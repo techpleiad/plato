@@ -1,0 +1,6 @@
+redirection:
+  test:
+    jm: job-manager
+    cm: custom-manager
+  preprod:
+    jm: job-manager

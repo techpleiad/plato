@@ -1,0 +1,6 @@
+redirection:
+  - jm: job-manager
+    cm: custom-manager
+    access: dev
+  - jm: job-manager
+    cm: custom-manager

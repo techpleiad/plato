@@ -1,0 +1,9 @@
+mongo:
+  cz:
+    uri:
+      in:
+        uri: link
+        host: user
+      dk:
+        uri: link
+        host: user

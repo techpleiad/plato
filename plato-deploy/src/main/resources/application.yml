@@ -1,0 +1,38 @@
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: plato
+  application:
+    name: plato
+
+server:
+  port: 8080
+
+plato:
+  multithreading:
+    config:
+      executor-service:
+        corePoolSize: 4
+        maxPoolSize: 4
+        queueCapacity: 10
+  config:
+    workingDirectory: tmp
+  properties:
+    altered:
+      values:
+        custom-manager:
+          - zone.config.country.management.countries.*
+          - zone.config.redirection.*
+          - zone.config.callback.callBackUrl.*
+          - zuul.routes.*
+    suppressed:
+      values:
+        custom-manager:
+          dev:
+            - zone.config.client.*.token
+            - zone.config.client.*.password
+        role-manager:
+          common:
+            - github.config
