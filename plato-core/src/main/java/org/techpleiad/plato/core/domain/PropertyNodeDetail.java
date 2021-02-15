@@ -1,14 +1,14 @@
 package org.techpleiad.plato.core.domain;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
-@Builder
+@SuperBuilder
 @Getter
-public class GlobalPropertyDetail {
+public class PropertyNodeDetail {
     private JsonNode rootNode;
-    private String prefix;
-    private boolean isPropertyDefaultArray;
+    private String pathRegex;
+    private boolean isPropertyArray;
     private PropertyTreeNode alteredPropertyRoot;
 }

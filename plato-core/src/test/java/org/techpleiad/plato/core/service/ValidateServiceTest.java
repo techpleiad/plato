@@ -145,6 +145,15 @@ class ValidateServiceTest {
         alteredPropertyTree = PropertyTreeNode.convertPropertiesToPropertyTree(alteredProperties);
     }
 
+    private void getMissingProperties(JsonNode convertToJsonNode, PropertyTreeNode alteredPropertyTree, List<String> missingProperties,
+                                      String pathRegex, String path, boolean isPropertyArray) {
+        validateService.findMissingProfilePropertiesRecursive(
+                convertToJsonNode,
+                alteredPropertyTree,
+                missingProperties, pathRegex, path, isPropertyArray
+        );
+    }
+
     @Test
     void given_profileFileContentAndEmptyAlteredPropertyTree_returnGlobalObjectPropertiesMapping_1() throws Exception {
 
@@ -182,8 +191,7 @@ class ValidateServiceTest {
 
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
-            validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getValue()),
+            getMissingProperties(convertToJsonNode(pair.getValue()),
                     alteredPropertyTree,
                     missingProperties,
                     "", "", false
@@ -238,8 +246,7 @@ class ValidateServiceTest {
 
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
-            validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getValue()),
+            getMissingProperties(convertToJsonNode(pair.getValue()),
                     alteredPropertyTree,
                     missingProperties,
                     "", "", false
@@ -272,8 +279,7 @@ class ValidateServiceTest {
 
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
-            validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getValue()),
+            getMissingProperties(convertToJsonNode(pair.getValue()),
                     alteredPropertyTree,
                     missingProperties,
                     "", "", false
@@ -335,8 +341,7 @@ class ValidateServiceTest {
         final ConsistencyAcrossProfilesReport serviceMissingProfileDetails = ConsistencyAcrossProfilesReport.builder().build();
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
-            validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getValue()),
+            getMissingProperties(convertToJsonNode(pair.getValue()),
                     alteredPropertyTree,
                     missingProperties,
                     "", "", false
@@ -369,8 +374,7 @@ class ValidateServiceTest {
         final ConsistencyAcrossProfilesReport serviceMissingProfileDetails = ConsistencyAcrossProfilesReport.builder().build();
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
-            validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getValue()),
+            getMissingProperties(convertToJsonNode(pair.getValue()),
                     alteredPropertyTree,
                     missingProperties,
                     "", "", false
@@ -444,8 +448,7 @@ class ValidateServiceTest {
         final ConsistencyAcrossProfilesReport serviceMissingProfileDetails = ConsistencyAcrossProfilesReport.builder().build();
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
-            validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getValue()),
+            getMissingProperties(convertToJsonNode(pair.getValue()),
                     alteredPropertyTree,
                     missingProperties,
                     "", "", false
@@ -481,8 +484,7 @@ class ValidateServiceTest {
 
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
-            validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getValue()),
+            getMissingProperties(convertToJsonNode(pair.getValue()),
                     alteredPropertyTree,
                     missingProperties,
                     "", "", false
