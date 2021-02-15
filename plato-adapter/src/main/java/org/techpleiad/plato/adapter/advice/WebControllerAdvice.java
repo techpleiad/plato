@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.techpleiad.plato.adapter.exception.ErrorResponse;
 import org.techpleiad.plato.core.exceptions.BranchNotSupportedException;
+import org.techpleiad.plato.core.exceptions.FileConvertException;
 import org.techpleiad.plato.core.exceptions.FileDeleteException;
 import org.techpleiad.plato.core.exceptions.GitBranchNotFoundException;
 import org.techpleiad.plato.core.exceptions.GitRepositoryNotFoundException;
@@ -117,5 +118,15 @@ public class WebControllerAdvice {
 
         return new ResponseEntity<>(new ErrorResponse(error, HttpStatus.BAD_REQUEST.value()),
                 HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = FileConvertException.class)
+    public ResponseEntity<ErrorResponse> generateFileConvertException(final FileConvertException exception) {
+
+        final Map<String, Object> error = new HashMap<>();
+        error.put(ERROR_MESSAGE, exception.getErrorMessage());
+
+        return new ResponseEntity<>(new ErrorResponse(error, HttpStatus.INTERNAL_SERVER_ERROR.value()),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
