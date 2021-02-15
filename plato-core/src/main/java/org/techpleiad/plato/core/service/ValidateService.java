@@ -13,6 +13,7 @@ import org.techpleiad.plato.core.advice.ThreadDirectory;
 import org.techpleiad.plato.core.convert.SortingNodeFactory;
 import org.techpleiad.plato.core.domain.*;
 import org.techpleiad.plato.core.exceptions.BranchNotSupportedException;
+import org.techpleiad.plato.core.exceptions.FileConvertException;
 import org.techpleiad.plato.core.port.in.IFileServiceUserCase;
 import org.techpleiad.plato.core.port.in.IFilterSuppressPropertyUseCase;
 import org.techpleiad.plato.core.port.in.IGetAlteredPropertyUseCase;
@@ -23,6 +24,7 @@ import org.techpleiad.plato.core.port.in.IValidateAcrossProfileUseCase;
 import org.techpleiad.plato.core.port.in.IValidateBranchUseCase;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -84,8 +86,8 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 final String fromOriginal = fileService.getFileToString(fromFile);
                 final String toOriginal = fileService.getFileToString(toFile);
 
-                final JsonNode sortFromOriginal = convertFileToSortedJsonNode(fromFile);
-                final JsonNode sortToOriginal = convertFileToSortedJsonNode(toFile);
+                final JsonNode sortFromOriginal = convertFileToJsonNode(fromFile, true);
+                final JsonNode sortToOriginal = convertFileToJsonNode(toFile, true);
 
                 final List<Document> documentList = Arrays.asList(
                         Document.builder().profile(profile.getName()).branch(fromBranch).build(),
@@ -207,14 +209,12 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
         final List<String> commonSuppressedProperties = suppressedProperties.getOrDefault("common", Collections.emptyList());
         mapProfileToFileContent.forEach(pairProfileFile -> {
 
-            final JsonNode rootNode = convertFileToJsonNode(pairProfileFile.getValue());
+            final JsonNode rootNode = convertFileToJsonNode(pairProfileFile.getValue(), false);
             profilePropertyDetails.addProfileDocument(pairProfileFile.getKey(),
                     fileService.convertToFormattedString(pairProfileFile.getKey(), rootNode));
 
             final List<String> missingProperties = new LinkedList<>();
-            findMissingProfilePropertiesRecursive(rootNode, alteredPropertyTree,
-                    missingProperties, "", "",
-                    false);
+            findMissingProfileProperties(rootNode, alteredPropertyTree, missingProperties);
 
             final List<String> suppressedPropertiesForProfile = suppressedProperties.getOrDefault(pairProfileFile.getKey(), new ArrayList<>());
             suppressedPropertiesForProfile.addAll(commonSuppressedProperties);
@@ -228,10 +228,8 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
     }
 
     @ExecutionTime
-    public void findMissingProfilePropertiesIterative(final JsonNode rootNode, final PropertyTreeNode alteredPropertyTreeNode,
-                                                      final List<String> missingProperties,
-                                                      final String pathRegex, final String path,
-                                                      final boolean isPropertyArray) {
+    public void findMissingProfileProperties(final JsonNode rootNode, final PropertyTreeNode alteredPropertyTreeNode,
+                                             final List<String> missingProperties) {
 
         Queue<MissingPropertyDetail> list = new LinkedList<>();
 
@@ -306,64 +304,6 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
     }
 
     @ExecutionTime
-    public void findMissingProfilePropertiesRecursive(final JsonNode rootNode, final PropertyTreeNode alteredPropertyTreeNode,
-                                                      final List<String> missingProperties,
-                                                      final String pathRegex, final String path,
-                                                      final boolean isPropertyArray) {
-
-        final String alteredRegexPath = propertyToAlteredProperty.get(pathRegex);
-
-        // If object, find the missing properties
-        final boolean getObjectMissingProperties =
-                rootNode.isObject() &&
-                        (alteredPropertyTreeNode == null || !alteredPropertyTreeNode.contains("*"));
-
-        if (getObjectMissingProperties || isPropertyArray) {
-            final Set<String> propertySet = new HashSet<>();
-            rootNode.fields().forEachRemaining(property -> propertySet.add(property.getKey()));
-
-            globalObjectProperty.get(alteredRegexPath)
-                    .stream()
-                    .filter(property -> !propertySet.contains(property))
-                    .forEach(property -> addErrorProfileNotification(missingProperties, path, property));
-        } else if (isJsonNodeValueOrNull(rootNode) && globalObjectProperty.containsKey(alteredRegexPath)) {
-            globalObjectProperty.get(alteredRegexPath).forEach(property ->
-                    addErrorProfileNotification(missingProperties, path, property)
-            );
-        }
-
-        rootNode.fields().forEachRemaining(object -> {
-            final JsonNode childRootNode = object.getValue();
-            final String key = object.getKey();
-
-            if (childRootNode.isObject()) {
-                findMissingProfilePropertiesRecursive(childRootNode,
-                        Objects.isNull(alteredPropertyTreeNode) ? null : alteredPropertyTreeNode.getChild("*", key),
-                        missingProperties,
-                        generatePropertyPath(alteredRegexPath, key),
-                        generatePropertyPath(path, key),
-                        false);
-            } else if (childRootNode.isArray()) {
-                traverseJsonArrayElements(childRootNode, missingProperties,
-                        alteredPropertyTreeNode,
-                        alteredRegexPath, path,
-                        key);
-            }
-
-            // Not an object or an array JsonNode
-            else {
-                final Pair<String, String> objectPathPrefix = getObjectPropertyToMissingPropertiesPair(alteredRegexPath, key);
-                if (Objects.nonNull(objectPathPrefix) && globalObjectProperty.containsKey(objectPathPrefix.getKey())) {
-
-                    globalObjectProperty.get(objectPathPrefix.getKey()).forEach(missingProperty ->
-                            addErrorProfileNotification(missingProperties, objectPathPrefix.getValue(), missingProperty)
-                    );
-                }
-            }
-        });
-    }
-
-    @ExecutionTime
     public Map<String, HashSet<String>> buildGlobalObjectToPropertiesMapping(final List<Pair<String, File>> fileContentMap,
                                                                              final PropertyTreeNode alteredPropertyTree) {
 
@@ -372,8 +312,8 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
 
         final HashMap<String, HashSet<String>> objectPropertyMap = new HashMap<>();
         fileContentMap.forEach(pairProfileFile ->
-                traverseObjectToPropertiesMappingRecursive(convertFileToJsonNode(pairProfileFile.getValue()), objectPropertyMap,
-                        alteredPropertyTree, "", false)
+                traverseObjectToPropertiesMapping(convertFileToJsonNode(pairProfileFile.getValue(), false), objectPropertyMap,
+                        alteredPropertyTree)
         );
         return objectPropertyMap;
     }
@@ -415,56 +355,9 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
     }
 
     @ExecutionTime
-    private void traverseObjectToPropertiesMappingRecursive(final JsonNode rootNode,
-                                                            final HashMap<String, HashSet<String>> objectPropertyMap,
-                                                            final PropertyTreeNode alteredPropertyRoot,
-                                                            final String prefix,
-                                                            final boolean isPropertyDefaultArray) {
-
-        final boolean getObjectPropertiesMapped = rootNode.isObject() && (alteredPropertyRoot == null || !alteredPropertyRoot.contains("*"));
-
-        if (getObjectPropertiesMapped || isPropertyDefaultArray) {
-
-            objectPropertyMap.putIfAbsent(prefix, new HashSet<>());
-            final Set<String> propertySet = objectPropertyMap.get(prefix);
-
-            rootNode.fields().forEachRemaining(property -> propertySet.add(property.getKey()));
-        }
-
-        rootNode.fields().forEachRemaining(object -> {
-            final JsonNode value = object.getValue();
-            final String key = object.getKey();
-
-            PropertyTreeNode childNode = null;
-            boolean isPropertyAltered = false;
-            if (Objects.nonNull(alteredPropertyRoot)) {
-                if (alteredPropertyRoot.contains("*")) {
-                    isPropertyAltered = true;
-                }
-                childNode = alteredPropertyRoot.getChild("*", key);
-            }
-
-            if (value.isObject()) {
-                final String alterRegexPath = generatePropertyPath(prefix, isPropertyAltered ? "*" : key);
-
-                propertyToAlteredProperty.put(generatePropertyPath(prefix, key), alterRegexPath);
-                traverseObjectToPropertiesMappingRecursive(value, objectPropertyMap, childNode, alterRegexPath, false);
-            } else if (value.isArray()) {
-                final String regexPath = generatePropertyPath(prefix, key, "*");
-                propertyToAlteredProperty.put(regexPath, regexPath);
-
-                final PropertyTreeNode finalChildNode = childNode;
-                value.forEach(subRoot -> traverseObjectToPropertiesMappingRecursive(subRoot, objectPropertyMap, finalChildNode, regexPath, true));
-            }
-        });
-    }
-
-    @ExecutionTime
-    private void traverseObjectToPropertiesMappingIterative(final JsonNode rootNode,
-                                                            final HashMap<String, HashSet<String>> objectPropertyMap,
-                                                            final PropertyTreeNode alteredPropertyRoot,
-                                                            final String prefix,
-                                                            final boolean isPropertyDefaultArray) {
+    private void traverseObjectToPropertiesMapping(final JsonNode rootNode,
+                                                   final HashMap<String, HashSet<String>> objectPropertyMap,
+                                                   final PropertyTreeNode alteredPropertyRoot) {
 
         Queue<PropertyNodeDetail> queue = new LinkedList<>();
         queue.add(PropertyNodeDetail.builder().alteredPropertyRoot(alteredPropertyRoot)
@@ -473,8 +366,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 .build()
         );
 
-        while(!queue.isEmpty())
-        {
+        while(!queue.isEmpty()) {
             PropertyNodeDetail propertyNodeDetail = queue.remove();
 
             final boolean getObjectPropertiesMapped = propertyNodeDetail.getRootNode().isObject() && (propertyNodeDetail.getAlteredPropertyRoot() == null || !propertyNodeDetail.getAlteredPropertyRoot().contains("*"));
@@ -516,13 +408,12 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                     propertyToAlteredProperty.put(regexPath, regexPath);
 
                     final PropertyTreeNode finalChildNode = childNode;
-                    value.forEach(subRoot -> {
-                        queue.add(PropertyNodeDetail.builder().alteredPropertyRoot(finalChildNode)
-                                .rootNode(subRoot).pathRegex(regexPath)
-                                .isPropertyArray(true)
-                                .build()
-                        );
-                    });
+                    value.forEach(subRoot ->
+                            queue.add(PropertyNodeDetail.builder().alteredPropertyRoot(finalChildNode)
+                                    .rootNode(subRoot).pathRegex(regexPath)
+                                    .isPropertyArray(true)
+                                    .build()
+                    ));
                 }
             });
         }
@@ -556,21 +447,6 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
         return Objects.isNull(object) ? null : Pair.<String, String>builder().key(object).value(property).build();
     }
 
-    private void traverseJsonArrayElements(final JsonNode rootNode, final List<String> missingProperties,
-                                           final PropertyTreeNode alteredPropertyTreeNode, final String alteredRegexPath,
-                                           final String path, final String key) {
-        final AtomicInteger index = new AtomicInteger();
-        rootNode.forEach(subRoot -> {
-            findMissingProfilePropertiesRecursive(subRoot,
-                    Objects.isNull(alteredPropertyTreeNode) ? null : alteredPropertyTreeNode.getChild(key),
-                    missingProperties,
-                    generatePropertyPath(alteredRegexPath, key, "*"),
-                    generatePropertyPath(path, key, Integer.toString(index.get())),
-                    true);
-            index.getAndIncrement();
-        });
-    }
-
     private void addErrorProfileNotification(final List<String> missingProperties, final String path, final String property) {
         missingProperties.add(generatePropertyPath(path, property));
     }
@@ -579,24 +455,16 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
         return Arrays.stream(property).filter(x -> !x.isEmpty()).collect(Collectors.joining("."));
     }
 
-    private JsonNode convertFileToSortedJsonNode(final File file) {
+    private JsonNode convertFileToJsonNode(final File file, boolean isSorted) {
+
         final ObjectMapper sortedMapper = JsonMapper.builder().nodeFactory(new SortingNodeFactory()).build();
         try {
-            return sortedMapper.readTree(convertFileToJsonNode(file).toString());
-        } catch (final Exception exception) {
-            log.error(exception.getMessage());
-        }
-        return null;
-    }
-
-    private JsonNode convertFileToJsonNode(final File file) {
-        JsonNode root = null;
-        try {
-            root = file.getName().endsWith(".yml") ?
+            JsonNode root = file.getName().endsWith(".yml") ?
                     new YAMLMapper().readTree(file) : new ObjectMapper().readTree(file);
+
+            return isSorted ? sortedMapper.readTree(root.toString()) : root;
         } catch (final Exception exception) {
-            log.error(exception.getMessage());
+            throw new FileConvertException(exception.getMessage());
         }
-        return root;
     }
 }
