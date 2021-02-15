@@ -294,7 +294,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
 
         final HashMap<String, HashSet<String>> objectPropertyMap = new HashMap<>();
         fileContentMap.forEach(pairProfileFile ->
-                traverseObjectToPropertiesMapping(convertFileToJsonNode(pairProfileFile.getValue()), objectPropertyMap,
+                traverseObjectToPropertiesMappingIterative(convertFileToJsonNode(pairProfileFile.getValue()), objectPropertyMap,
                         alteredPropertyTree, "", false)
         );
         return objectPropertyMap;
@@ -336,11 +336,11 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
         return true;
     }
 
-    private void traverseObjectToPropertiesMapping(final JsonNode rootNode,
-                                                   final HashMap<String, HashSet<String>> objectPropertyMap,
-                                                   final PropertyTreeNode alteredPropertyRoot,
-                                                   final String prefix,
-                                                   final boolean isPropertyDefaultArray) {
+    private void traverseObjectToPropertiesMappingRecursive(final JsonNode rootNode,
+                                                            final HashMap<String, HashSet<String>> objectPropertyMap,
+                                                            final PropertyTreeNode alteredPropertyRoot,
+                                                            final String prefix,
+                                                            final boolean isPropertyDefaultArray) {
 
         final boolean getObjectPropertiesMapped = rootNode.isObject() && (alteredPropertyRoot == null || !alteredPropertyRoot.contains("*"));
 
@@ -369,15 +369,83 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 final String alterRegexPath = generatePropertyPath(prefix, isPropertyAltered ? "*" : key);
 
                 propertyToAlteredProperty.put(generatePropertyPath(prefix, key), alterRegexPath);
-                traverseObjectToPropertiesMapping(value, objectPropertyMap, childNode, alterRegexPath, false);
+                traverseObjectToPropertiesMappingRecursive(value, objectPropertyMap, childNode, alterRegexPath, false);
             } else if (value.isArray()) {
                 final String regexPath = generatePropertyPath(prefix, key, "*");
                 propertyToAlteredProperty.put(regexPath, regexPath);
 
                 final PropertyTreeNode finalChildNode = childNode;
-                value.forEach(subRoot -> traverseObjectToPropertiesMapping(subRoot, objectPropertyMap, finalChildNode, regexPath, true));
+                value.forEach(subRoot -> traverseObjectToPropertiesMappingRecursive(subRoot, objectPropertyMap, finalChildNode, regexPath, true));
             }
         });
+    }
+
+    private void traverseObjectToPropertiesMappingIterative(final JsonNode rootNode,
+                                                            final HashMap<String, HashSet<String>> objectPropertyMap,
+                                                            final PropertyTreeNode alteredPropertyRoot,
+                                                            final String prefix,
+                                                            final boolean isPropertyDefaultArray) {
+
+        Queue<GlobalPropertyDetail> queue = new LinkedList<>();
+        queue.add(GlobalPropertyDetail.builder().alteredPropertyRoot(alteredPropertyRoot)
+                .rootNode(rootNode).prefix("")
+                .isPropertyDefaultArray(false)
+                .build()
+        );
+
+        while(!queue.isEmpty())
+        {
+            GlobalPropertyDetail obj = queue.remove();
+
+            final boolean getObjectPropertiesMapped = obj.getRootNode().isObject() && (obj.getAlteredPropertyRoot() == null || !obj.getAlteredPropertyRoot().contains("*"));
+
+            if (getObjectPropertiesMapped || obj.isPropertyDefaultArray()) {
+
+                objectPropertyMap.putIfAbsent(obj.getPrefix(), new HashSet<>());
+                final Set<String> propertySet = objectPropertyMap.get(obj.getPrefix());
+
+                obj.getRootNode().fields().forEachRemaining(property -> propertySet.add(property.getKey()));
+            }
+
+            obj.getRootNode().fields().forEachRemaining(object -> {
+                final JsonNode value = object.getValue();
+                final String key = object.getKey();
+
+                PropertyTreeNode childNode = null;
+                boolean isPropertyAltered = false;
+
+                if (Objects.nonNull(obj.getAlteredPropertyRoot())) {
+                    if (obj.getAlteredPropertyRoot().contains("*")){
+                        isPropertyAltered = true;
+                    }
+                    childNode = obj.getAlteredPropertyRoot().getChild("*", key);
+                }
+
+                if (value.isObject()) {
+                    final String alterRegexPath = generatePropertyPath(obj.getPrefix(), isPropertyAltered ? "*" : key);
+
+                    propertyToAlteredProperty.put(generatePropertyPath(obj.getPrefix(), key), alterRegexPath);
+                    queue.add(GlobalPropertyDetail.builder().alteredPropertyRoot(childNode)
+                            .rootNode(value).prefix(alterRegexPath)
+                            .isPropertyDefaultArray(false)
+                            .build()
+                    );
+                }
+                else if (value.isArray()) {
+                    final String regexPath = generatePropertyPath(obj.getPrefix(), key, "*");
+                    propertyToAlteredProperty.put(regexPath, regexPath);
+
+                    final PropertyTreeNode finalChildNode = childNode;
+                    value.forEach(subRoot -> {
+                        queue.add(GlobalPropertyDetail.builder().alteredPropertyRoot(finalChildNode)
+                                .rootNode(subRoot).prefix(regexPath)
+                                .isPropertyDefaultArray(true)
+                                .build()
+                        );
+                    });
+                }
+            });
+        }
     }
 
     private boolean isJsonNodeValueOrNull(final JsonNode rootNode) {
