@@ -114,8 +114,8 @@ public class ServiceManagerController implements IServiceManagerController {
         );
 
 
-        final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = reportList.stream().map(consistencyAcrossBranchesReport -> serviceManagerMapper
-                .convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(consistencyAcrossBranchesReport)).collect(Collectors.toList());
+        final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = serviceManagerMapper
+                .convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(reportList);
 
         return ResponseEntity.ok(servicesAcrossBranchValidateResponseTO);
     }

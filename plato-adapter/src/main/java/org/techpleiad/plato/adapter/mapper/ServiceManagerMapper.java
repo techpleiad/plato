@@ -4,6 +4,7 @@ package org.techpleiad.plato.adapter.mapper;
 import org.mapstruct.Mapper;
 import org.techpleiad.plato.api.request.ServiceRequestTO;
 import org.techpleiad.plato.api.response.BranchProfileReportResponseTO;
+import org.techpleiad.plato.api.response.BranchResponseTO;
 import org.techpleiad.plato.api.response.DocumentResponseTO;
 import org.techpleiad.plato.api.response.ProfilePropertiesResponseTO;
 import org.techpleiad.plato.api.response.ServiceResponseTO;
@@ -29,27 +30,11 @@ public interface ServiceManagerMapper {
 
     List<ServiceResponseTO> convertServiceSpecListToServiceResponseTOList(List<ServiceSpec> serviceSpecs);
 
-    DocumentResponseTO convertDocumentToDocumentResponseTo(final Document document);
+    List<DocumentResponseTO> convertDocumentToDocumentResponseTo(final List<Document> document);
 
+    List<BranchProfileReportResponseTO> convertBranchProfileToBranchProfileResponse(final List<BranchProfileReport> branchProfileReport);
 
-    default BranchProfileReportResponseTO convertBranchProfileToBranchProfileResponse(final BranchProfileReport branchProfileReport) {
-        return BranchProfileReportResponseTO.builder().
-                profile(branchProfileReport.getProfile())
-                .fileEqual(branchProfileReport.isFileEqual())
-                .propertyValuesEqual(branchProfileReport.isPropertyValueEqual())
-                .documents(branchProfileReport.getDocuments().stream().map(this::convertDocumentToDocumentResponseTo).collect(Collectors.toList()))
-                .build();
-
-    }
-
-    default ServicesAcrossBranchValidateResponseTO convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(final ConsistencyAcrossBranchesReport reportList) {
-        return ServicesAcrossBranchValidateResponseTO.builder()
-                .service(reportList.getService())
-                .report(
-                        reportList.getReport().stream().map(this::convertBranchProfileToBranchProfileResponse).collect(Collectors.toList())
-                )
-                .build();
-    }
+    List<ServicesAcrossBranchValidateResponseTO> convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(final List<ConsistencyAcrossBranchesReport> consistencyAcrossBranchesReport);
 
     default ServicesAcrossProfileValidateResponseTO convertInconsistentProfilePropertyToProfilePropertyResponseTO(
             final String service, final String branch, final ConsistencyAcrossProfilesReport profilePropertyDetails) {
