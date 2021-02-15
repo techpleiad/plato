@@ -114,7 +114,7 @@ class ServiceManagerMapperTest {
 
     @Test
     void givenConsistencyAcrossBranchReport_whenConvertToServiceAcrossBranchResponse_thenMap() {
-        final ConsistencyAcrossBranchesReport consistencyAcrossBranchesReport = ConsistencyAcrossBranchesReport.builder()
+        final List<ConsistencyAcrossBranchesReport> consistencyAcrossBranchesReport = Arrays.asList(ConsistencyAcrossBranchesReport.builder()
                 .service("data-manager")
                 .report(
                         Arrays.asList(
@@ -157,13 +157,23 @@ class ServiceManagerMapperTest {
                                         )
                                         .build()
                         )
-                ).build();
+                ).build());
 
-        final ServicesAcrossBranchValidateResponseTO servicesAcrossBranchValidateResponseTO = serviceManagerMapper
+
+
+        final List<ConsistencyAcrossBranchesReport> emptyConsistencyAcrossBranchesReport = Arrays.asList();
+
+        final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = serviceManagerMapper
                 .convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(consistencyAcrossBranchesReport);
 
-        Assertions.assertEquals("data-manager", servicesAcrossBranchValidateResponseTO.getService());
-        Assertions.assertEquals(2, servicesAcrossBranchValidateResponseTO.getReport().size());
+        final List<ServicesAcrossBranchValidateResponseTO> emptyServicesAcrossBranchValidateResponseTO = serviceManagerMapper
+                .convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(emptyConsistencyAcrossBranchesReport);
+
+
+        Assertions.assertEquals(1, servicesAcrossBranchValidateResponseTO.size());
+        Assertions.assertEquals(0, emptyServicesAcrossBranchValidateResponseTO.size());
+        Assertions.assertEquals("data-manager", servicesAcrossBranchValidateResponseTO.get(0).getService());
+        Assertions.assertEquals(2, servicesAcrossBranchValidateResponseTO.get(0).getReport().size());
 
 
     }

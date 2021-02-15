@@ -12,6 +12,7 @@ import java.util.List;
 public class BranchProfileReportResponseTO {
     private String profile;
     private boolean fileEqual;
-    private boolean propertyValuesEqual;
+    private boolean propertyValueEqual;
+
     List<DocumentResponseTO> documents;
 }
