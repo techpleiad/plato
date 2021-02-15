@@ -294,7 +294,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
 
         final HashMap<String, HashSet<String>> objectPropertyMap = new HashMap<>();
         fileContentMap.forEach(pairProfileFile ->
-                traverseObjectToPropertiesMappingIterative(convertFileToJsonNode(pairProfileFile.getValue()), objectPropertyMap,
+                traverseObjectToPropertiesMappingRecursive(convertFileToJsonNode(pairProfileFile.getValue()), objectPropertyMap,
                         alteredPropertyTree, "", false)
         );
         return objectPropertyMap;
