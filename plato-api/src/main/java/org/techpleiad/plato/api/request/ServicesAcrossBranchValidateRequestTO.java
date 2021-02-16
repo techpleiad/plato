@@ -15,11 +15,12 @@ import java.util.List;
 @Getter
 @ToString
 public class ServicesAcrossBranchValidateRequestTO {
-
     @NotEmpty(message = "service list cannot be empty")
     private List<String> services;
     @NotEmpty(message = "fromBranch cannot be empty")
     private String fromBranch;
     @NotEmpty(message = "toBranch cannot be empty")
     private String toBranch;
+    private boolean propertyValueEqual;
+
 }
