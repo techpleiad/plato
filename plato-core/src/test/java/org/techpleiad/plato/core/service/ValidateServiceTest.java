@@ -548,23 +548,23 @@ class ValidateServiceTest {
             return getFileToString(file);
         });
 
-        final ConsistencyAcrossBranchesReport report = validateService.validateProfilesAcrossBranch(fromServiceBranchData, toServiceBranchData, serviceSpec);
+        final ConsistencyAcrossBranchesReport report = validateService.validateProfilesAcrossBranch(fromServiceBranchData, toServiceBranchData, serviceSpec, true);
 
         Assertions.assertEquals(serviceSpec.getService(), report.getService());
         report.getReport().forEach(profileReport -> {
             switch (profileReport.getProfile()) {
                 case PREPROD:
-                    Assertions.assertTrue(profileReport.isPropertyValueEqual());
+                    Assertions.assertTrue(profileReport.getPropertyValueEqual());
                     Assertions.assertTrue(profileReport.isFileEqual());
                     break;
 
                 case TEST:
-                    Assertions.assertFalse(profileReport.isPropertyValueEqual());
+                    Assertions.assertFalse(profileReport.getPropertyValueEqual());
                     Assertions.assertFalse(profileReport.isFileEqual());
                     break;
 
                 case DEV:
-                    Assertions.assertTrue(profileReport.isPropertyValueEqual());
+                    Assertions.assertTrue(profileReport.getPropertyValueEqual());
                     Assertions.assertFalse(profileReport.isFileEqual());
                     break;
 

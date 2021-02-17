@@ -16,6 +16,7 @@ import org.techpleiad.plato.core.advice.ExecutionTime;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossBranchesReport;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossProfilesReport;
 import org.techpleiad.plato.core.domain.ServiceSpec;
+import org.techpleiad.plato.core.domain.ValidationAcrossBranchConfig;
 import org.techpleiad.plato.core.port.in.IAddServiceUseCase;
 import org.techpleiad.plato.core.port.in.IDeleteServiceUseCase;
 import org.techpleiad.plato.core.port.in.IGetServiceUseCase;
@@ -107,12 +108,16 @@ public class ServiceManagerController implements IServiceManagerController {
 
         final List<ServiceSpec> serviceSpecList = getServiceUseCase.getServicesList(acrossBranchValidateRequestTO.getServices());
 
+        final ValidationAcrossBranchConfig validationAcrossBranchConfig = ValidationAcrossBranchConfig.builder()
+                .fromBranch(acrossBranchValidateRequestTO.getFromBranch())
+                .toBranch(acrossBranchValidateRequestTO.getToBranch())
+                .propertyValueEqual(acrossBranchValidateRequestTO.isPropertyValueEqual())
+                .build();
+
         final List<ConsistencyAcrossBranchesReport> reportList = validateAcrossBranchUseCase.validateAcrossBranchesInServiceBatch(
                 serviceSpecList,
-                acrossBranchValidateRequestTO.getFromBranch(),
-                acrossBranchValidateRequestTO.getToBranch()
+                validationAcrossBranchConfig
         );
-
 
         final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = serviceManagerMapper
                 .convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(reportList);

@@ -58,7 +58,8 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
     public ConsistencyAcrossBranchesReport validateProfilesAcrossBranch(
             final ServiceBranchData fromServiceBranchData,
             final ServiceBranchData toServiceBranchData,
-            final ServiceSpec serviceSpec) throws ExecutionException, InterruptedException {
+            final ServiceSpec serviceSpec,
+            final boolean checkPropertyValue) throws ExecutionException, InterruptedException {
 
         final List<ServiceBranchData> serviceBranchList = Arrays.asList(fromServiceBranchData, toServiceBranchData);
 
@@ -95,10 +96,12 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 );
                 final boolean fileEqual = fromOriginal.equals(toOriginal);
 
-                final boolean propertyValueEqual =
+                final Boolean propertyValueEqual = checkPropertyValue ?
                         Objects.nonNull(sortFromOriginal) &&
-                                Objects.nonNull(sortToOriginal) &&
-                                sortFromOriginal.toString().equals(sortToOriginal.toString());
+                        Objects.nonNull(sortToOriginal) &&
+                        sortFromOriginal.toString().equals(sortToOriginal.toString())
+                        : null;
+
 
                 branchProfileReportList.add(
                         BranchProfileReport.builder()
@@ -122,11 +125,10 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
     @Override
     public List<ConsistencyAcrossBranchesReport> validateAcrossBranchesInServiceBatch(
             final List<ServiceSpec> serviceSpecList,
-            final String fromBranch,
-            final String toBranch) throws ExecutionException, InterruptedException {
+            final ValidationAcrossBranchConfig validationAcrossBranchConfig) throws ExecutionException, InterruptedException {
 
         final List<ConsistencyAcrossBranchesReport> reportList = new LinkedList<>();
-        final List<String> branchList = Arrays.asList(fromBranch, toBranch);
+        final List<String> branchList = Arrays.asList(validationAcrossBranchConfig.getFromBranch(), validationAcrossBranchConfig.getToBranch());
 
         serviceSpecList.forEach(serviceSpec -> validateBranchesInService(serviceSpec, branchList));
 
@@ -147,7 +149,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                         .build()
                 );
             }
-            final ConsistencyAcrossBranchesReport report = validateProfilesAcrossBranch(serviceBranchList.get(0), serviceBranchList.get(1), serviceSpec);
+            final ConsistencyAcrossBranchesReport report = validateProfilesAcrossBranch(serviceBranchList.get(0), serviceBranchList.get(1), serviceSpec, validationAcrossBranchConfig.isPropertyValueEqual());
             reportList.add(report);
         }
         return reportList;

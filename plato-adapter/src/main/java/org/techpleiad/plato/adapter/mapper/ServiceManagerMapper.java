@@ -47,13 +47,15 @@ public interface ServiceManagerMapper {
 
 
     default List<ProfilePropertiesResponseTO> convertMissingPropertyMapToList(final HashMap<String, List<String>> missingProperty, final HashMap<String, String> profileDocument) {
-
         final List<ProfilePropertiesResponseTO> profilePropertiesResponseTOList = new LinkedList<>();
         missingProperty.forEach((profile, properties) ->
                         profilePropertiesResponseTOList.add(ProfilePropertiesResponseTO.builder()
-//                    .document(profileDocument.get(profile))
                                         .properties(properties)
-                                        .profile(profile)
+                                        .document(DocumentResponseTO.builder().
+                                                profile(profile)
+//                                                .document(profileDocument.get(profile))
+                                                        .build()
+                                                )
                                         .build()
                         )
         );
