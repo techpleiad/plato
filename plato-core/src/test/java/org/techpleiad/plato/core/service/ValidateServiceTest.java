@@ -586,17 +586,17 @@ class ValidateServiceTest {
             switch (profileReport.getProfile()) {
                 case PREPROD:
                     Assertions.assertTrue(profileReport.getPropertyValueEqual());
-                    Assertions.assertTrue(profileReport.getFileEqual());
+                    Assertions.assertTrue(profileReport.isFileEqual());
                     break;
 
                 case TEST:
                     Assertions.assertFalse(profileReport.getPropertyValueEqual());
-                    Assertions.assertFalse(profileReport.getFileEqual());
+                    Assertions.assertFalse(profileReport.isFileEqual());
                     break;
 
                 case DEV:
                     Assertions.assertTrue(profileReport.getPropertyValueEqual());
-                    Assertions.assertFalse(profileReport.getFileEqual());
+                    Assertions.assertFalse(profileReport.isFileEqual());
                     break;
 
                 default:
