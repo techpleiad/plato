@@ -83,7 +83,7 @@ class FileServiceTest {
         final File directory = ResourceUtils.getFile(PATH);
         final CompletableFuture<TreeMap<String, File>> profileToFileList = fileService.getYamlFiles(directory, SERVICE_NAME);
 
-        Assertions.assertEquals(3, profileToFileList.get().size());
+        Assertions.assertEquals(4, profileToFileList.get().size());
         profileToFileList.get().forEach((key, value) -> {
             Assertions.assertNotNull(value);
             Assertions.assertNotNull(key);

@@ -24,11 +24,11 @@ import org.techpleiad.plato.core.port.in.IValidateAcrossProfileUseCase;
 import org.techpleiad.plato.core.port.in.IValidateBranchUseCase;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,7 +77,10 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
 
         final List<BranchProfileReport> branchProfileReportList = new LinkedList<>();
 
-        serviceSpec.getProfiles().forEach(profile -> {
+        List<Profile> profileList = serviceSpec.getProfiles().stream().collect(Collectors.toList());
+        profileList.add(Profile.builder().name("").build());
+
+        profileList.forEach(profile -> {
             final File fromFile = branchToProfileMap.get(fromBranch).get(profile.getName());
             final File toFile = branchToProfileMap.get(toBranch).get(profile.getName());
 
@@ -101,7 +104,6 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                         Objects.nonNull(sortToOriginal) &&
                         sortFromOriginal.toString().equals(sortToOriginal.toString())
                         : null;
-
 
                 branchProfileReportList.add(
                         BranchProfileReport.builder()
