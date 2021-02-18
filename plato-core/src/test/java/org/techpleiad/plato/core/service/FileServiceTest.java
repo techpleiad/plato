@@ -85,6 +85,7 @@ class FileServiceTest {
 
         Assertions.assertEquals(4, profileToFileList.get().size());
         profileToFileList.get().forEach((key, value) -> {
+            System.out.println("profile - '" + key + "' > file - " + value.getName());
             Assertions.assertNotNull(value);
             Assertions.assertNotNull(key);
         });

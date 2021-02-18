@@ -28,7 +28,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,6 +86,8 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
             if (Objects.isNull(fromFile) || Objects.isNull(toFile)) {
                 log.error("from file {}, toFile {}", fromFile, toFile);
             } else {
+                final String profileName = profile.getName().isEmpty() ? "default" : profile.getName();
+
                 final String fromOriginal = fileService.getFileToString(fromFile);
                 final String toOriginal = fileService.getFileToString(toFile);
 
@@ -94,8 +95,8 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 final JsonNode sortToOriginal = convertFileToJsonNode(toFile, true);
 
                 final List<Document> documentList = Arrays.asList(
-                        Document.builder().profile(profile.getName()).branch(fromBranch).build(),
-                        Document.builder().profile(profile.getName()).branch(toBranch).build()
+                        Document.builder().profile(profileName).branch(fromBranch).build(),
+                        Document.builder().profile(profileName).branch(toBranch).build()
                 );
                 final boolean fileEqual = fromOriginal.equals(toOriginal);
 
@@ -108,7 +109,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 branchProfileReportList.add(
                         BranchProfileReport.builder()
                                 .propertyValueEqual(propertyValueEqual)
-                                .profile(profile.getName())
+                                .profile(profileName)
                                 .documents(documentList)
                                 .fileEqual(fileEqual)
                                 .build()
