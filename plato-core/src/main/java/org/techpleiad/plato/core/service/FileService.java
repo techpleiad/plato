@@ -154,6 +154,9 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
         if (!expectedProfile.isEmpty() && expectedProfile.charAt(0) == '-') {
             return Optional.of(expectedProfile.substring(1));
         }
+        else if (expectedProfile.isEmpty()) {
+            return Optional.of(expectedProfile);
+        }
         return Optional.empty();
     }
 }

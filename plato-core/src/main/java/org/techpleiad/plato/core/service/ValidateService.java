@@ -24,7 +24,6 @@ import org.techpleiad.plato.core.port.in.IValidateAcrossProfileUseCase;
 import org.techpleiad.plato.core.port.in.IValidateBranchUseCase;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -77,13 +76,18 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
 
         final List<BranchProfileReport> branchProfileReportList = new LinkedList<>();
 
-        serviceSpec.getProfiles().forEach(profile -> {
+        List<Profile> profileList = serviceSpec.getProfiles().stream().collect(Collectors.toList());
+        profileList.add(Profile.builder().name("").build());
+
+        profileList.forEach(profile -> {
             final File fromFile = branchToProfileMap.get(fromBranch).get(profile.getName());
             final File toFile = branchToProfileMap.get(toBranch).get(profile.getName());
 
             if (Objects.isNull(fromFile) || Objects.isNull(toFile)) {
                 log.error("from file {}, toFile {}", fromFile, toFile);
             } else {
+                final String profileName = profile.getName().isEmpty() ? "default" : profile.getName();
+
                 final String fromOriginal = fileService.getFileToString(fromFile);
                 final String toOriginal = fileService.getFileToString(toFile);
 
@@ -91,8 +95,8 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 final JsonNode sortToOriginal = convertFileToJsonNode(toFile, true);
 
                 final List<Document> documentList = Arrays.asList(
-                        Document.builder().profile(profile.getName()).branch(fromBranch).build(),
-                        Document.builder().profile(profile.getName()).branch(toBranch).build()
+                        Document.builder().profile(profileName).branch(fromBranch).build(),
+                        Document.builder().profile(profileName).branch(toBranch).build()
                 );
                 final boolean fileEqual = fromOriginal.equals(toOriginal);
 
@@ -102,11 +106,10 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                         sortFromOriginal.toString().equals(sortToOriginal.toString())
                         : null;
 
-
                 branchProfileReportList.add(
                         BranchProfileReport.builder()
                                 .propertyValueEqual(propertyValueEqual)
-                                .profile(profile.getName())
+                                .profile(profileName)
                                 .documents(documentList)
                                 .fileEqual(fileEqual)
                                 .build()

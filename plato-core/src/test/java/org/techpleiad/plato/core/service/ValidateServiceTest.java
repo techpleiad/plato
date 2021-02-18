@@ -534,11 +534,13 @@ class ValidateServiceTest {
                 profileToFileMap.put(PREPROD, getFileContent(prefix + PREPROD + ".yml"));
                 profileToFileMap.put(TEST, getFileContent(prefix + TEST + ".yml"));
                 profileToFileMap.put(DEV, getFileContent(prefix + DEV + ".yml"));
+                profileToFileMap.put("", getFileContent("repo/" + DEV + "/" + SERVICE + ".yml"));
             } else if (file.equals(preprodFile)) {
                 final String prefix = "repo/" + PREPROD + "/" + SERVICE + "-";
                 profileToFileMap.put(PREPROD, getFileContent(prefix + PREPROD + ".yml"));
                 profileToFileMap.put(TEST, getFileContent(prefix + TEST + ".yml"));
                 profileToFileMap.put(DEV, getFileContent(prefix + DEV + ".yml"));
+                profileToFileMap.put("", getFileContent("repo/" + PREPROD + "/" + SERVICE + ".yml"));
             }
             return CompletableFuture.completedFuture(profileToFileMap);
         });
@@ -551,9 +553,12 @@ class ValidateServiceTest {
         final ConsistencyAcrossBranchesReport report = validateService.validateProfilesAcrossBranch(fromServiceBranchData, toServiceBranchData, serviceSpec, true);
 
         Assertions.assertEquals(serviceSpec.getService(), report.getService());
+        Assertions.assertEquals(3, report.getReport().size());
+
         report.getReport().forEach(profileReport -> {
             switch (profileReport.getProfile()) {
                 case PREPROD:
+                case "default":
                     Assertions.assertTrue(profileReport.getPropertyValueEqual());
                     Assertions.assertTrue(profileReport.isFileEqual());
                     break;
