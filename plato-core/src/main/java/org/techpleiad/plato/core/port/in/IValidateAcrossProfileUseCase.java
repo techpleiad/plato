@@ -1,7 +1,7 @@
 package org.techpleiad.plato.core.port.in;
 
+import org.springframework.data.util.Pair;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossProfilesReport;
-import org.techpleiad.plato.core.domain.Pair;
 import org.techpleiad.plato.core.domain.ServiceSpec;
 
 import java.io.File;

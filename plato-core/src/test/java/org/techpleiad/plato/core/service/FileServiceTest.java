@@ -8,8 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.util.Pair;
 import org.springframework.util.ResourceUtils;
-import org.techpleiad.plato.core.domain.Pair;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -59,9 +59,9 @@ class FileServiceTest {
         final CompletableFuture<List<Pair<String, File>>> profileToFileList = fileService.getYamlFiles(directory, SERVICE_NAME, profiles);
         Assertions.assertEquals(2, profileToFileList.get().size());
         for (final Pair<String, File> item : profileToFileList.get()) {
-            Assertions.assertNotNull(item.getValue());
-            Assertions.assertNotNull(item.getKey());
-            Assertions.assertTrue(profiles.contains(item.getKey()));
+            Assertions.assertNotNull(item.getSecond());
+            Assertions.assertNotNull(item.getFirst());
+            Assertions.assertTrue(profiles.contains(item.getFirst()));
         }
 
         final CompletableFuture<List<Pair<String, File>>> profileToFileListEmpty = fileService.getYamlFiles(directory, "custom-mana", profiles);
