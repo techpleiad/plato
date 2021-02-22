@@ -7,6 +7,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.techpleiad.plato.core.advice.ExecutionTime;
 import org.techpleiad.plato.core.advice.ThreadDirectory;
@@ -214,17 +215,17 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
         final List<String> commonSuppressedProperties = suppressedProperties.getOrDefault("common", Collections.emptyList());
         mapProfileToFileContent.forEach(pairProfileFile -> {
 
-            final JsonNode rootNode = convertFileToJsonNode(pairProfileFile.getValue(), false);
-            profilePropertyDetails.addProfileDocument(pairProfileFile.getKey(),
-                    fileService.convertToFormattedString(pairProfileFile.getKey(), rootNode));
+            final JsonNode rootNode = convertFileToJsonNode(pairProfileFile.getSecond(), false);
+            profilePropertyDetails.addProfileDocument(pairProfileFile.getFirst(),
+                    fileService.convertToFormattedString(pairProfileFile.getFirst(), rootNode));
 
             final List<String> missingProperties = new LinkedList<>();
             findMissingProfileProperties(rootNode, alteredPropertyTree, missingProperties);
 
-            final List<String> suppressedPropertiesForProfile = suppressedProperties.getOrDefault(pairProfileFile.getKey(), new ArrayList<>());
+            final List<String> suppressedPropertiesForProfile = suppressedProperties.getOrDefault(pairProfileFile.getFirst(), new ArrayList<>());
             suppressedPropertiesForProfile.addAll(commonSuppressedProperties);
             profilePropertyDetails.addProfileToMissingProperties(
-                    pairProfileFile.getKey(),
+                    pairProfileFile.getFirst(),
                     filterSuppressPropertyUseCase.filterSuppressedProperties(suppressedPropertiesForProfile, missingProperties)
             );
         });
@@ -299,8 +300,8 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 else {
                     final Pair<String, String> objectPathPrefix = getObjectPropertyToMissingPropertiesPair(alteredRegexPath, key);
                     if (Objects.nonNull(objectPathPrefix)) {
-                        globalObjectProperty.get(objectPathPrefix.getKey()).forEach(missingProperty -> {
-                            addErrorProfileNotification(missingProperties, objectPathPrefix.getValue(), missingProperty);
+                        globalObjectProperty.get(objectPathPrefix.getFirst()).forEach(missingProperty -> {
+                            addErrorProfileNotification(missingProperties, objectPathPrefix.getSecond(), missingProperty);
                         });
                     }
                 }
@@ -317,7 +318,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
 
         final HashMap<String, HashSet<String>> objectPropertyMap = new HashMap<>();
         fileContentMap.forEach(pairProfileFile ->
-                traverseObjectToPropertiesMapping(convertFileToJsonNode(pairProfileFile.getValue(), false), objectPropertyMap,
+                traverseObjectToPropertiesMapping(convertFileToJsonNode(pairProfileFile.getSecond(), false), objectPropertyMap,
                         alteredPropertyTree)
         );
         return objectPropertyMap;
@@ -449,7 +450,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
             object = keyArray;
         }
 
-        return Objects.isNull(object) ? null : Pair.<String, String>builder().key(object).value(property).build();
+        return Objects.isNull(object) ? null : Pair.of(object, property);
     }
 
     private void addErrorProfileNotification(final List<String> missingProperties, final String path, final String property) {
