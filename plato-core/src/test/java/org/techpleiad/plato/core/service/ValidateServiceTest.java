@@ -12,13 +12,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.util.Pair;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ResourceUtils;
 import org.techpleiad.plato.core.domain.Branch;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossBranchesReport;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossProfilesReport;
 import org.techpleiad.plato.core.domain.GitRepository;
-import org.techpleiad.plato.core.domain.Pair;
 import org.techpleiad.plato.core.domain.Profile;
 import org.techpleiad.plato.core.domain.PropertyTreeNode;
 import org.techpleiad.plato.core.domain.ServiceBranchData;
@@ -130,19 +130,24 @@ class ValidateServiceTest {
         fileContentMap = new LinkedList<>();
         for (final String profile : profiles) {
             fileContentMap.add(
-                    Pair.<String, File>builder()
-                            .second(getFileContent(
-                                    new StringBuilder()
-                                            .append("global-missing-alter/profile-").append(profile)
-                                            .append("-").append(profileTestIndex)
-                                            .append(".yml")
-                                            .toString()
-                            ))
-                            .first(profile)
-                            .build()
+                    Pair.of(profile, getFileContent(
+                            new StringBuilder()
+                                    .append("global-missing-alter/profile-").append(profile)
+                                    .append("-").append(profileTestIndex)
+                                    .append(".yml")
+                                    .toString()
+                    ))
             );
         }
         alteredPropertyTree = PropertyTreeNode.convertPropertiesToPropertyTree(alteredProperties);
+    }
+
+    private void getMissingProperties(JsonNode convertToJsonNode, PropertyTreeNode alteredPropertyTree, List<String> missingProperties) {
+        validateService.findMissingProfileProperties(
+                convertToJsonNode,
+                alteredPropertyTree,
+                missingProperties
+        );
     }
 
     @Test
@@ -182,12 +187,7 @@ class ValidateServiceTest {
 
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
-            validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getSecond()),
-                    alteredPropertyTree,
-                    missingProperties,
-                    "", "", false
-            );
+            getMissingProperties(convertToJsonNode(pair.getSecond()), alteredPropertyTree, missingProperties);
             serviceMissingProfileDetails.addProfileToMissingProperties(pair.getFirst(), missingProperties);
         }
 
@@ -238,12 +238,7 @@ class ValidateServiceTest {
 
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
-            validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getSecond()),
-                    alteredPropertyTree,
-                    missingProperties,
-                    "", "", false
-            );
+            getMissingProperties(convertToJsonNode(pair.getSecond()), alteredPropertyTree, missingProperties);
             serviceMissingProfileDetails.addProfileToMissingProperties(pair.getFirst(), missingProperties);
         }
 
@@ -272,12 +267,7 @@ class ValidateServiceTest {
 
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
-            validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getSecond()),
-                    alteredPropertyTree,
-                    missingProperties,
-                    "", "", false
-            );
+            getMissingProperties(convertToJsonNode(pair.getSecond()), alteredPropertyTree, missingProperties);
             serviceMissingProfileDetails.addProfileToMissingProperties(pair.getFirst(), missingProperties);
         }
 
@@ -335,12 +325,7 @@ class ValidateServiceTest {
         final ConsistencyAcrossProfilesReport serviceMissingProfileDetails = ConsistencyAcrossProfilesReport.builder().build();
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
-            validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getSecond()),
-                    alteredPropertyTree,
-                    missingProperties,
-                    "", "", false
-            );
+            getMissingProperties(convertToJsonNode(pair.getSecond()), alteredPropertyTree, missingProperties);
             serviceMissingProfileDetails.addProfileToMissingProperties(pair.getFirst(), missingProperties);
         }
 
@@ -369,12 +354,7 @@ class ValidateServiceTest {
         final ConsistencyAcrossProfilesReport serviceMissingProfileDetails = ConsistencyAcrossProfilesReport.builder().build();
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
-            validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getSecond()),
-                    alteredPropertyTree,
-                    missingProperties,
-                    "", "", false
-            );
+            getMissingProperties(convertToJsonNode(pair.getSecond()), alteredPropertyTree, missingProperties);
             serviceMissingProfileDetails.addProfileToMissingProperties(pair.getFirst(), missingProperties);
         }
 
@@ -444,12 +424,7 @@ class ValidateServiceTest {
         final ConsistencyAcrossProfilesReport serviceMissingProfileDetails = ConsistencyAcrossProfilesReport.builder().build();
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
-            validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getSecond()),
-                    alteredPropertyTree,
-                    missingProperties,
-                    "", "", false
-            );
+            getMissingProperties(convertToJsonNode(pair.getSecond()), alteredPropertyTree, missingProperties);
             serviceMissingProfileDetails.addProfileToMissingProperties(pair.getFirst(), missingProperties);
         }
 
@@ -481,17 +456,12 @@ class ValidateServiceTest {
 
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
-            validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getSecond()),
-                    alteredPropertyTree,
-                    missingProperties,
-                    "", "", false
-            );
+            getMissingProperties(convertToJsonNode(pair.getSecond()), alteredPropertyTree, missingProperties);
             Assertions.assertTrue(CollectionUtils.isEmpty(missingProperties));
         }
     }
 
-    //@Test //TODO
+    @Test
     void validateAcrossProfilesInServiceBatch() throws Exception {
 
         final List<Profile> profiles = Arrays.asList(Profile.builder().name(DEV).build(), Profile.builder().name(PREPROD).build());
@@ -513,8 +483,8 @@ class ValidateServiceTest {
         );
 
         final List<Pair<String, File>> profileFileList = Arrays.asList(
-                new Pair<>(DEV, getFileContent(prefix + DEV + ".yml")),
-                new Pair<>(PREPROD, getFileContent(prefix + PREPROD + ".yml"))
+                Pair.of(DEV, getFileContent(prefix + DEV + ".yml")),
+                Pair.of(PREPROD, getFileContent(prefix + PREPROD + ".yml"))
         );
         final CompletableFuture<List<Pair<String, File>>> mapProfileToFileContent = CompletableFuture.completedFuture(profileFileList);
 
@@ -528,7 +498,6 @@ class ValidateServiceTest {
         Mockito.when(gitService.cloneGitRepositoryByBranchInBatchAsync(Mockito.anyList(), Mockito.anyList()))
                 .thenReturn(mapServiceBranchToRepository);
 
-        Mockito.when(fileService.generateFileFromLocalDirectoryPath(Mockito.any(), Mockito.any())).thenReturn(getFileContent("repo/" + DEV));
         Mockito.when(fileService.getYamlFiles(Mockito.any(), Mockito.any(), Mockito.anySet())).thenReturn(mapProfileToFileContent);
 
         Mockito.when(getSuppressPropertyUseCase.getSuppressedProperties(Mockito.anyString())).thenReturn(suppressedPropertiesMap);
@@ -536,9 +505,6 @@ class ValidateServiceTest {
         Mockito.when(getAlteredPropertyUseCase.getAlteredProperties(Mockito.anyString())).thenReturn(alteredProperties);
 
         Mockito.when(filterSuppressPropertyUseCase.filterSuppressedProperties(Mockito.anyList(), Mockito.anyList())).thenReturn(Collections.emptyList());
-
-        Mockito.when(fileService.generateFileFromLocalDirectoryPath(Mockito.anyString())).thenReturn(getFileContent("repo/" + DEV));
-        Mockito.doNothing().when(fileService).deleteDirectory(Mockito.any(File.class));
 
         validateService.validateAcrossProfilesInServiceBatch(serviceSpecList, DEV, false);
         validateService.validateAcrossProfilesInServiceBatch(serviceSpecList, DEV, true);
@@ -565,11 +531,13 @@ class ValidateServiceTest {
                 profileToFileMap.put(PREPROD, getFileContent(prefix + PREPROD + ".yml"));
                 profileToFileMap.put(TEST, getFileContent(prefix + TEST + ".yml"));
                 profileToFileMap.put(DEV, getFileContent(prefix + DEV + ".yml"));
+                profileToFileMap.put("", getFileContent("repo/" + DEV + "/" + SERVICE + ".yml"));
             } else if (file.equals(preprodFile)) {
                 final String prefix = "repo/" + PREPROD + "/" + SERVICE + "-";
                 profileToFileMap.put(PREPROD, getFileContent(prefix + PREPROD + ".yml"));
                 profileToFileMap.put(TEST, getFileContent(prefix + TEST + ".yml"));
                 profileToFileMap.put(DEV, getFileContent(prefix + DEV + ".yml"));
+                profileToFileMap.put("", getFileContent("repo/" + PREPROD + "/" + SERVICE + ".yml"));
             }
             return CompletableFuture.completedFuture(profileToFileMap);
         });
@@ -579,23 +547,26 @@ class ValidateServiceTest {
             return getFileToString(file);
         });
 
-        final ConsistencyAcrossBranchesReport report = validateService.validateProfilesAcrossBranch(fromServiceBranchData, toServiceBranchData, serviceSpec);
+        final ConsistencyAcrossBranchesReport report = validateService.validateProfilesAcrossBranch(fromServiceBranchData, toServiceBranchData, serviceSpec, true);
 
         Assertions.assertEquals(serviceSpec.getService(), report.getService());
+        Assertions.assertEquals(3, report.getReport().size());
+
         report.getReport().forEach(profileReport -> {
             switch (profileReport.getProfile()) {
                 case PREPROD:
-                    Assertions.assertTrue(profileReport.isPropertyValueEqual());
+                case "default":
+                    Assertions.assertTrue(profileReport.getPropertyValueEqual());
                     Assertions.assertTrue(profileReport.isFileEqual());
                     break;
 
                 case TEST:
-                    Assertions.assertFalse(profileReport.isPropertyValueEqual());
+                    Assertions.assertFalse(profileReport.getPropertyValueEqual());
                     Assertions.assertFalse(profileReport.isFileEqual());
                     break;
 
                 case DEV:
-                    Assertions.assertTrue(profileReport.isPropertyValueEqual());
+                    Assertions.assertTrue(profileReport.getPropertyValueEqual());
                     Assertions.assertFalse(profileReport.isFileEqual());
                     break;
 

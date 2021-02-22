@@ -25,4 +25,6 @@ public class ServicesAcrossBranchValidateRequestTO {
     private String toBranch;
     @NotNull
     private EmailConfigRequestTO emailConfig;
+    private boolean propertyValueEqual;
+
 }

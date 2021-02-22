@@ -1,7 +1,7 @@
 package org.techpleiad.plato.core.port.in;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.techpleiad.plato.core.domain.Pair;
+import org.springframework.data.util.Pair;
 
 import java.io.File;
 import java.util.List;

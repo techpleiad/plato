@@ -8,8 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.util.Pair;
 import org.springframework.util.ResourceUtils;
-import org.techpleiad.plato.core.domain.Pair;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -83,8 +83,9 @@ class FileServiceTest {
         final File directory = ResourceUtils.getFile(PATH);
         final CompletableFuture<TreeMap<String, File>> profileToFileList = fileService.getYamlFiles(directory, SERVICE_NAME);
 
-        Assertions.assertEquals(3, profileToFileList.get().size());
+        Assertions.assertEquals(4, profileToFileList.get().size());
         profileToFileList.get().forEach((key, value) -> {
+            System.out.println("profile - '" + key + "' > file - " + value.getName());
             Assertions.assertNotNull(value);
             Assertions.assertNotNull(key);
         });
