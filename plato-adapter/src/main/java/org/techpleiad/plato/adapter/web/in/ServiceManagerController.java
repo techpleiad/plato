@@ -97,9 +97,9 @@ public class ServiceManagerController implements IServiceManagerController {
                         servicesAcrossProfileValidateRequestTO.isIncludeSuppressed()
                 );
 
-        String mailBody = htmlServiceUseCase.createProfileReportMailBody(reportList, branchName);
 
         if(servicesAcrossProfileValidateRequestTO.getEmailConfig().isSendEmail()){
+            String mailBody = htmlServiceUseCase.createProfileReportMailBody(reportList, branchName);
             emailServiceUseCase.sendEmail(mailBody, servicesAcrossProfileValidateRequestTO.getEmailConfig().getRecipients(), "Profile Consistency Report");
         }
 
@@ -126,10 +126,9 @@ public class ServiceManagerController implements IServiceManagerController {
                 acrossBranchValidateRequestTO.getToBranch()
         );
 
-        String mailBody = htmlServiceUseCase.createBranchReportMailBody(reportList,acrossBranchValidateRequestTO.getFromBranch(),
-                acrossBranchValidateRequestTO.getToBranch());
-
         if(acrossBranchValidateRequestTO.getEmailConfig().isSendEmail()){
+            String mailBody = htmlServiceUseCase.createBranchReportMailBody(reportList,acrossBranchValidateRequestTO.getFromBranch(),
+                acrossBranchValidateRequestTO.getToBranch());
             emailServiceUseCase.sendEmail(mailBody, acrossBranchValidateRequestTO.getEmailConfig().getRecipients(), "Branch Consistency Report");
         }
 

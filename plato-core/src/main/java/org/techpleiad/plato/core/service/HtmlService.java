@@ -22,6 +22,7 @@ public class HtmlService implements IHtmlServiceUseCase {
     private static final String LEGENDBRANCH = "<br><table style=\" border: 1px solid black; border-collapse: collapse;\"><tr><th>Legend</th></tr><tr><td style=\"background-color: red;  border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td><td style=\"border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\">Inconsistent with other branches</td></tr><tr><td style=\"background-color: green; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td><td style=\"border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\">Consistent and good to go</td></tr><tr><td style=\"background-color: yellow; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td><td style=\"border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\">Properties match but the formatting does not</td></tr></table>";
     private static final String LEGENDPROFILE = "<br><table style=\" border: 1px solid black; border-collapse: collapse;\"><tr><th>Legend</th></tr><tr><td style=\"background-color: red;  border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td><td style=\"border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\">Inconsistent with other profiles</td></tr><tr><td style=\"background-color: green; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td><td style=\"border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\">Consistent and good to go</td></tr></table>";
 
+    @Override
     public String createBranchReportMailBody(List<ConsistencyAcrossBranchesReport> reportList, String fromBranch, String toBranch){
         String htmlDocument = "<h1>Branch Consistency Report<h1>";
         htmlDocument += "<h3>"+"Inconsistency in branches " + fromBranch +" and " + toBranch + " in configuration files" + "</h3> </br>";
@@ -31,7 +32,7 @@ public class HtmlService implements IHtmlServiceUseCase {
         return htmlDocument;
     }
 
-    public Map<String, Map<String,BranchProfileReport>> convertBranchReportToHashMap(List<ConsistencyAcrossBranchesReport> reportList){
+    private Map<String, Map<String,BranchProfileReport>> convertBranchReportToHashMap(List<ConsistencyAcrossBranchesReport> reportList){
         Map<String, Map<String,BranchProfileReport >> reportMap = new HashMap<>();
         for (ConsistencyAcrossBranchesReport consistencyAcrossBranchesReport: reportList) {
             Map<String, BranchProfileReport> innerReport = new HashMap<>();
@@ -43,7 +44,7 @@ public class HtmlService implements IHtmlServiceUseCase {
         return reportMap;
     }
 
-    public String createBranchTable(Map<String, Map<String,BranchProfileReport>> branchReport){
+    private String createBranchTable(Map<String, Map<String,BranchProfileReport>> branchReport){
         Set<String> profileNames = new HashSet<>();
 
         for (Map.Entry<String, Map<String,BranchProfileReport>> serviceName: branchReport.entrySet()){
@@ -63,7 +64,7 @@ public class HtmlService implements IHtmlServiceUseCase {
         return "<table style=\"width: 100%; border: 1px solid black; border-collapse: collapse;\">" + tableHead.toString() + rows.toString() + " </table>";
     }
 
-    public String createBranchTableRow(Map.Entry<String, Map<String,BranchProfileReport>> serviceName, Set<String> profileNames){
+    private String createBranchTableRow(Map.Entry<String, Map<String,BranchProfileReport>> serviceName, Set<String> profileNames){
         StringBuilder columns = new StringBuilder("<td style=\"border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\">" + serviceName.getKey() + "</td>");
         for (String profile:profileNames) {
             columns.append(createBranchTableColumn(serviceName.getValue(), profile));
@@ -71,7 +72,7 @@ public class HtmlService implements IHtmlServiceUseCase {
         return "<tr>" + columns.toString() + TR;
     }
 
-    public String createBranchTableColumn(Map<String,BranchProfileReport> profileReport, String profile){
+    private String createBranchTableColumn(Map<String,BranchProfileReport> profileReport, String profile){
         if(profileReport.containsKey(profile)){
             if(profileReport.get(profile).isFileEqual() && profileReport.get(profile).isPropertyValueEqual()){
                 return "<td style=\"background-color: green; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td>";
@@ -86,6 +87,7 @@ public class HtmlService implements IHtmlServiceUseCase {
         }
     }
 
+    @Override
     public String createProfileReportMailBody(List<ConsistencyAcrossProfilesReport> reportList, String branchName){
         String htmlDocument = "<h1>Profile Consistency Report<h1>";
         htmlDocument += "<h3>"+"Inconsistency in profiles in" + " configuration files in " + branchName + " branch"+"</h3> </br>";
@@ -96,7 +98,7 @@ public class HtmlService implements IHtmlServiceUseCase {
         return htmlDocument;
     }
 
-    public Map<String, Map<String, List<String>>> convertProfileReportToHashMap(List<ConsistencyAcrossProfilesReport> reportList){
+    private Map<String, Map<String, List<String>>> convertProfileReportToHashMap(List<ConsistencyAcrossProfilesReport> reportList){
         Map<String, Map<String, List<String>>> reportMap = new HashMap<>();
         for (ConsistencyAcrossProfilesReport consistencyAcrossProfilesReport:reportList) {
             reportMap.put(consistencyAcrossProfilesReport.getService(), consistencyAcrossProfilesReport.getMissingProperty());
@@ -104,7 +106,7 @@ public class HtmlService implements IHtmlServiceUseCase {
         return reportMap;
     }
 
-    public String createProfileTable(Map<String, Map<String, List<String>>> profileReport){
+    private String createProfileTable(Map<String, Map<String, List<String>>> profileReport){
         Set<String> profileNames = new HashSet<>();
         for (Map.Entry<String, Map<String, List<String>>> serviceName: profileReport.entrySet()){
             for (Map.Entry<String, List<String>> profileName: serviceName.getValue().entrySet()) {
@@ -124,7 +126,7 @@ public class HtmlService implements IHtmlServiceUseCase {
         return "<table style=\"width: 100%; border: 1px solid black; border-collapse: collapse;\">" + tableHead.toString() + rows.toString() + " </table>";
     }
 
-    public String createProfileTableRow(Map.Entry<String, Map<String,List<String>>> serviceName, Set<String> profileNames){
+    private String createProfileTableRow(Map.Entry<String, Map<String,List<String>>> serviceName, Set<String> profileNames){
         StringBuilder columns = new StringBuilder("<td style=\"border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\">" + serviceName.getKey() + "</td>");
         for (String profile:profileNames) {
             columns.append(createProfileTableColumn(serviceName.getValue(), profile));
@@ -132,7 +134,7 @@ public class HtmlService implements IHtmlServiceUseCase {
         return "<tr>" + columns.toString() + TR;
     }
 
-    public String createProfileTableColumn(Map<String,List<String>> profileReport, String profile){
+    private String createProfileTableColumn(Map<String,List<String>> profileReport, String profile){
         if(profileReport.containsKey(profile)){
             if(profileReport.get(profile).isEmpty() ){
                 return "<td style=\"background-color: green; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td>";
@@ -145,7 +147,7 @@ public class HtmlService implements IHtmlServiceUseCase {
         }
     }
 
-    public String createMissingPropertiesText(List<ConsistencyAcrossProfilesReport> reportList){
+    private String createMissingPropertiesText(List<ConsistencyAcrossProfilesReport> reportList){
         StringBuilder missingProperties = new StringBuilder("<h3> Missing Properties </h3>");
         for (ConsistencyAcrossProfilesReport consistencyAcrossProfilesReport: reportList) {
             missingProperties.append("<p> <strong>").append(consistencyAcrossProfilesReport.getService()).append("</strong> </p>");

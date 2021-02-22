@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @Getter
 @ToString
-public class EmailConfigRequestTo {
+public class EmailConfigRequestTO {
     private boolean sendEmail;
     private List<String> recipients;
 }

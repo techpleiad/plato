@@ -24,5 +24,5 @@ public class ServicesAcrossBranchValidateRequestTO {
     @NotEmpty(message = "toBranch cannot be empty")
     private String toBranch;
     @NotNull
-    private EmailConfigRequestTo emailConfig;
+    private EmailConfigRequestTO emailConfig;
 }

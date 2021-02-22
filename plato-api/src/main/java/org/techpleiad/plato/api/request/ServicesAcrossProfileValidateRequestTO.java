@@ -20,5 +20,5 @@ public class ServicesAcrossProfileValidateRequestTO {
     private List<String> services;
     private boolean includeSuppressed;
     @NotNull
-    private EmailConfigRequestTo emailConfig;
+    private EmailConfigRequestTO emailConfig;
 }
