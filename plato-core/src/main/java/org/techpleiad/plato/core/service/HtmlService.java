@@ -74,9 +74,9 @@ public class HtmlService implements IHtmlServiceUseCase {
 
     private String createBranchTableColumn(Map<String,BranchProfileReport> profileReport, String profile){
         if(profileReport.containsKey(profile)){
-            if(profileReport.get(profile).isFileEqual() && profileReport.get(profile).isPropertyValueEqual()){
+            if(profileReport.get(profile).isFileEqual() && profileReport.get(profile).getPropertyValueEqual()){
                 return "<td style=\"background-color: green; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td>";
-            }else if(!profileReport.get(profile).isFileEqual() && profileReport.get(profile).isPropertyValueEqual()){
+            }else if(!profileReport.get(profile).isFileEqual() && profileReport.get(profile).getPropertyValueEqual()){
                 return "<td style=\"background-color: yellow; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td>";
             }else {
                 return "<td style=\"background-color: red; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td>";
