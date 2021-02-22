@@ -207,19 +207,19 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
         final List<String> commonSuppressedProperties = suppressedProperties.getOrDefault("common", Collections.emptyList());
         mapProfileToFileContent.forEach(pairProfileFile -> {
 
-            final JsonNode rootNode = convertFileToJsonNode(pairProfileFile.getValue());
-            profilePropertyDetails.addProfileDocument(pairProfileFile.getKey(),
-                    fileService.convertToFormattedString(pairProfileFile.getKey(), rootNode));
+            final JsonNode rootNode = convertFileToJsonNode(pairProfileFile.getSecond());
+            profilePropertyDetails.addProfileDocument(pairProfileFile.getFirst(),
+                    fileService.convertToFormattedString(pairProfileFile.getFirst(), rootNode));
 
             final List<String> missingProperties = new LinkedList<>();
             findMissingProfileProperties(rootNode, alteredPropertyTree,
                     missingProperties, "", "",
                     false);
 
-            final List<String> suppressedPropertiesForProfile = suppressedProperties.getOrDefault(pairProfileFile.getKey(), new ArrayList<>());
+            final List<String> suppressedPropertiesForProfile = suppressedProperties.getOrDefault(pairProfileFile.getFirst(), new ArrayList<>());
             suppressedPropertiesForProfile.addAll(commonSuppressedProperties);
             profilePropertyDetails.addProfileToMissingProperties(
-                    pairProfileFile.getKey(),
+                    pairProfileFile.getFirst(),
                     filterSuppressPropertyUseCase.filterSuppressedProperties(suppressedPropertiesForProfile, missingProperties)
             );
         });
@@ -275,10 +275,10 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
             // Not an object or an array JsonNode
             else {
                 final Pair<String, String> objectPathPrefix = getObjectPropertyToMissingPropertiesPair(alteredRegexPath, key);
-                if (Objects.nonNull(objectPathPrefix) && globalObjectProperty.containsKey(objectPathPrefix.getKey())) {
+                if (Objects.nonNull(objectPathPrefix) && globalObjectProperty.containsKey(objectPathPrefix.getFirst())) {
 
-                    globalObjectProperty.get(objectPathPrefix.getKey()).forEach(missingProperty ->
-                            addErrorProfileNotification(missingProperties, objectPathPrefix.getValue(), missingProperty)
+                    globalObjectProperty.get(objectPathPrefix.getFirst()).forEach(missingProperty ->
+                            addErrorProfileNotification(missingProperties, objectPathPrefix.getSecond(), missingProperty)
                     );
                 }
             }
@@ -294,7 +294,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
 
         final HashMap<String, HashSet<String>> objectPropertyMap = new HashMap<>();
         fileContentMap.forEach(pairProfileFile ->
-                traverseObjectToPropertiesMapping(convertFileToJsonNode(pairProfileFile.getValue()), objectPropertyMap,
+                traverseObjectToPropertiesMapping(convertFileToJsonNode(pairProfileFile.getSecond()), objectPropertyMap,
                         alteredPropertyTree, "", false)
         );
         return objectPropertyMap;
@@ -405,7 +405,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
             object = keyArray;
         }
 
-        return Objects.isNull(object) ? null : Pair.<String, String>builder().key(object).value(property).build();
+        return Objects.isNull(object) ? null : Pair.<String, String>builder().first(object).second(property).build();
     }
 
     private void traverseJsonArrayElements(final JsonNode rootNode, final List<String> missingProperties,

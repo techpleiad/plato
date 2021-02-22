@@ -29,7 +29,7 @@ public class LoggingAdvice {
         /* No return */
     }
 
-    //    @Around(value = "serviceControllerPointCut()")
+    //    @Around(second = "serviceControllerPointCut()")
     private Object logger(final ProceedingJoinPoint joinPoint) throws Throwable {
 
         final String className = joinPoint.getTarget().getClass().getName();
@@ -50,7 +50,7 @@ public class LoggingAdvice {
     private Object exceptionLogger(final ProceedingJoinPoint joinPoint, final Exception exception) throws Throwable {
 
         final String className = exception.getClass().getSimpleName();
-        log.info("Exception :: {}, value :: {}", className, mapper.writeValueAsString(joinPoint.getArgs()));
+        log.info("Exception :: {}, second :: {}", className, mapper.writeValueAsString(joinPoint.getArgs()));
 
         final Object object = joinPoint.proceed();
 

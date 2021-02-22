@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @AllArgsConstructor
@@ -15,8 +16,9 @@ import java.util.List;
 @Getter
 @ToString
 public class ServicesAcrossProfileValidateRequestTO {
-
     @NotEmpty(message = "service list cannot be empty")
     private List<String> services;
     private boolean includeSuppressed;
+    @NotNull
+    private EmailConfigRequestTo emailConfig;
 }

@@ -131,14 +131,14 @@ class ValidateServiceTest {
         for (final String profile : profiles) {
             fileContentMap.add(
                     Pair.<String, File>builder()
-                            .value(getFileContent(
+                            .second(getFileContent(
                                     new StringBuilder()
                                             .append("global-missing-alter/profile-").append(profile)
                                             .append("-").append(profileTestIndex)
                                             .append(".yml")
                                             .toString()
                             ))
-                            .key(profile)
+                            .first(profile)
                             .build()
             );
         }
@@ -183,12 +183,12 @@ class ValidateServiceTest {
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
             validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getValue()),
+                    convertToJsonNode(pair.getSecond()),
                     alteredPropertyTree,
                     missingProperties,
                     "", "", false
             );
-            serviceMissingProfileDetails.addProfileToMissingProperties(pair.getKey(), missingProperties);
+            serviceMissingProfileDetails.addProfileToMissingProperties(pair.getFirst(), missingProperties);
         }
 
         AssertTrueMissingProperties(
@@ -239,12 +239,12 @@ class ValidateServiceTest {
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
             validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getValue()),
+                    convertToJsonNode(pair.getSecond()),
                     alteredPropertyTree,
                     missingProperties,
                     "", "", false
             );
-            serviceMissingProfileDetails.addProfileToMissingProperties(pair.getKey(), missingProperties);
+            serviceMissingProfileDetails.addProfileToMissingProperties(pair.getFirst(), missingProperties);
         }
 
         AssertTrueMissingProperties(
@@ -273,12 +273,12 @@ class ValidateServiceTest {
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
             validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getValue()),
+                    convertToJsonNode(pair.getSecond()),
                     alteredPropertyTree,
                     missingProperties,
                     "", "", false
             );
-            serviceMissingProfileDetails.addProfileToMissingProperties(pair.getKey(), missingProperties);
+            serviceMissingProfileDetails.addProfileToMissingProperties(pair.getFirst(), missingProperties);
         }
 
         AssertTrueMissingProperties(
@@ -336,12 +336,12 @@ class ValidateServiceTest {
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
             validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getValue()),
+                    convertToJsonNode(pair.getSecond()),
                     alteredPropertyTree,
                     missingProperties,
                     "", "", false
             );
-            serviceMissingProfileDetails.addProfileToMissingProperties(pair.getKey(), missingProperties);
+            serviceMissingProfileDetails.addProfileToMissingProperties(pair.getFirst(), missingProperties);
         }
 
         AssertTrueMissingProperties(
@@ -370,12 +370,12 @@ class ValidateServiceTest {
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
             validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getValue()),
+                    convertToJsonNode(pair.getSecond()),
                     alteredPropertyTree,
                     missingProperties,
                     "", "", false
             );
-            serviceMissingProfileDetails.addProfileToMissingProperties(pair.getKey(), missingProperties);
+            serviceMissingProfileDetails.addProfileToMissingProperties(pair.getFirst(), missingProperties);
         }
 
         AssertTrueMissingProperties(
@@ -445,12 +445,12 @@ class ValidateServiceTest {
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
             validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getValue()),
+                    convertToJsonNode(pair.getSecond()),
                     alteredPropertyTree,
                     missingProperties,
                     "", "", false
             );
-            serviceMissingProfileDetails.addProfileToMissingProperties(pair.getKey(), missingProperties);
+            serviceMissingProfileDetails.addProfileToMissingProperties(pair.getFirst(), missingProperties);
         }
 
         AssertTrueMissingProperties(
@@ -482,7 +482,7 @@ class ValidateServiceTest {
         for (final Pair<String, File> pair : fileContentMap) {
             final List<String> missingProperties = new LinkedList<>();
             validateService.findMissingProfileProperties(
-                    convertToJsonNode(pair.getValue()),
+                    convertToJsonNode(pair.getSecond()),
                     alteredPropertyTree,
                     missingProperties,
                     "", "", false

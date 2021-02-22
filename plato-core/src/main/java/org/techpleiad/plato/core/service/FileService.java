@@ -86,8 +86,8 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
                     if (profiles.contains(profile)) {
                         profileToFileList.add(
                                 Pair.<String, File>builder()
-                                        .value(files)
-                                        .key(profile)
+                                        .second(files)
+                                        .first(profile)
                                         .build()
                         );
                     }

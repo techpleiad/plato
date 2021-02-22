@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @AllArgsConstructor
@@ -22,4 +23,6 @@ public class ServicesAcrossBranchValidateRequestTO {
     private String fromBranch;
     @NotEmpty(message = "toBranch cannot be empty")
     private String toBranch;
+    @NotNull
+    private EmailConfigRequestTo emailConfig;
 }
