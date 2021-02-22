@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.eclipse.jgit.util.StringUtils;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
-import org.techpleiad.plato.core.domain.Pair;
 import org.techpleiad.plato.core.exceptions.FileDeleteException;
 import org.techpleiad.plato.core.port.in.IFileServiceUserCase;
 import org.techpleiad.plato.core.port.in.IFileThreadServiceUseCase;
@@ -84,12 +84,7 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
         Arrays.stream(Objects.requireNonNull(directory.listFiles())).forEach(files ->
                 validateFileAndGetProfile(files, serviceName).ifPresent(profile -> {
                     if (profiles.contains(profile)) {
-                        profileToFileList.add(
-                                Pair.<String, File>builder()
-                                        .second(files)
-                                        .first(profile)
-                                        .build()
-                        );
+                        profileToFileList.add(Pair.of(profile, files));
                     }
                 })
         );
@@ -153,6 +148,9 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
         final String expectedProfile = filename.substring(serviceName.length(), filename.lastIndexOf("."));
         if (!expectedProfile.isEmpty() && expectedProfile.charAt(0) == '-') {
             return Optional.of(expectedProfile.substring(1));
+        }
+        else if (expectedProfile.isEmpty()) {
+            return Optional.of(expectedProfile);
         }
         return Optional.empty();
     }

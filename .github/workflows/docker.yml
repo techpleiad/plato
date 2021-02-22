@@ -1,0 +1,31 @@
+name: Build and Publish Docker Image
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Login to docker
+      uses: docker/login-action@v1 
+      with:
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+    - name: Build with Maven
+      run: mvn clean install
+    - name: Push to docker
+      uses: docker/build-push-action@v2
+      with:
+          context: ./
+          file: ./Dockerfile
+          push: true
+          tags: |
+            techpleiad/plato:0.${{github.run_number}}
+            techpleiad/plato:latest

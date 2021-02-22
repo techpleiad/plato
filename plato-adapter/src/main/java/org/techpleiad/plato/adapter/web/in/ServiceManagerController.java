@@ -17,6 +17,7 @@ import org.techpleiad.plato.core.advice.ExecutionTime;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossBranchesReport;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossProfilesReport;
 import org.techpleiad.plato.core.domain.ServiceSpec;
+import org.techpleiad.plato.core.domain.ValidationAcrossBranchConfig;
 import org.techpleiad.plato.core.port.in.IAddServiceUseCase;
 import org.techpleiad.plato.core.port.in.IDeleteServiceUseCase;
 import org.techpleiad.plato.core.port.in.IEmailServiceUseCase;
@@ -120,10 +121,15 @@ public class ServiceManagerController implements IServiceManagerController {
 
         final List<ServiceSpec> serviceSpecList = getServiceUseCase.getServicesList(acrossBranchValidateRequestTO.getServices());
 
+        final ValidationAcrossBranchConfig validationAcrossBranchConfig = ValidationAcrossBranchConfig.builder()
+                .fromBranch(acrossBranchValidateRequestTO.getFromBranch())
+                .toBranch(acrossBranchValidateRequestTO.getToBranch())
+                .propertyValueEqual(acrossBranchValidateRequestTO.isPropertyValueEqual())
+                .build();
+
         final List<ConsistencyAcrossBranchesReport> reportList = validateAcrossBranchUseCase.validateAcrossBranchesInServiceBatch(
                 serviceSpecList,
-                acrossBranchValidateRequestTO.getFromBranch(),
-                acrossBranchValidateRequestTO.getToBranch()
+                validationAcrossBranchConfig
         );
 
         String mailBody = htmlServiceUseCase.createBranchReportMailBody(reportList,acrossBranchValidateRequestTO.getFromBranch(),
@@ -133,8 +139,8 @@ public class ServiceManagerController implements IServiceManagerController {
             emailServiceUseCase.sendEmail(mailBody, acrossBranchValidateRequestTO.getEmailConfig().getRecipients(), "Branch Consistency Report");
         }
 
-        final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = reportList.stream().map(consistencyAcrossBranchesReport -> serviceManagerMapper
-                .convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(consistencyAcrossBranchesReport)).collect(Collectors.toList());
+        final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = serviceManagerMapper
+                .convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(reportList);
 
         return ResponseEntity.ok(servicesAcrossBranchValidateResponseTO);
     }
