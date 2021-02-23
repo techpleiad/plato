@@ -6,6 +6,11 @@ spring:
       database: plato
   application:
     name: plato
+  mail:
+    host: smtp.mailtrap.io
+    port: 2525
+    username: 640ac9b1cb07fd
+    password: 724ddb9243aa7f
 
 server:
   port: 8080
@@ -18,7 +23,10 @@ plato:
         maxPoolSize: 4
         queueCapacity: 10
   config:
-    workingDirectory: tmp
+    workingDirectory: /tmp
+    branchConsistencyEmailSubject: "Branch Consistency Report"
+    profileConsistencyEmailSubject: "Profile Consistency Report"
+    emailFrom: "Plato"
   properties:
     altered:
       values:

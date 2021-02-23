@@ -1,12 +1,12 @@
 package org.techpleiad.plato.api.request;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @AllArgsConstructor
@@ -14,9 +14,6 @@ import java.util.List;
 @Builder
 @Getter
 @ToString
-public class ServicesAcrossProfileValidateRequestTO {
-    @NotEmpty(message = "service list cannot be empty")
-    private List<String> services;
-    private boolean includeSuppressed;
-    private EmailRequestTO email;
+public class EmailRequestTO {
+    private List<String> recipients;
 }

@@ -14,7 +14,6 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @ToString
 public class GitRepositoryRequestTO {
-
     @NotBlank(message = "Git repository URL can not be blank")
     private String url;
     private String username;

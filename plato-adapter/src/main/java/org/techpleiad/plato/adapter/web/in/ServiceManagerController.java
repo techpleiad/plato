@@ -3,7 +3,9 @@ package org.techpleiad.plato.adapter.web.in;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RestController;
+import org.techpleiad.plato.adapter.config.ConfigToolConfig;
 import org.techpleiad.plato.adapter.mapper.ServiceManagerMapper;
 import org.techpleiad.plato.api.request.ServiceRequestTO;
 import org.techpleiad.plato.api.request.ServicesAcrossBranchValidateRequestTO;
@@ -19,7 +21,9 @@ import org.techpleiad.plato.core.domain.ServiceSpec;
 import org.techpleiad.plato.core.domain.ValidationAcrossBranchConfig;
 import org.techpleiad.plato.core.port.in.IAddServiceUseCase;
 import org.techpleiad.plato.core.port.in.IDeleteServiceUseCase;
+import org.techpleiad.plato.core.port.in.IEmailServiceUseCase;
 import org.techpleiad.plato.core.port.in.IGetServiceUseCase;
+import org.techpleiad.plato.core.port.in.IHtmlServiceUseCase;
 import org.techpleiad.plato.core.port.in.IValidateAcrossBranchUseCase;
 import org.techpleiad.plato.core.port.in.IValidateAcrossProfileUseCase;
 
@@ -39,12 +43,16 @@ public class ServiceManagerController implements IServiceManagerController {
     private IDeleteServiceUseCase deleteServiceUseCase;
     @Autowired
     private IGetServiceUseCase getServiceUseCase;
-
+    @Autowired
+    private IEmailServiceUseCase emailServiceUseCase;
     @Autowired
     private IValidateAcrossProfileUseCase validateAcrossProfileUseCase;
     @Autowired
     private IValidateAcrossBranchUseCase validateAcrossBranchUseCase;
-
+    @Autowired
+    private IHtmlServiceUseCase htmlServiceUseCase;
+    @Autowired
+    private ConfigToolConfig configToolConfig;
     @Autowired
     private ServiceManagerMapper serviceManagerMapper;
 
@@ -91,6 +99,14 @@ public class ServiceManagerController implements IServiceManagerController {
                         servicesAcrossProfileValidateRequestTO.isIncludeSuppressed()
                 );
 
+
+        if (servicesAcrossProfileValidateRequestTO.getEmail() != null && !CollectionUtils.isEmpty(servicesAcrossProfileValidateRequestTO.getEmail().getRecipients())) {
+            final String mailBody = htmlServiceUseCase.createProfileReportMailBody(reportList, branchName);
+            emailServiceUseCase
+                    .sendEmail(mailBody, servicesAcrossProfileValidateRequestTO.getEmail().getRecipients(), configToolConfig.getProfileConsistencyEmailSubject(), configToolConfig
+                            .getEmailFrom());
+        }
+
         final List<ServicesAcrossProfileValidateResponseTO> responseList =
                 reportList.stream().map(report ->
                         serviceManagerMapper.convertInconsistentProfilePropertyToProfilePropertyResponseTO(
@@ -118,6 +134,13 @@ public class ServiceManagerController implements IServiceManagerController {
                 serviceSpecList,
                 validationAcrossBranchConfig
         );
+
+        if (acrossBranchValidateRequestTO.getEmail() != null && !CollectionUtils.isEmpty(acrossBranchValidateRequestTO.getEmail().getRecipients())) {
+            final String mailBody = htmlServiceUseCase.createBranchReportMailBody(reportList, acrossBranchValidateRequestTO.getFromBranch(),
+                    acrossBranchValidateRequestTO.getToBranch());
+            emailServiceUseCase.sendEmail(mailBody, acrossBranchValidateRequestTO.getEmail().getRecipients(), configToolConfig.getBranchConsistencyEmailSubject(), configToolConfig
+                    .getEmailFrom());
+        }
 
         final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = serviceManagerMapper
                 .convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(reportList);

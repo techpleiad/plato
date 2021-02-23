@@ -17,6 +17,9 @@ public class ConfigToolConfig implements IGetWorkingDirectoryPort {
     public static final String PREFIX = "plato.config";
 
     private String workingDirectory;
+    private String branchConsistencyEmailSubject;
+    private String profileConsistencyEmailSubject;
+    private String emailFrom;
 
     @Override
     public String getRootWorkingDirectory() {
