@@ -6,6 +6,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.techpleiad.plato.core.port.in.IEmailServiceUseCase;
+
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.util.List;
@@ -19,17 +20,17 @@ public class EmailService implements IEmailServiceUseCase {
     private JavaMailSender javaMailSender;
 
     @Override
-    public void sendEmail(String mailBody, List<String> recipient, String subject) {
+    public void sendEmail(final String mailBody, final List<String> recipient, final String subject) {
         try {
-            MimeMessage message = javaMailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            final MimeMessage message = javaMailSender.createMimeMessage();
+            final MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setFrom("Plato");
             helper.setSubject(subject);
-            helper.setTo(recipient.toArray(new String[0]));
+            helper.setTo(recipient.toArray(new String[recipient.size()]));
             helper.setText(mailBody, true);
             javaMailSender.send(message);
-        } catch (MessagingException e) {
-            log.info("Exception in Email Service");
+        } catch (final MessagingException e) {
+            log.error("Unable to send email : {}", e);
         }
     }
 }

@@ -3,7 +3,7 @@ package org.techpleiad.plato.adapter.web.in;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RestController;
 import org.techpleiad.plato.adapter.mapper.ServiceManagerMapper;
 import org.techpleiad.plato.api.request.ServiceRequestTO;
@@ -25,7 +25,6 @@ import org.techpleiad.plato.core.port.in.IGetServiceUseCase;
 import org.techpleiad.plato.core.port.in.IHtmlServiceUseCase;
 import org.techpleiad.plato.core.port.in.IValidateAcrossBranchUseCase;
 import org.techpleiad.plato.core.port.in.IValidateAcrossProfileUseCase;
-
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -99,9 +98,9 @@ public class ServiceManagerController implements IServiceManagerController {
                 );
 
 
-        if(servicesAcrossProfileValidateRequestTO.getEmailConfig().isSendEmail()){
-            String mailBody = htmlServiceUseCase.createProfileReportMailBody(reportList, branchName);
-            emailServiceUseCase.sendEmail(mailBody, servicesAcrossProfileValidateRequestTO.getEmailConfig().getRecipients(), "Profile Consistency Report");
+        if (servicesAcrossProfileValidateRequestTO.getEmail() != null && !CollectionUtils.isEmpty(servicesAcrossProfileValidateRequestTO.getEmail().getRecipients())) {
+            final String mailBody = htmlServiceUseCase.createProfileReportMailBody(reportList, branchName);
+            emailServiceUseCase.sendEmail(mailBody, servicesAcrossProfileValidateRequestTO.getEmail().getRecipients(), "Profile Consistency Report");
         }
 
         final List<ServicesAcrossProfileValidateResponseTO> responseList =
@@ -132,10 +131,10 @@ public class ServiceManagerController implements IServiceManagerController {
                 validationAcrossBranchConfig
         );
 
-        if(acrossBranchValidateRequestTO.getEmailConfig().isSendEmail()){
-            String mailBody = htmlServiceUseCase.createBranchReportMailBody(reportList,acrossBranchValidateRequestTO.getFromBranch(),
-                acrossBranchValidateRequestTO.getToBranch());
-            emailServiceUseCase.sendEmail(mailBody, acrossBranchValidateRequestTO.getEmailConfig().getRecipients(), "Branch Consistency Report");
+        if (acrossBranchValidateRequestTO.getEmail() != null && !CollectionUtils.isEmpty(acrossBranchValidateRequestTO.getEmail().getRecipients())) {
+            final String mailBody = htmlServiceUseCase.createBranchReportMailBody(reportList, acrossBranchValidateRequestTO.getFromBranch(),
+                    acrossBranchValidateRequestTO.getToBranch());
+            emailServiceUseCase.sendEmail(mailBody, acrossBranchValidateRequestTO.getEmail().getRecipients(), "Branch Consistency Report");
         }
 
         final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = serviceManagerMapper
