@@ -20,11 +20,11 @@ public class EmailService implements IEmailServiceUseCase {
     private JavaMailSender javaMailSender;
 
     @Override
-    public void sendEmail(final String mailBody, final List<String> recipient, final String subject) {
+    public void sendEmail(final String mailBody, final List<String> recipient, final String subject, final String from) {
         try {
             final MimeMessage message = javaMailSender.createMimeMessage();
             final MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setFrom("Plato");
+            helper.setFrom(from);
             helper.setSubject(subject);
             helper.setTo(recipient.toArray(new String[recipient.size()]));
             helper.setText(mailBody, true);
