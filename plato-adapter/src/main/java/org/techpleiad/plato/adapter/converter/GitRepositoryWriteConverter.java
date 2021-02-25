@@ -2,7 +2,7 @@ package org.techpleiad.plato.adapter.converter;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import lombok.SneakyThrows;
+import org.eclipse.jgit.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
@@ -16,16 +16,17 @@ import org.techpleiad.plato.core.port.in.IEncryptionServiceUseCase;
 public class GitRepositoryWriteConverter implements Converter<GitRepository, DBObject> {
 
     @Autowired
-    private IEncryptionServiceUseCase iEncryptionServiceUseCase;
+    private IEncryptionServiceUseCase encryptionServiceUseCase;
 
-    @SneakyThrows
     @Override
     public DBObject convert(@NotNull final GitRepository gitRepository) {
         final DBObject dbObject = new BasicDBObject();
-        dbObject.put("url", iEncryptionServiceUseCase.encrypt(gitRepository.getUrl()));
-        if (gitRepository.getUsername() != null) {
-            dbObject.put("username", iEncryptionServiceUseCase.encrypt(gitRepository.getUsername()));
-            dbObject.put("password", iEncryptionServiceUseCase.encrypt(gitRepository.getPassword()));
+        dbObject.put("url", gitRepository.getUrl());
+        if (!StringUtils.isEmptyOrNull(gitRepository.getUsername())) {
+            dbObject.put("username", gitRepository.getUsername());
+        }
+        if (!StringUtils.isEmptyOrNull(gitRepository.getPassword())) {
+            dbObject.put("password", encryptionServiceUseCase.encrypt(gitRepository.getPassword()));
         }
         dbObject.removeField("_class");
         return dbObject;

@@ -3,15 +3,11 @@ package org.techpleiad.plato.core.service;
 import org.springframework.stereotype.Service;
 import org.techpleiad.plato.core.port.in.IEncryptionServiceUseCase;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -41,18 +37,26 @@ public class EncryptionService implements IEncryptionServiceUseCase {
     }
 
     @Override
-    public String encrypt(final String input) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec);
-        final byte[] cipherText = cipher.doFinal(input.getBytes());
-        return Base64.getEncoder()
-                .encodeToString(cipherText);
+    public String encrypt(final String input) {
+        try {
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec);
+            final byte[] cipherText = cipher.doFinal(input.getBytes());
+            return Base64.getEncoder()
+                    .encodeToString(cipherText);
+        } catch (final Exception e) {
+            throw new RuntimeException("Unable to encrypt", e);
+        }
     }
 
     @Override
-    public String decrypt(final String cipherText) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
-        final byte[] plainText = cipher.doFinal(Base64.getDecoder()
-                .decode(cipherText));
-        return new String(plainText);
+    public String decrypt(final String cipherText) {
+        try {
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
+            final byte[] plainText = cipher.doFinal(Base64.getDecoder()
+                    .decode(cipherText));
+            return new String(plainText);
+        } catch (final Exception e) {
+            throw new RuntimeException("Unable to decrypt", e);
+        }
     }
 }

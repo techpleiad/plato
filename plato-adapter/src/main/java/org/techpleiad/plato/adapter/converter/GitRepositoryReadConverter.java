@@ -1,6 +1,5 @@
 package org.techpleiad.plato.adapter.converter;
 
-import lombok.SneakyThrows;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
@@ -16,13 +15,12 @@ public class GitRepositoryReadConverter implements Converter<Document, GitReposi
     @Autowired
     private IEncryptionServiceUseCase iEncryptionServiceUseCase;
 
-    @SneakyThrows
     @Override
     public GitRepository convert(final Document dbObject) {
         return GitRepository.builder()
-                .url(iEncryptionServiceUseCase.decrypt((String) dbObject.get("url")))
-                .username(dbObject.get("username") != null ? iEncryptionServiceUseCase.decrypt((String) dbObject.get("username")) : null)
-                .password(dbObject.get("password") != null ? iEncryptionServiceUseCase.decrypt((String) dbObject.get("password")) : null)
+                .url((String) dbObject.get("url"))
+                .username((String) dbObject.get("username"))
+                .password(dbObject.containsKey("password") ? iEncryptionServiceUseCase.decrypt((String) dbObject.get("password")) : null)
                 .build();
 
     }
