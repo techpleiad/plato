@@ -28,17 +28,13 @@ class EncryptionServiceTest {
         String password = "password";
         String username = "username";
 
-        GitRepository encryptGitRepository= encryptionService.encryptGitRepository(GitRepository.builder()
-                .username(username)
-                .password(password)
-                .url(url)
-                .build());
+        String encryptUrl = encryptionService.encrypt(url);
+        String encryptPassword = encryptionService.encrypt(password);
+        String encryptUsername = encryptionService.encrypt(username);
 
-        GitRepository decryptGitRepository = encryptionService.decryptGitRepository(encryptGitRepository);
-
-        Assertions.assertEquals(url, decryptGitRepository.getUrl());
-        Assertions.assertEquals(password, decryptGitRepository.getPassword());
-        Assertions.assertEquals(username, decryptGitRepository.getUsername());
+        Assertions.assertEquals(url, encryptionService.decrypt(encryptUrl));
+        Assertions.assertEquals(password, encryptionService.decrypt(encryptPassword));
+        Assertions.assertEquals(username, encryptionService.decrypt(encryptUsername));
 
     }
 }

@@ -18,12 +18,12 @@ public class GitRepositoryReadConverter implements Converter<Document, GitReposi
 
     @SneakyThrows
     @Override
-    public GitRepository convert(Document dbObject) {
-        return iEncryptionServiceUseCase.decryptGitRepository(GitRepository.builder()
-                .url((String) dbObject.get("url"))
-                .username((String) dbObject.get("username"))
-                .password((String) dbObject.get("password"))
-                .build());
+    public GitRepository convert(final Document dbObject) {
+        return GitRepository.builder()
+                .url(iEncryptionServiceUseCase.decrypt((String) dbObject.get("url")))
+                .username(dbObject.get("username") != null ? iEncryptionServiceUseCase.decrypt((String) dbObject.get("username")) : null)
+                .password(dbObject.get("password") != null ? iEncryptionServiceUseCase.decrypt((String) dbObject.get("password")) : null)
+                .build();
 
     }
 }

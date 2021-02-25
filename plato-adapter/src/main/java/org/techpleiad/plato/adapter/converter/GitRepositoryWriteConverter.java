@@ -20,12 +20,13 @@ public class GitRepositoryWriteConverter implements Converter<GitRepository, DBO
 
     @SneakyThrows
     @Override
-    public DBObject convert(@NotNull GitRepository gitRepository) {
-        GitRepository encryptedGitRepo =  iEncryptionServiceUseCase.encryptGitRepository(gitRepository);
-        DBObject dbObject = new BasicDBObject();
-        dbObject.put("url", encryptedGitRepo.getUrl());
-        dbObject.put("username", encryptedGitRepo.getUsername());
-        dbObject.put("password", encryptedGitRepo.getPassword());
+    public DBObject convert(@NotNull final GitRepository gitRepository) {
+        final DBObject dbObject = new BasicDBObject();
+        dbObject.put("url", iEncryptionServiceUseCase.encrypt(gitRepository.getUrl()));
+        if (gitRepository.getUsername() != null) {
+            dbObject.put("username", iEncryptionServiceUseCase.encrypt(gitRepository.getUsername()));
+            dbObject.put("password", iEncryptionServiceUseCase.encrypt(gitRepository.getPassword()));
+        }
         dbObject.removeField("_class");
         return dbObject;
     }

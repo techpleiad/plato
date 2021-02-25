@@ -1,7 +1,6 @@
 package org.techpleiad.plato.core.service;
 
 import org.springframework.stereotype.Service;
-import org.techpleiad.plato.core.domain.GitRepository;
 import org.techpleiad.plato.core.port.in.IEncryptionServiceUseCase;
 
 import javax.crypto.BadPaddingException;
@@ -24,55 +23,35 @@ public class EncryptionService implements IEncryptionServiceUseCase {
 
     private final IvParameterSpec ivParameterSpec;
 
-    private final String algorithm;
+    Cipher cipher;
 
-    public EncryptionService() throws NoSuchAlgorithmException {
+    public EncryptionService() throws NoSuchAlgorithmException, NoSuchPaddingException {
 
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+        final KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
         keyGenerator.init(128);
         secretKey = keyGenerator.generateKey();
 
-        byte[] iv = new byte[16];
+        final byte[] iv = new byte[16];
         new SecureRandom().nextBytes(iv);
         ivParameterSpec = new IvParameterSpec(iv);
 
-        algorithm = "AES/CBC/PKCS5Padding";
+        final String algorithm = "AES/CBC/PKCS5Padding";
+
+        cipher = Cipher.getInstance(algorithm);
     }
 
     @Override
-    public GitRepository encryptGitRepository(GitRepository gitRepository) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
-        return GitRepository.builder()
-                .url(encrypt(algorithm, gitRepository.getUrl(), secretKey, ivParameterSpec))
-                .username(encrypt(algorithm, gitRepository.getUsername(), secretKey, ivParameterSpec))
-                .password(encrypt(algorithm, gitRepository.getPassword(), secretKey, ivParameterSpec))
-                .build();
-    }
-
-    @Override
-    public GitRepository decryptGitRepository(GitRepository gitRepository) throws NoSuchPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
-        return GitRepository.builder()
-                .url(decrypt(algorithm, gitRepository.getUrl(), secretKey, ivParameterSpec))
-                .username(decrypt(algorithm, gitRepository.getUsername(), secretKey, ivParameterSpec))
-                .password(decrypt(algorithm, gitRepository.getPassword(), secretKey, ivParameterSpec))
-                .build();
-    }
-
-    private String encrypt(String algorithm, String input, SecretKey key, IvParameterSpec iv)
-            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
-            InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        Cipher cipher = Cipher.getInstance(algorithm);
-        cipher.init(Cipher.ENCRYPT_MODE, key, iv);
-        byte[] cipherText = cipher.doFinal(input.getBytes());
+    public String encrypt(final String input) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivParameterSpec);
+        final byte[] cipherText = cipher.doFinal(input.getBytes());
         return Base64.getEncoder()
                 .encodeToString(cipherText);
     }
 
-    private String decrypt(String algorithm, String cipherText, SecretKey key, IvParameterSpec iv)
-            throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
-            InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        Cipher cipher = Cipher.getInstance(algorithm);
-        cipher.init(Cipher.DECRYPT_MODE, key, iv);
-        byte[] plainText = cipher.doFinal(Base64.getDecoder()
+    @Override
+    public String decrypt(final String cipherText) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException {
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
+        final byte[] plainText = cipher.doFinal(Base64.getDecoder()
                 .decode(cipherText));
         return new String(plainText);
     }
