@@ -15,7 +15,7 @@ import org.techpleiad.plato.core.domain.GitRepository;
 import org.techpleiad.plato.core.domain.ServiceBranchData;
 import org.techpleiad.plato.core.exceptions.GitBranchNotFoundException;
 import org.techpleiad.plato.core.exceptions.GitRepositoryNotFoundException;
-import org.techpleiad.plato.core.exceptions.GitUsernameNullException;
+import org.techpleiad.plato.core.exceptions.InvalidGitCredentials;
 import org.techpleiad.plato.core.port.in.IFileServiceUserCase;
 import org.techpleiad.plato.core.port.in.IGitCloneRequestUseCase;
 import org.techpleiad.plato.core.port.in.IGitServiceUseCase;
@@ -161,7 +161,8 @@ public class GitService implements IGitServiceUseCase {
         return repository.substring(repository.lastIndexOf("/") + 1, repository.lastIndexOf("."));
     }
 
-    private CloneCommand createCloneCommand(final GitRepository gitRepository) {
+    private CloneCommand createCloneCommand(GitRepository gitRepository) {
+        gitRepository = populateGitCredentials(gitRepository);
         final CloneCommand cloneCommand = Git.cloneRepository().setURI(gitRepository.getUrl());
         if (!StringUtils.isEmptyOrNull(gitRepository.getPassword()) && !StringUtils.isEmptyOrNull(gitRepository.getUsername())) {
             cloneCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitRepository.getUsername(), gitRepository.getPassword()));
@@ -169,20 +170,32 @@ public class GitService implements IGitServiceUseCase {
         return cloneCommand;
     }
 
-    private LsRemoteCommand createLsRemoteCommand(final GitRepository gitRepository) {
+    private LsRemoteCommand createLsRemoteCommand(GitRepository gitRepository) {
+        gitRepository = populateGitCredentials(gitRepository);
         final LsRemoteCommand lsRemoteCommand = Git.lsRemoteRepository().setRemote(gitRepository.getUrl());
         if (!StringUtils.isEmptyOrNull(gitRepository.getPassword()) && !StringUtils.isEmptyOrNull(gitRepository.getUsername())) {
             lsRemoteCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitRepository.getUsername(), gitRepository.getPassword()));
-        } else if (StringUtils.isEmptyOrNull(gitRepository.getPassword()) && !StringUtils.isEmptyOrNull(gitRepository.getUsername())) {
-            lsRemoteCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitRepository.getUsername(), String.valueOf(getCredentialUseCase.getPassword())));
-        } else if (!StringUtils.isEmptyOrNull(gitRepository.getPassword()) && StringUtils.isEmptyOrNull(gitRepository.getUsername())) {
-            throw new GitUsernameNullException("Git Username not provided");
         }
         return lsRemoteCommand;
     }
 
     private String extractRemoteBranchName(final String branch) {
-
         return branch.substring(branch.lastIndexOf("/") + 1);
+    }
+
+    private GitRepository populateGitCredentials(final GitRepository gitRepository) {
+        if (StringUtils.isEmptyOrNull(gitRepository.getUsername())) {
+            return gitRepository;
+        }
+
+        final String defaultGitPassword = getCredentialUseCase.getPassword();
+        if (StringUtils.isEmptyOrNull(defaultGitPassword)) {
+            throw new InvalidGitCredentials("Git credentials not available");
+        }
+        return GitRepository.builder()
+                .url(gitRepository.getUrl())
+                .username(gitRepository.getUsername())
+                .password(defaultGitPassword)
+                .build();
     }
 }

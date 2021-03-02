@@ -1,33 +1,25 @@
 package org.techpleiad.plato.adapter.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 import org.techpleiad.plato.core.port.out.IGetGitCredentialsPort;
 
-import javax.annotation.PostConstruct;
-
 @RefreshScope
 @Configuration
 @EnableConfigurationProperties
+@Data
+@ConfigurationProperties(prefix = CredentialsConfig.PREFIX)
 public class CredentialsConfig implements IGetGitCredentialsPort {
 
-    @Value("${encryptionKey: default}")
-    public String encryptionKey;
+    public static final String PREFIX = "git.default";
 
-    @Value("${password: default}")
-    public String password;
-
-    @PostConstruct
-    public void print() {
-        System.out.println(encryptionKey);
-        System.out.println(password);
-
-    }
+    private String password;
 
     @Override
     public String getPassword() {
-        return encryptionKey;
+        return password;
     }
 }

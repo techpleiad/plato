@@ -6,10 +6,10 @@ import lombok.ToString;
 
 @ToString
 @Getter
-public class GitUsernameNullException extends RuntimeException {
+public class InvalidGitCredentials extends RuntimeException {
     private String errorMessage;
 
-    public GitUsernameNullException(final String errorMessage) {
+    public InvalidGitCredentials(final String errorMessage) {
         this.errorMessage = errorMessage;
     }
 }
