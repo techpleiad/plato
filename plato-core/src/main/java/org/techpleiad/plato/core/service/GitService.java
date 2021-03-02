@@ -188,6 +188,10 @@ public class GitService implements IGitServiceUseCase {
             return gitRepository;
         }
 
+        if (!StringUtils.isEmptyOrNull(gitRepository.getPassword())) {
+            return gitRepository;
+        }
+
         final String defaultGitPassword = getCredentialUseCase.getPassword();
         if (StringUtils.isEmptyOrNull(defaultGitPassword)) {
             throw new InvalidGitCredentials("Git credentials not available");

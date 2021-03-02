@@ -1,14 +1,12 @@
 aws:
   secretsmanager:
-    enabled: true
-    prefix: plato
-    region: us-east-2
-    name: plato
+    enabled: false
+    prefix: hgw
+    name: ${spring.profiles.active}/plato
     fail-fast: false
 
 spring:
+  application:
+    name: plato
   profiles:
-    active: dev
-  cloud:
-    config:
-      uri: http://localhost:8100
+    active: local

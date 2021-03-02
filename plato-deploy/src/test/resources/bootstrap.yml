@@ -1,3 +1,6 @@
 aws:
   secretsmanager:
     enabled: false
+spring:
+  profiles:
+    active: local
