@@ -2,7 +2,7 @@ package org.techpleiad.plato.core.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-@Profile("!local")
+@ConditionalOnProperty(value = "plato.email.enabled", havingValue = "true")
 public class EmailService implements IEmailServiceUseCase {
 
     @Autowired

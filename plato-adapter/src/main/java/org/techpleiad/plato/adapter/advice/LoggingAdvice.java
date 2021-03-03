@@ -7,9 +7,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.techpleiad.plato.adapter.exception.ErrorResponse;
 
 @Component
 @Aspect
@@ -48,16 +46,8 @@ public class LoggingAdvice {
 
     @Around(value = "exceptionLogPointCut() && args(exception)")
     private Object exceptionLogger(final ProceedingJoinPoint joinPoint, final Exception exception) throws Throwable {
-
-        final String className = exception.getClass().getSimpleName();
-        log.info("Exception :: {}, second :: {}", className, mapper.writeValueAsString(joinPoint.getArgs()));
-
+        log.error("Exception occurred : {}", exception);
         final Object object = joinPoint.proceed();
-
-        final ErrorResponse errorResponse = ((ResponseEntity<ErrorResponse>) object).getBody();
-        log.info("\nErrorResponse :: {}", mapper.writerWithDefaultPrettyPrinter()
-                .writeValueAsString(errorResponse));
-
         return object;
     }
 
