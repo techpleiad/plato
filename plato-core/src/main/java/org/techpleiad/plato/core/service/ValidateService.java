@@ -143,19 +143,33 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
         );
 
         for (final ServiceSpec serviceSpec : serviceSpecList) {
-            final List<ServiceBranchData> serviceBranchList = new ArrayList<>();
-            for (final String branch : branchList) {
-                final ServiceBranchData data = ServiceBranchData.builder().repository(serviceSpec.getGitRepository().getUrl()).branch(branch).build();
+            try {
+                final List<ServiceBranchData> serviceBranchList = new ArrayList<>();
+                for (final String branch : branchList) {
+                    final ServiceBranchData data = ServiceBranchData.builder().repository(serviceSpec.getGitRepository().getUrl()).branch(branch).build();
 
-                serviceBranchList.add(ServiceBranchData.builder().repository(data.getRepository())
-                        .branch(data.getBranch())
-                        .directory(mapServiceBranchToRepository.get(data).getDirectory())
-                        .build()
-                );
+                    serviceBranchList.add(ServiceBranchData.builder().repository(data.getRepository())
+                            .branch(data.getBranch())
+                            .directory(mapServiceBranchToRepository.get(data).getDirectory())
+                            .build()
+                    );
+                }
+                final ConsistencyAcrossBranchesReport report = validateProfilesAcrossBranch(serviceBranchList.get(0), serviceBranchList
+                        .get(1), serviceSpec, validationAcrossBranchConfig.isPropertyValueEqual());
+                reportList.add(report);
+
+            } catch (final Exception e) {
+                reportList.add(ConsistencyAcrossBranchesReport.builder()
+                        .service(serviceSpec.getService())
+                        .report(Arrays.asList(BranchProfileReport.builder()
+                                .fileEqual(false)
+                                .propertyValueEqual(false)
+                                .profile("Invalid")
+                                .build()))
+                        .build());
+                log.error("Exception while validating service : {}, {}", serviceSpec.getService(), e);
             }
-            final ConsistencyAcrossBranchesReport report = validateProfilesAcrossBranch(serviceBranchList.get(0), serviceBranchList
-                    .get(1), serviceSpec, validationAcrossBranchConfig.isPropertyValueEqual());
-            reportList.add(report);
+
         }
         return reportList;
     }
