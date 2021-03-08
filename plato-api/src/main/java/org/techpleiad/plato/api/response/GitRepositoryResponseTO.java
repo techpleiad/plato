@@ -11,5 +11,6 @@ public class GitRepositoryResponseTO {
 
     private String url;
     private String username;
+    private boolean useDefault;
 
 }

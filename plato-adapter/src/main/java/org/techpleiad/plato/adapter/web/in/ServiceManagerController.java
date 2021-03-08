@@ -101,9 +101,10 @@ public class ServiceManagerController implements IServiceManagerController {
 
 
         if (servicesAcrossProfileValidateRequestTO.getEmail() != null && !CollectionUtils.isEmpty(servicesAcrossProfileValidateRequestTO.getEmail().getRecipients())) {
+            final String subject = configToolConfig.getProfileConsistencyEmailSubject().replace("{{branch}}", branchName);
             final String mailBody = htmlServiceUseCase.createProfileReportMailBody(reportList, branchName);
             emailServiceUseCase
-                    .sendEmail(mailBody, servicesAcrossProfileValidateRequestTO.getEmail().getRecipients(), configToolConfig.getProfileConsistencyEmailSubject(), configToolConfig
+                    .sendEmail(mailBody, servicesAcrossProfileValidateRequestTO.getEmail().getRecipients(), subject, configToolConfig
                             .getEmailFrom());
         }
 
@@ -136,9 +137,12 @@ public class ServiceManagerController implements IServiceManagerController {
         );
 
         if (acrossBranchValidateRequestTO.getEmail() != null && !CollectionUtils.isEmpty(acrossBranchValidateRequestTO.getEmail().getRecipients())) {
+            final String subject = configToolConfig.getBranchConsistencyEmailSubject()
+                    .replace("{{branch1}}", acrossBranchValidateRequestTO.getFromBranch())
+                    .replace("{{branch2}}", acrossBranchValidateRequestTO.getToBranch());
             final String mailBody = htmlServiceUseCase.createBranchReportMailBody(reportList, acrossBranchValidateRequestTO.getFromBranch(),
                     acrossBranchValidateRequestTO.getToBranch());
-            emailServiceUseCase.sendEmail(mailBody, acrossBranchValidateRequestTO.getEmail().getRecipients(), configToolConfig.getBranchConsistencyEmailSubject(), configToolConfig
+            emailServiceUseCase.sendEmail(mailBody, acrossBranchValidateRequestTO.getEmail().getRecipients(), subject, configToolConfig
                     .getEmailFrom());
         }
 
