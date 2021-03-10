@@ -142,7 +142,7 @@ class ValidateServiceTest {
         alteredPropertyTree = PropertyTreeNode.convertPropertiesToPropertyTree(alteredProperties);
     }
 
-    private void getMissingProperties(JsonNode convertToJsonNode, PropertyTreeNode alteredPropertyTree, List<String> missingProperties) {
+    private void getMissingProperties(final JsonNode convertToJsonNode, final PropertyTreeNode alteredPropertyTree, final List<String> missingProperties) {
         validateService.findMissingProfileProperties(
                 convertToJsonNode,
                 alteredPropertyTree,
@@ -574,6 +574,13 @@ class ValidateServiceTest {
                     Assertions.fail();
             }
         });
+    }
+
+    @Test
+    void testSorting() {
+        final List<Branch> branches = Arrays
+                .asList(Branch.builder().name("as").priority(3).build(), Branch.builder().name("bs").priority(1).build(), Branch.builder().name("cs").priority(2).build());
+        validateService.sortByPriority(branches);
     }
 
     private String getFileToString(final File file) {

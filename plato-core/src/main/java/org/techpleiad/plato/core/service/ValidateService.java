@@ -20,6 +20,7 @@ import org.techpleiad.plato.core.port.in.IFilterSuppressPropertyUseCase;
 import org.techpleiad.plato.core.port.in.IGetAlteredPropertyUseCase;
 import org.techpleiad.plato.core.port.in.IGetSuppressPropertyUseCase;
 import org.techpleiad.plato.core.port.in.IGitServiceUseCase;
+import org.techpleiad.plato.core.port.in.IValidateAcrossBranchConsistencyLevelUseCase;
 import org.techpleiad.plato.core.port.in.IValidateAcrossBranchUseCase;
 import org.techpleiad.plato.core.port.in.IValidateAcrossProfileUseCase;
 import org.techpleiad.plato.core.port.in.IValidateBranchUseCase;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class ValidateService implements IValidateAcrossProfileUseCase, IValidateBranchUseCase, IValidateAcrossBranchUseCase {
+public class ValidateService implements IValidateAcrossProfileUseCase, IValidateBranchUseCase, IValidateAcrossBranchUseCase, IValidateAcrossBranchConsistencyLevelUseCase {
 
     @Autowired
     private IFileServiceUserCase fileService;
@@ -77,7 +78,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
 
         final List<BranchProfileReport> branchProfileReportList = new LinkedList<>();
 
-        List<Profile> profileList = serviceSpec.getProfiles().stream().collect(Collectors.toList());
+        final List<Profile> profileList = new ArrayList<>(serviceSpec.getProfiles());
         profileList.add(Profile.builder().name("").build());
 
         profileList.forEach(profile -> {
@@ -95,6 +96,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 final JsonNode sortFromOriginal = convertFileToJsonNode(fromFile, true);
                 final JsonNode sortToOriginal = convertFileToJsonNode(toFile, true);
 
+
                 final List<Document> documentList = Arrays.asList(
                         Document.builder().profile(profileName).branch(fromBranch).build(),
                         Document.builder().profile(profileName).branch(toBranch).build()
@@ -103,8 +105,8 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
 
                 final Boolean propertyValueEqual = checkPropertyValue ?
                         Objects.nonNull(sortFromOriginal) &&
-                        Objects.nonNull(sortToOriginal) &&
-                        sortFromOriginal.toString().equals(sortToOriginal.toString())
+                                Objects.nonNull(sortToOriginal) &&
+                                sortFromOriginal.toString().equals(sortToOriginal.toString())
                         : null;
 
                 branchProfileReportList.add(
@@ -129,10 +131,10 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
     @Override
     public List<ConsistencyAcrossBranchesReport> validateAcrossBranchesInServiceBatch(
             final List<ServiceSpec> serviceSpecList,
-            final ValidationAcrossBranchConfig validationAcrossBranchConfig) throws ExecutionException, InterruptedException {
+            final ValidationAcrossBranchProperties validationAcrossBranchProperties) throws ExecutionException, InterruptedException {
 
         final List<ConsistencyAcrossBranchesReport> reportList = new LinkedList<>();
-        final List<String> branchList = Arrays.asList(validationAcrossBranchConfig.getFromBranch(), validationAcrossBranchConfig.getToBranch());
+        final List<String> branchList = Arrays.asList(validationAcrossBranchProperties.getFromBranch(), validationAcrossBranchProperties.getToBranch());
 
         serviceSpecList.forEach(serviceSpec -> validateBranchesInService(serviceSpec, branchList));
 
@@ -153,7 +155,9 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                         .build()
                 );
             }
-            final ConsistencyAcrossBranchesReport report = validateProfilesAcrossBranch(serviceBranchList.get(0), serviceBranchList.get(1), serviceSpec, validationAcrossBranchConfig.isPropertyValueEqual());
+            final ConsistencyAcrossBranchesReport report = validateProfilesAcrossBranch(serviceBranchList.get(0), serviceBranchList
+                    .get(1), serviceSpec, validationAcrossBranchProperties
+                    .isPropertyValueEqual());
             reportList.add(report);
         }
         return reportList;
@@ -237,7 +241,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
     public void findMissingProfileProperties(final JsonNode rootNode, final PropertyTreeNode alteredPropertyTreeNode,
                                              final List<String> missingProperties) {
 
-        Queue<MissingPropertyDetail> list = new LinkedList<>();
+        final Queue<MissingPropertyDetail> list = new LinkedList<>();
 
         list.add(MissingPropertyDetail.builder().rootNode(rootNode)
                 .actualPath("").pathRegex("")
@@ -246,9 +250,8 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 .build()
         );
 
-        while(!list.isEmpty())
-        {
-            MissingPropertyDetail obj = list.remove();
+        while (!list.isEmpty()) {
+            final MissingPropertyDetail obj = list.remove();
 
             final String alteredRegexPath = propertyToAlteredProperty.get(obj.getPathRegex());
             final boolean getObjectMissingProperties =
@@ -264,8 +267,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                         .stream()
                         .filter(property -> !propertySet.contains(property))
                         .forEach(property -> addErrorProfileNotification(missingProperties, obj.getActualPath(), property));
-            }
-            else if (isJsonNodeValueOrNull(obj.getRootNode()) && globalObjectProperty.containsKey(alteredRegexPath)) {
+            } else if (isJsonNodeValueOrNull(obj.getRootNode()) && globalObjectProperty.containsKey(alteredRegexPath)) {
                 globalObjectProperty.get(alteredRegexPath).forEach(property -> {
                     addErrorProfileNotification(missingProperties, obj.getActualPath(), property);
                 });
@@ -283,8 +285,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                             .alteredPropertyRoot(Objects.isNull(obj.getAlteredPropertyRoot()) ? null : obj.getAlteredPropertyRoot().getChild("*", key))
                             .build()
                     );
-                }
-                else if (childRootNode.isArray()) {
+                } else if (childRootNode.isArray()) {
                     final AtomicInteger index = new AtomicInteger();
                     childRootNode.forEach(subRoot -> {
                         list.add(MissingPropertyDetail.builder().rootNode(subRoot)
@@ -296,8 +297,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                         );
                         index.getAndIncrement();
                     });
-                }
-                else {
+                } else {
                     final Pair<String, String> objectPathPrefix = getObjectPropertyToMissingPropertiesPair(alteredRegexPath, key);
                     if (Objects.nonNull(objectPathPrefix)) {
                         globalObjectProperty.get(objectPathPrefix.getFirst()).forEach(missingProperty -> {
@@ -365,17 +365,18 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                                                    final HashMap<String, HashSet<String>> objectPropertyMap,
                                                    final PropertyTreeNode alteredPropertyRoot) {
 
-        Queue<PropertyNodeDetail> queue = new LinkedList<>();
+        final Queue<PropertyNodeDetail> queue = new LinkedList<>();
         queue.add(PropertyNodeDetail.builder().alteredPropertyRoot(alteredPropertyRoot)
                 .rootNode(rootNode).pathRegex("")
                 .isPropertyArray(false)
                 .build()
         );
 
-        while(!queue.isEmpty()) {
-            PropertyNodeDetail propertyNodeDetail = queue.remove();
+        while (!queue.isEmpty()) {
+            final PropertyNodeDetail propertyNodeDetail = queue.remove();
 
-            final boolean getObjectPropertiesMapped = propertyNodeDetail.getRootNode().isObject() && (propertyNodeDetail.getAlteredPropertyRoot() == null || !propertyNodeDetail.getAlteredPropertyRoot().contains("*"));
+            final boolean getObjectPropertiesMapped = propertyNodeDetail.getRootNode().isObject() && (propertyNodeDetail.getAlteredPropertyRoot() == null || !propertyNodeDetail
+                    .getAlteredPropertyRoot().contains("*"));
 
             if (getObjectPropertiesMapped || propertyNodeDetail.isPropertyArray()) {
 
@@ -393,7 +394,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 boolean isPropertyAltered = false;
 
                 if (Objects.nonNull(propertyNodeDetail.getAlteredPropertyRoot())) {
-                    if (propertyNodeDetail.getAlteredPropertyRoot().contains("*")){
+                    if (propertyNodeDetail.getAlteredPropertyRoot().contains("*")) {
                         isPropertyAltered = true;
                     }
                     childNode = propertyNodeDetail.getAlteredPropertyRoot().getChild("*", key);
@@ -408,8 +409,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                             .isPropertyArray(false)
                             .build()
                     );
-                }
-                else if (value.isArray()) {
+                } else if (value.isArray()) {
                     final String regexPath = generatePropertyPath(propertyNodeDetail.getPathRegex(), key, "*");
                     propertyToAlteredProperty.put(regexPath, regexPath);
 
@@ -419,7 +419,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                                     .rootNode(subRoot).pathRegex(regexPath)
                                     .isPropertyArray(true)
                                     .build()
-                    ));
+                            ));
                 }
             });
         }
@@ -461,16 +461,79 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
         return Arrays.stream(property).filter(x -> !x.isEmpty()).collect(Collectors.joining("."));
     }
 
-    private JsonNode convertFileToJsonNode(final File file, boolean isSorted) {
+    private JsonNode convertFileToJsonNode(final File file, final boolean isSorted) {
 
         final ObjectMapper sortedMapper = JsonMapper.builder().nodeFactory(new SortingNodeFactory()).build();
         try {
-            JsonNode root = file.getName().endsWith(".yml") ?
+            final JsonNode root = file.getName().endsWith(".yml") ?
                     new YAMLMapper().readTree(file) : new ObjectMapper().readTree(file);
 
             return isSorted ? sortedMapper.readTree(root.toString()) : root;
         } catch (final Exception exception) {
             throw new FileConvertException(exception.getMessage());
         }
+    }
+
+    @ThreadDirectory
+    @Override
+    public List<ConsistencyLevelAcrossBranchesReport> validateAcrossBranchesConsistencyLevelServiceBatch(final List<ServiceSpec> serviceSpecList, final boolean isPropertyValueEqual, final String targetBranch) throws ExecutionException, InterruptedException {
+
+        final Map<ServiceBranchData, ServiceBranchData> mapServiceBranchToRepository = gitService.cloneGitRepositoryByBranchInBatchAsyncDifferentBranches(serviceSpecList);
+
+        final List<ConsistencyLevelAcrossBranchesReport> consistencyLevelAcrossBranchesReports = new ArrayList<>();
+
+        for (final ServiceSpec serviceSpec : serviceSpecList) {
+            final List<BranchReport> branchReports = new ArrayList<>();
+
+            final List<ServiceBranchData> serviceBranchList = new ArrayList<>();
+
+            final List<Branch> branches = sortByPriority(serviceSpec.getBranches());
+
+            int x = 0;
+            for (int i = 0; i < branches.size(); i++) {
+                if (branches.get(i).getName().equals(targetBranch)) {
+                    x = i;
+                    break;
+                }
+            }
+
+            for (int i = 0; i <= x; i++) {
+                final ServiceBranchData data = ServiceBranchData.builder().repository(serviceSpec.getGitRepository().getUrl()).branch(branches.get(i).getName()).build();
+
+                serviceBranchList.add(ServiceBranchData.builder().repository(data.getRepository())
+                        .branch(data.getBranch())
+                        .directory(mapServiceBranchToRepository.get(data).getDirectory())
+                        .build()
+                );
+            }
+
+
+            for (int i = 0; i < serviceBranchList.size() - 1; i++) {
+
+                final ConsistencyAcrossBranchesReport report = validateProfilesAcrossBranch(serviceBranchList.get(i), serviceBranchList
+                        .get(i + 1), serviceSpec, isPropertyValueEqual);
+
+                branchReports.add(BranchReport.builder()
+                        .consistencyAcrossBranchesReport(report)
+                        .fromBranch(serviceBranchList.get(i).getBranch())
+                        .toBranch(serviceBranchList.get(i + 1).getBranch())
+                        .build());
+            }
+
+            consistencyLevelAcrossBranchesReports.add(ConsistencyLevelAcrossBranchesReport.builder()
+                    .branchReports(branchReports)
+                    .service(serviceSpec.getService())
+                    .build());
+        }
+
+        return consistencyLevelAcrossBranchesReports;
+    }
+
+    public List<Branch> sortByPriority(final List<Branch> branches) {
+        return branches.stream().sorted(this::compareBranchPriority).collect(Collectors.toList());
+    }
+
+    private int compareBranchPriority(final Branch a, final Branch b) {
+        return b.getPriority() - a.getPriority();
     }
 }

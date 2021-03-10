@@ -11,8 +11,10 @@ import org.eclipse.jgit.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.techpleiad.plato.core.advice.ExecutionTime;
+import org.techpleiad.plato.core.domain.Branch;
 import org.techpleiad.plato.core.domain.GitRepository;
 import org.techpleiad.plato.core.domain.ServiceBranchData;
+import org.techpleiad.plato.core.domain.ServiceSpec;
 import org.techpleiad.plato.core.exceptions.GitBranchNotFoundException;
 import org.techpleiad.plato.core.exceptions.GitRepositoryNotFoundException;
 import org.techpleiad.plato.core.exceptions.InvalidGitCredentials;
@@ -111,6 +113,54 @@ public class GitService implements IGitServiceUseCase {
                                 createCloneCommand(gitRepository),
                                 gitRepository,
                                 branch,
+                                directoryFile
+                        )
+                );
+                mapRepoToDirectory.put(serviceBranchData, serviceBranchData);
+            }
+        }
+
+        final CompletableFuture<Void> allFutures = CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[completableFutures.size()]));
+        final CompletableFuture<List<Boolean>> allCompletableFutures = allFutures.thenApply(future ->
+                completableFutures.stream().map(CompletableFuture::join)
+                        .collect(Collectors.toList())
+        );
+        allCompletableFutures.thenApply(ArrayList::new).get();
+
+        return mapRepoToDirectory;
+    }
+
+
+    @ExecutionTime
+    @Override
+    public HashMap<ServiceBranchData, ServiceBranchData> cloneGitRepositoryByBranchInBatchAsyncDifferentBranches(final List<ServiceSpec> serviceSpecs) throws ExecutionException, InterruptedException {
+
+        final Map<String, ServiceSpec> gitRepositoryMap = new TreeMap<>();
+
+        for (final ServiceSpec serviceSpec : serviceSpecs) {
+            gitRepositoryMap.putIfAbsent(serviceSpec.getGitRepository().getUrl(), serviceSpec);
+        }
+
+        final HashMap<ServiceBranchData, ServiceBranchData> mapRepoToDirectory = new HashMap<>();
+
+        final List<CompletableFuture<Boolean>> completableFutures = new LinkedList<>();
+        for (final ServiceSpec serviceSpec : gitRepositoryMap.values()) {
+            validateGitUrlAndBranches(serviceSpec.getGitRepository(), serviceSpec.getBranches().stream().map(Branch::getName).collect(Collectors.toList()));
+            for (final Branch branch : serviceSpec.getBranches()) {
+                final String directory = fileService.generateDirectory(getGitRepositoryName(serviceSpec.getGitRepository().getUrl()), branch.getName());
+                final File directoryFile = fileService.generateFileFromLocalDirectoryPath(directory);
+
+                final ServiceBranchData serviceBranchData = ServiceBranchData.builder()
+                        .repository(serviceSpec.getGitRepository().getUrl())
+                        .branch(branch.getName())
+                        .directory(directoryFile)
+                        .build();
+
+                completableFutures.add(
+                        gitCloneRequestUseCase.cloneGitRepositoryByBranchAsync(
+                                createCloneCommand(serviceSpec.getGitRepository()),
+                                serviceSpec.getGitRepository(),
+                                branch.getName(),
                                 directoryFile
                         )
                 );

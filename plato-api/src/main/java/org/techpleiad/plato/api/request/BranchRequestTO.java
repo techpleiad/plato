@@ -17,4 +17,5 @@ public class BranchRequestTO {
 
     @NotBlank(message = "Branch name can not be blank")
     private String name;
+    private int priority;
 }

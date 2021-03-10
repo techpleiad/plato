@@ -10,6 +10,7 @@ import org.techpleiad.plato.api.constant.Constants;
 import org.techpleiad.plato.api.request.ServiceRequestTO;
 import org.techpleiad.plato.api.request.ServicesAcrossBranchValidateRequestTO;
 import org.techpleiad.plato.api.request.ServicesAcrossProfileValidateRequestTO;
+import org.techpleiad.plato.api.request.ServicesConsistencyLevelAcrossBranchValidateRequestTO;
 import org.techpleiad.plato.api.response.ServiceResponseTO;
 
 import javax.validation.Valid;
@@ -37,4 +38,7 @@ public interface IServiceManagerController {
 
     @PostMapping(Constants.VERSION_SERVICES_BRANCHES + Constants.ACROSS_BRANCHES_VALIDATE)
     ResponseEntity validateAcrossBranches(@Valid @RequestBody ServicesAcrossBranchValidateRequestTO servicesAcrossBranchValidateRequestTO) throws ExecutionException, InterruptedException;
+
+    @PostMapping(Constants.VERSION_SERVICES_BRANCHES + Constants.CONSISTENCY_LEVEL_VALIDATE)
+    ResponseEntity validateAcrossBranchesConsistencyLevel(@Valid @RequestBody ServicesConsistencyLevelAcrossBranchValidateRequestTO servicesConsistencyLevelAcrossBranchValidateRequestTO) throws ExecutionException, InterruptedException;
 }
