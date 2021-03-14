@@ -56,7 +56,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
     private Map<String, String> propertyToAlteredProperty;
 
     @ExecutionTime
-    public Map<String, HashMap<String, String>> temp_buildGlobalObjectToPropertiesMapping(
+    public Map<String, HashMap<String, String>> buildGlobalObjectToPropertiesMappingForBranch(
             final List<Pair<String, File>> fileContentMap,
             final PropertyTreeNode alteredPropertyTree) {
 
@@ -65,7 +65,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
 
         final HashMap<String, HashMap<String, String>> objectPropertyMap = new HashMap<>();
         fileContentMap.forEach(pairProfileFile ->
-                temp_traverseObjectToPropertiesMapping(convertFileToJsonNode(pairProfileFile.getSecond(), false), objectPropertyMap,
+                traverseObjectToPropertiesMappingForBranch(convertFileToJsonNode(pairProfileFile.getSecond(), false), objectPropertyMap,
                         alteredPropertyTree)
         );
         return objectPropertyMap;
@@ -78,9 +78,9 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
     }
 
     @ExecutionTime
-    private void temp_traverseObjectToPropertiesMapping(final JsonNode rootNode,
-                                                        final HashMap<String, HashMap<String, String>> objectPropertyMap,
-                                                        final PropertyTreeNode alteredPropertyRoot) {
+    private void traverseObjectToPropertiesMappingForBranch(final JsonNode rootNode,
+                                                            final HashMap<String, HashMap<String, String>> objectPropertyMap,
+                                                            final PropertyTreeNode alteredPropertyRoot) {
 
         final Queue<PropertyNodeDetail> queue = new LinkedList<>();
         queue.add(PropertyNodeDetail.builder().alteredPropertyRoot(alteredPropertyRoot)
@@ -144,6 +144,42 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
         }
     }
 
+    private List<Pair<String,String>> generateDownFlowBetweenBranch(final String profileName, final File fromFile, final File toFile)
+    {
+        final Map<String, HashMap<String, String>> fromGlobalProperty = // dev
+                buildGlobalObjectToPropertiesMappingForBranch(
+                        Collections.singletonList(Pair.of(profileName, fromFile)),
+                        PropertyTreeNode.builder().build()
+                );
+        final Map<String, HashMap<String, String>> toGlobalProperty = // preprod
+                buildGlobalObjectToPropertiesMappingForBranch(
+                        Collections.singletonList(Pair.of(profileName, toFile)),
+                        PropertyTreeNode.builder().build()
+                );
+
+        final List<Pair<String, String>> downFlowMissingData = new LinkedList<>();
+        toGlobalProperty.forEach((path, propertyValue) -> {
+            HashMap<String, String> fromPropertyValue = fromGlobalProperty.getOrDefault(path, null);
+            if (Objects.isNull(fromPropertyValue)) {
+                propertyValue.forEach((key, value) -> System.out.println("MISSING : " + path + "." + key));
+            }
+            else {
+                propertyValue.forEach((property, value) -> {
+                    String val = fromPropertyValue.getOrDefault(property, null);
+                    final String invalidProperty =  path + "." + property;
+                    if (Objects.isNull(val)) {
+                        downFlowMissingData.add(Pair.of(invalidProperty, "MISSING"));
+                    }
+                    else if (!value.equalsIgnoreCase(val)) {
+                        downFlowMissingData.add(Pair.of(invalidProperty, "MISMATCH"));
+                    }
+                });
+            }
+        });
+
+        return downFlowMissingData;
+    }
+
     @Override
     public ConsistencyAcrossBranchesReport validateProfilesAcrossBranch(
             final ServiceBranchData fromServiceBranchData,
@@ -185,34 +221,8 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 final JsonNode sortFromOriginal = convertFileToJsonNode(fromFile, true);
                 final JsonNode sortToOriginal = convertFileToJsonNode(toFile, true);
 
-                final Map<String, HashMap<String, String>> fromGlobalProperty = // dev
-                        temp_buildGlobalObjectToPropertiesMapping(
-                                Collections.singletonList(Pair.of(profileName, fromFile)),
-                                PropertyTreeNode.builder().build()
-                        );
-                final Map<String, HashMap<String, String>> toGlobalProperty = // preprod
-                        temp_buildGlobalObjectToPropertiesMapping(
-                                Collections.singletonList(Pair.of(profileName, toFile)),
-                                PropertyTreeNode.builder().build()
-                        );
-
-                toGlobalProperty.forEach((path, propertyValue) -> {
-                    HashMap<String, String> fromPropertyValue = fromGlobalProperty.getOrDefault(path, null);
-                    if (Objects.isNull(fromPropertyValue)) {
-                        propertyValue.forEach((key, value) -> System.out.println("MISSING : " + path + "." + key));
-                    }
-                    else {
-                        propertyValue.forEach((key, value) -> {
-                            String val = fromPropertyValue.getOrDefault(key, null);
-                            if (Objects.isNull(val)) {
-                                System.out.println("MISSING : " + path + "." + key);
-                            }
-                            else if (!value.equalsIgnoreCase(val)) {
-                                System.out.println("MISMATCH : " + path + "." + key);
-                            }
-                        });
-                    }
-                });
+                final List<Pair<String,String>> downFlowMissingData = generateDownFlowBetweenBranch(profileName, fromFile, toFile);
+                System.out.println(downFlowMissingData);
 
                 final List<Document> documentList = Arrays.asList(
                         Document.builder().profile(profileName).branch(fromBranch).build(),
