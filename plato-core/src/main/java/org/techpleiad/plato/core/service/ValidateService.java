@@ -55,6 +55,131 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
     private Map<String, HashSet<String>> globalObjectProperty;
     private Map<String, String> propertyToAlteredProperty;
 
+    @ExecutionTime
+    public Map<String, HashMap<String, String>> buildGlobalObjectToPropertiesMappingForBranch(
+            final List<Pair<String, File>> fileContentMap,
+            final PropertyTreeNode alteredPropertyTree) {
+
+        propertyToAlteredProperty = new HashMap<>();
+        propertyToAlteredProperty.put("", "");
+
+        final HashMap<String, HashMap<String, String>> objectPropertyMap = new HashMap<>();
+        fileContentMap.forEach(pairProfileFile ->
+                traverseObjectToPropertiesMappingForBranch(convertFileToJsonNode(pairProfileFile.getSecond(), false), objectPropertyMap,
+                        alteredPropertyTree)
+        );
+        return objectPropertyMap;
+    }
+
+    private boolean checkIfJsonNodeValue(JsonNode node) {
+        if (Objects.isNull(node)) return false;
+
+        return node.isValueNode();
+    }
+
+    @ExecutionTime
+    private void traverseObjectToPropertiesMappingForBranch(final JsonNode rootNode,
+                                                            final HashMap<String, HashMap<String, String>> objectPropertyMap,
+                                                            final PropertyTreeNode alteredPropertyRoot) {
+
+        final Queue<PropertyNodeDetail> queue = new LinkedList<>();
+        queue.add(PropertyNodeDetail.builder().alteredPropertyRoot(alteredPropertyRoot)
+                .rootNode(rootNode).pathRegex("")
+                .isPropertyArray(false)
+                .build()
+        );
+
+        while (!queue.isEmpty()) {
+            final PropertyNodeDetail propertyNodeDetail = queue.remove();
+
+            final boolean getObjectPropertiesMapped = propertyNodeDetail.getRootNode().isObject() && (propertyNodeDetail.getAlteredPropertyRoot() == null || !propertyNodeDetail
+                    .getAlteredPropertyRoot().contains("*"));
+
+            if (getObjectPropertiesMapped || propertyNodeDetail.isPropertyArray()) {
+
+                objectPropertyMap.putIfAbsent(propertyNodeDetail.getPathRegex(), new HashMap<>());
+                final HashMap<String, String> propertySet = objectPropertyMap.get(propertyNodeDetail.getPathRegex());
+
+                propertyNodeDetail.getRootNode().fields().forEachRemaining(property -> {
+                    propertySet.put(property.getKey(), checkIfJsonNodeValue(property.getValue()) ? property.getValue().toString() : "$");
+                });
+            }
+
+            propertyNodeDetail.getRootNode().fields().forEachRemaining(object -> {
+                final JsonNode value = object.getValue();
+                final String key = object.getKey();
+
+                PropertyTreeNode childNode = null;
+                boolean isPropertyAltered = false;
+
+                if (Objects.nonNull(propertyNodeDetail.getAlteredPropertyRoot())) {
+                    if (propertyNodeDetail.getAlteredPropertyRoot().contains("*")) {
+                        isPropertyAltered = true;
+                    }
+                    childNode = propertyNodeDetail.getAlteredPropertyRoot().getChild("*", key);
+                }
+
+                if (value.isObject()) {
+                    final String alterRegexPath = generatePropertyPath(propertyNodeDetail.getPathRegex(), isPropertyAltered ? "*" : key);
+
+                    propertyToAlteredProperty.put(generatePropertyPath(propertyNodeDetail.getPathRegex(), key), alterRegexPath);
+                    queue.add(PropertyNodeDetail.builder().alteredPropertyRoot(childNode)
+                            .rootNode(value).pathRegex(alterRegexPath)
+                            .isPropertyArray(false)
+                            .build()
+                    );
+                } else if (value.isArray()) {
+                    final String regexPath = generatePropertyPath(propertyNodeDetail.getPathRegex(), key, "*");
+                    propertyToAlteredProperty.put(regexPath, regexPath);
+
+                    final PropertyTreeNode finalChildNode = childNode;
+                    value.forEach(subRoot ->
+                            queue.add(PropertyNodeDetail.builder().alteredPropertyRoot(finalChildNode)
+                                    .rootNode(subRoot).pathRegex(regexPath)
+                                    .isPropertyArray(true)
+                                    .build()
+                            ));
+                }
+            });
+        }
+    }
+
+    private List<Pair<String,String>> generateDownFlowBetweenBranch(final String profileName, final File fromFile, final File toFile)
+    {
+        final Map<String, HashMap<String, String>> fromGlobalProperty = // dev
+                buildGlobalObjectToPropertiesMappingForBranch(
+                        Collections.singletonList(Pair.of(profileName, fromFile)),
+                        PropertyTreeNode.builder().build()
+                );
+        final Map<String, HashMap<String, String>> toGlobalProperty = // preprod
+                buildGlobalObjectToPropertiesMappingForBranch(
+                        Collections.singletonList(Pair.of(profileName, toFile)),
+                        PropertyTreeNode.builder().build()
+                );
+
+        final List<Pair<String, String>> downFlowMissingData = new LinkedList<>();
+        toGlobalProperty.forEach((path, propertyValue) -> {
+            HashMap<String, String> fromPropertyValue = fromGlobalProperty.getOrDefault(path, null);
+            if (Objects.isNull(fromPropertyValue)) {
+                propertyValue.forEach((key, value) -> System.out.println("MISSING : " + path + "." + key));
+            }
+            else {
+                propertyValue.forEach((property, value) -> {
+                    String val = fromPropertyValue.getOrDefault(property, null);
+                    final String invalidProperty =  path + "." + property;
+                    if (Objects.isNull(val)) {
+                        downFlowMissingData.add(Pair.of(invalidProperty, "MISSING"));
+                    }
+                    else if (!value.equalsIgnoreCase(val)) {
+                        downFlowMissingData.add(Pair.of(invalidProperty, "MISMATCH"));
+                    }
+                });
+            }
+        });
+
+        return downFlowMissingData;
+    }
+
     @Override
     public ConsistencyAcrossBranchesReport validateProfilesAcrossBranch(
             final ServiceBranchData fromServiceBranchData,
@@ -96,6 +221,8 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 final JsonNode sortFromOriginal = convertFileToJsonNode(fromFile, true);
                 final JsonNode sortToOriginal = convertFileToJsonNode(toFile, true);
 
+                final List<Pair<String,String>> downFlowMissingData = generateDownFlowBetweenBranch(profileName, fromFile, toFile);
+                System.out.println(downFlowMissingData);
 
                 final List<Document> documentList = Arrays.asList(
                         Document.builder().profile(profileName).branch(fromBranch).build(),
