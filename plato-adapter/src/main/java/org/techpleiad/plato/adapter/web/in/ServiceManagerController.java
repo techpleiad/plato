@@ -11,6 +11,7 @@ import org.techpleiad.plato.api.request.ServiceRequestTO;
 import org.techpleiad.plato.api.request.ServicesAcrossBranchValidateRequestTO;
 import org.techpleiad.plato.api.request.ServicesAcrossProfileValidateRequestTO;
 import org.techpleiad.plato.api.request.ServicesConsistencyLevelAcrossBranchValidateRequestTO;
+import org.techpleiad.plato.api.response.ConsistencyLevelValidateResponseTO;
 import org.techpleiad.plato.api.response.ServiceResponseTO;
 import org.techpleiad.plato.api.response.ServicesAcrossBranchValidateResponseTO;
 import org.techpleiad.plato.api.response.ServicesAcrossProfileValidateResponseTO;
@@ -148,7 +149,7 @@ public class ServiceManagerController implements IServiceManagerController {
         }
 
         final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = serviceManagerMapper
-                .convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(reportList);
+                .convertConsistencyAcrossBranchesReportListToServicesAcrossBranchListValidateResponseTO(reportList);
 
         return ResponseEntity.ok(servicesAcrossBranchValidateResponseTO);
     }
@@ -164,7 +165,17 @@ public class ServiceManagerController implements IServiceManagerController {
                 servicesConsistencyLevelAcrossBranchValidateRequestTO.getTargetBranch()
         );
 
-        System.out.println(reportList);
-        return null;
+        if (servicesConsistencyLevelAcrossBranchValidateRequestTO.getEmail() != null && !CollectionUtils
+                .isEmpty(servicesConsistencyLevelAcrossBranchValidateRequestTO.getEmail().getRecipients())) {
+            final String mailBody = htmlServiceUseCase.createConsistencyLevelMailBody(reportList);
+            emailServiceUseCase.sendEmail(mailBody, servicesConsistencyLevelAcrossBranchValidateRequestTO.getEmail().getRecipients(), configToolConfig
+                    .getBranchConsistencyEmailSubject(), configToolConfig
+                    .getEmailFrom());
+        }
+
+        final List<ConsistencyLevelValidateResponseTO> consistencyLevelValidateResponseTO = serviceManagerMapper
+                .ConsistencyLevelBranchesReportToConsistencyLevelResponse(reportList);
+
+        return ResponseEntity.ok(consistencyLevelValidateResponseTO);
     }
 }

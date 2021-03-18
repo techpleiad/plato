@@ -9,4 +9,5 @@ public interface IValidateBranchUseCase {
     boolean validateBranchesInService(ServiceSpec serviceSpec, List<String> branchList);
 
     boolean validateBranchInService(ServiceSpec serviceSpec, String branch);
+
 }

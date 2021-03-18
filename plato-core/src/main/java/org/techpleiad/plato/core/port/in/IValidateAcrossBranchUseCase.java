@@ -10,6 +10,13 @@ import java.util.concurrent.ExecutionException;
 
 public interface IValidateAcrossBranchUseCase {
 
+    ConsistencyAcrossBranchesReport validateProfilesAcrossBranchDownflow(
+            final ServiceBranchData fromServiceBranchData,
+            final ServiceBranchData toServiceBranchData,
+            final ServiceSpec serviceSpec,
+            final boolean checkPropertyValue
+    ) throws ExecutionException, InterruptedException;
+
     ConsistencyAcrossBranchesReport validateProfilesAcrossBranch(
             final ServiceBranchData fromServiceBranchData,
             final ServiceBranchData toServiceBranchData,
