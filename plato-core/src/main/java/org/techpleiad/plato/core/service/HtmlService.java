@@ -1,11 +1,14 @@
 package org.techpleiad.plato.core.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.techpleiad.plato.core.domain.BranchProfileReport;
+import org.techpleiad.plato.core.domain.BranchReport;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossBranchesReport;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossProfilesReport;
+import org.techpleiad.plato.core.domain.ConsistencyLevelAcrossBranchesReport;
 import org.techpleiad.plato.core.port.in.IHtmlServiceUseCase;
 
 import java.util.HashMap;
@@ -13,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -86,6 +90,86 @@ public class HtmlService implements IHtmlServiceUseCase {
         } else {
             return "<td style=\"border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\" > N/A </td>";
         }
+    }
+
+    @Override
+    public String createConsistencyLevelMailBody(final List<ConsistencyLevelAcrossBranchesReport> reportList) {
+        String htmlDocument = "<h1>Consistency Level Report</h1>";
+        htmlDocument += createConsistencyLevelTable(reportList);
+        htmlDocument += LEGENDPROFILE;
+        htmlDocument += createConsistencyLevelMissingPropertiesText(reportList);
+        return htmlDocument;
+    }
+
+    private String createConsistencyLevelTable(final List<ConsistencyLevelAcrossBranchesReport> reportList) {
+        final String tableHead = createConsistencyLevelTableHead(reportList);
+        final String tableContent = createConsistencyLevelTableRows(reportList);
+        return "<table style=\"border: 1px solid black; border-collapse: collapse;\">" + tableHead + tableContent + "</table>";
+
+    }
+
+    private String createConsistencyLevelTableRows(final List<ConsistencyLevelAcrossBranchesReport> reportList) {
+        final StringBuilder tableRows = new StringBuilder();
+        for (final ConsistencyLevelAcrossBranchesReport consistencyLevelAcrossBranchesReport : reportList) {
+            final StringBuilder tableRow = new StringBuilder("<tr style=\"border: 1px solid black;\"><td style=\"border: 1px solid black;border-collapse: collapse;\">" + consistencyLevelAcrossBranchesReport
+                    .getService() + "</td>");
+            for (final BranchReport branchReport : consistencyLevelAcrossBranchesReport.getBranchReports()) {
+                for (final BranchProfileReport branchProfileReport : branchReport.getConsistencyAcrossBranchesReport().getReport()) {
+                    if (branchProfileReport.getPropertyValuePair().isEmpty()) {
+                        tableRow.append("<td style=\"background-color: green; border: 1px solid black;border-collapse: collapse;\"></td>");
+                    } else {
+                        tableRow.append("<td style=\"background-color: red; border: 1px solid black;border-collapse: collapse;\"></td>");
+                    }
+                }
+            }
+            tableRow.append(TR);
+            tableRows.append(tableRow.toString());
+        }
+        return tableRows.toString();
+    }
+
+    private String createConsistencyLevelMissingPropertiesText(final List<ConsistencyLevelAcrossBranchesReport> reportList) {
+        final StringBuilder htmlDocument = new StringBuilder();
+        for (final ConsistencyLevelAcrossBranchesReport consistencyLevelAcrossBranchesReport : reportList) {
+            final StringBuilder serviceText = new StringBuilder("<h3>" + consistencyLevelAcrossBranchesReport.getService() + "</h3>");
+            for (final BranchReport branchReport : consistencyLevelAcrossBranchesReport.getBranchReports()) {
+                final StringBuilder missingDataBranchReport = new StringBuilder();
+                missingDataBranchReport.append("<P> <strong>").append(branchReport.getFromBranch()).append(" - ").append(branchReport.getToBranch()).append("</strong></p>\n");
+                for (final BranchProfileReport branchProfileReport : branchReport.getConsistencyAcrossBranchesReport().getReport()) {
+                    missingDataBranchReport.append(" <p> &nbsp; Profile: <strong>").append(branchProfileReport.getProfile()).append("</strong></p>");
+                    for (final Pair<String, String> report : branchProfileReport.getPropertyValuePair().stream().filter(pair -> pair.getSecond().equals("MISMATCH"))
+                            .collect(Collectors.toList())) {
+                        missingDataBranchReport.append("<P> &nbsp; &nbsp;Mismatch of values in:").append(report.getFirst()).append("</p>");
+                    }
+                    for (final Pair<String, String> report : branchProfileReport.getPropertyValuePair().stream().filter(pair -> pair.getSecond().equals("MISSING"))
+                            .collect(Collectors.toList())) {
+                        missingDataBranchReport.append("<P>&nbsp; &nbsp;Missing values in ").append(branchReport.getFromBranch()).append(" branch ").append(":")
+                                .append(report.getFirst())
+                                .append("</p>");
+                    }
+                }
+                serviceText.append(missingDataBranchReport.toString());
+            }
+            htmlDocument.append(serviceText.toString());
+        }
+        return htmlDocument.toString();
+    }
+
+    private String createConsistencyLevelTableHead(final List<ConsistencyLevelAcrossBranchesReport> reportList) {
+        final StringBuilder tableHead = new StringBuilder("<tr style=\"border: 1px solid black;border-collapse: collapse;\"><th style=\"border: 1px solid black;border-collapse: collapse;\" rowspan=\"2\">Service Name</th>");
+        for (final BranchReport branchReport : reportList.get(0).getBranchReports()) {
+            tableHead.append("<th  colspan=\" ").append(branchReport.getConsistencyAcrossBranchesReport().getReport().size())
+                    .append("\" style=\"text-align: center; border: 1px solid black; border-collapse: collapse;\">")
+                    .append(branchReport.getFromBranch()).append("-").append(branchReport.getToBranch()).append("</th>");
+        }
+        tableHead.append("</tr> <tr style=\"border: 1px solid black; border-collapse: collapse;\">");
+        for (final BranchReport branchReport : reportList.get(0).getBranchReports()) {
+            for (final BranchProfileReport branchProfileReport : branchReport.getConsistencyAcrossBranchesReport().getReport()) {
+                tableHead.append("<td style=\"border: 1px solid black; border-collapse: collapse;\">").append(branchProfileReport.getProfile()).append("</td>");
+            }
+        }
+        tableHead.append(TR);
+        return tableHead.toString();
     }
 
     @Override

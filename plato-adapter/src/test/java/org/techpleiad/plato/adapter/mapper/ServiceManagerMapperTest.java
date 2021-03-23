@@ -160,14 +160,13 @@ class ServiceManagerMapperTest {
                 ).build());
 
 
-
         final List<ConsistencyAcrossBranchesReport> emptyConsistencyAcrossBranchesReport = Arrays.asList();
 
         final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = serviceManagerMapper
-                .convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(consistencyAcrossBranchesReport);
+                .convertConsistencyAcrossBranchesReportListToServicesAcrossBranchListValidateResponseTO(consistencyAcrossBranchesReport);
 
         final List<ServicesAcrossBranchValidateResponseTO> emptyServicesAcrossBranchValidateResponseTO = serviceManagerMapper
-                .convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(emptyConsistencyAcrossBranchesReport);
+                .convertConsistencyAcrossBranchesReportListToServicesAcrossBranchListValidateResponseTO(emptyConsistencyAcrossBranchesReport);
 
 
         Assertions.assertEquals(1, servicesAcrossBranchValidateResponseTO.size());

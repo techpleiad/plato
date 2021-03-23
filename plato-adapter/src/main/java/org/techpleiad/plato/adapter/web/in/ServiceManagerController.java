@@ -10,6 +10,8 @@ import org.techpleiad.plato.adapter.mapper.ServiceManagerMapper;
 import org.techpleiad.plato.api.request.ServiceRequestTO;
 import org.techpleiad.plato.api.request.ServicesAcrossBranchValidateRequestTO;
 import org.techpleiad.plato.api.request.ServicesAcrossProfileValidateRequestTO;
+import org.techpleiad.plato.api.request.ServicesConsistencyLevelAcrossBranchValidateRequestTO;
+import org.techpleiad.plato.api.response.ConsistencyLevelValidateResponseTO;
 import org.techpleiad.plato.api.response.ServiceResponseTO;
 import org.techpleiad.plato.api.response.ServicesAcrossBranchValidateResponseTO;
 import org.techpleiad.plato.api.response.ServicesAcrossProfileValidateResponseTO;
@@ -17,13 +19,15 @@ import org.techpleiad.plato.api.web.IServiceManagerController;
 import org.techpleiad.plato.core.advice.ExecutionTime;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossBranchesReport;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossProfilesReport;
+import org.techpleiad.plato.core.domain.ConsistencyLevelAcrossBranchesReport;
 import org.techpleiad.plato.core.domain.ServiceSpec;
-import org.techpleiad.plato.core.domain.ValidationAcrossBranchConfig;
+import org.techpleiad.plato.core.domain.ValidationAcrossBranchProperties;
 import org.techpleiad.plato.core.port.in.IAddServiceUseCase;
 import org.techpleiad.plato.core.port.in.IDeleteServiceUseCase;
 import org.techpleiad.plato.core.port.in.IEmailServiceUseCase;
 import org.techpleiad.plato.core.port.in.IGetServiceUseCase;
 import org.techpleiad.plato.core.port.in.IHtmlServiceUseCase;
+import org.techpleiad.plato.core.port.in.IValidateAcrossBranchConsistencyLevelUseCase;
 import org.techpleiad.plato.core.port.in.IValidateAcrossBranchUseCase;
 import org.techpleiad.plato.core.port.in.IValidateAcrossProfileUseCase;
 
@@ -49,6 +53,8 @@ public class ServiceManagerController implements IServiceManagerController {
     private IValidateAcrossProfileUseCase validateAcrossProfileUseCase;
     @Autowired
     private IValidateAcrossBranchUseCase validateAcrossBranchUseCase;
+    @Autowired
+    private IValidateAcrossBranchConsistencyLevelUseCase validateAcrossBranchConsistencyLevelUseCase;
     @Autowired
     private IHtmlServiceUseCase htmlServiceUseCase;
     @Autowired
@@ -125,7 +131,7 @@ public class ServiceManagerController implements IServiceManagerController {
 
         final List<ServiceSpec> serviceSpecList = getServiceUseCase.getServicesList(acrossBranchValidateRequestTO.getServices());
 
-        final ValidationAcrossBranchConfig validationAcrossBranchConfig = ValidationAcrossBranchConfig.builder()
+        final ValidationAcrossBranchProperties validationAcrossBranchProperties = ValidationAcrossBranchProperties.builder()
                 .fromBranch(acrossBranchValidateRequestTO.getFromBranch())
                 .toBranch(acrossBranchValidateRequestTO.getToBranch())
                 .propertyValueEqual(acrossBranchValidateRequestTO.isPropertyValueEqual())
@@ -133,7 +139,7 @@ public class ServiceManagerController implements IServiceManagerController {
 
         final List<ConsistencyAcrossBranchesReport> reportList = validateAcrossBranchUseCase.validateAcrossBranchesInServiceBatch(
                 serviceSpecList,
-                validationAcrossBranchConfig
+                validationAcrossBranchProperties
         );
 
         if (acrossBranchValidateRequestTO.getEmail() != null && !CollectionUtils.isEmpty(acrossBranchValidateRequestTO.getEmail().getRecipients())) {
@@ -147,8 +153,33 @@ public class ServiceManagerController implements IServiceManagerController {
         }
 
         final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = serviceManagerMapper
-                .convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(reportList);
+                .convertConsistencyAcrossBranchesReportListToServicesAcrossBranchListValidateResponseTO(reportList);
 
         return ResponseEntity.ok(servicesAcrossBranchValidateResponseTO);
+    }
+
+    @ExecutionTime
+    @Override
+    public ResponseEntity validateAcrossBranchesConsistencyLevel(@Valid final ServicesConsistencyLevelAcrossBranchValidateRequestTO servicesConsistencyLevelAcrossBranchValidateRequestTO) throws ExecutionException, InterruptedException {
+        final List<ServiceSpec> serviceSpecList = getServiceUseCase.getServicesList(servicesConsistencyLevelAcrossBranchValidateRequestTO.getServices());
+
+        final List<ConsistencyLevelAcrossBranchesReport> reportList = validateAcrossBranchConsistencyLevelUseCase.validateAcrossBranchesConsistencyLevelServiceBatch(
+                serviceSpecList,
+                servicesConsistencyLevelAcrossBranchValidateRequestTO.isPropertyValueEqual(),
+                servicesConsistencyLevelAcrossBranchValidateRequestTO.getTargetBranch()
+        );
+
+        if (servicesConsistencyLevelAcrossBranchValidateRequestTO.getEmail() != null && !CollectionUtils
+                .isEmpty(servicesConsistencyLevelAcrossBranchValidateRequestTO.getEmail().getRecipients())) {
+            final String mailBody = htmlServiceUseCase.createConsistencyLevelMailBody(reportList);
+            emailServiceUseCase.sendEmail(mailBody, servicesConsistencyLevelAcrossBranchValidateRequestTO.getEmail().getRecipients(), configToolConfig
+                    .getBranchConsistencyEmailSubject(), configToolConfig
+                    .getEmailFrom());
+        }
+
+        final List<ConsistencyLevelValidateResponseTO> consistencyLevelValidateResponseTO = serviceManagerMapper
+                .ConsistencyLevelBranchesReportToConsistencyLevelResponse(reportList);
+
+        return ResponseEntity.ok(consistencyLevelValidateResponseTO);
     }
 }
