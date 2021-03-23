@@ -137,7 +137,7 @@ public class HtmlService implements IHtmlServiceUseCase {
     }
 
     private String createProfileTableColumn(final Map<String, List<String>> profileReport, final String profile) {
-        if (profileReport.containsKey(profile)) {
+        if (profileReport.containsKey(profile) && profileReport.get(profile) != null) {
             if (profileReport.get(profile).isEmpty()) {
                 return "<td style=\"background-color: green; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td>";
             } else {

@@ -209,6 +209,12 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                         alteredProperties
                 );
 
+                final List<String> profiles = serviceSpec.getProfiles().stream().map(Profile::getName).collect(Collectors.toList());
+
+                for (final String profile : profiles) {
+                    report.getMissingProperty().putIfAbsent(profile, null);
+                }
+
                 report.setService(serviceSpec.getService());
                 reportList.add(report);
             } catch (final Exception e) {

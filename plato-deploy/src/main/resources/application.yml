@@ -1,4 +1,10 @@
 spring:
+
+  mail:
+    host: smtp.mailtrap.io
+    username: 640ac9b1cb07fd
+    password: 724ddb9243aa7f
+    port: 2525
   data:
     mongodb:
       uri: mongodb://localhost:27017/plato
@@ -8,6 +14,8 @@ server:
   port: 8080
 
 plato:
+  email:
+    enabled: true
   multithreading:
     config:
       executor-service:
