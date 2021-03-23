@@ -19,5 +19,6 @@ public class GitRepositoryRequestTO {
     private String username;
     @ToString.Exclude
     private String password;
+    private boolean useDefault;
 
 }

@@ -219,20 +219,33 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
         );
 
         for (final ServiceSpec serviceSpec : serviceSpecList) {
-            final List<ServiceBranchData> serviceBranchList = new ArrayList<>();
-            for (final String branch : branchList) {
-                final ServiceBranchData data = ServiceBranchData.builder().repository(serviceSpec.getGitRepository().getUrl()).branch(branch).build();
+            try {
+                final List<ServiceBranchData> serviceBranchList = new ArrayList<>();
+                for (final String branch : branchList) {
+                    final ServiceBranchData data = ServiceBranchData.builder().repository(serviceSpec.getGitRepository().getUrl()).branch(branch).build();
 
-                serviceBranchList.add(ServiceBranchData.builder().repository(data.getRepository())
-                        .branch(data.getBranch())
-                        .directory(mapServiceBranchToRepository.get(data).getDirectory())
-                        .build()
-                );
+                    serviceBranchList.add(ServiceBranchData.builder().repository(data.getRepository())
+                            .branch(data.getBranch())
+                            .directory(mapServiceBranchToRepository.get(data).getDirectory())
+                            .build()
+                    );
+                }
+                final ConsistencyAcrossBranchesReport report = validateProfilesAcrossBranch(serviceBranchList.get(0), serviceBranchList
+                        .get(1), serviceSpec, validationAcrossBranchProperties.isPropertyValueEqual());
+                reportList.add(report);
+
+            } catch (final Exception e) {
+                reportList.add(ConsistencyAcrossBranchesReport.builder()
+                        .service(serviceSpec.getService())
+                        .report(Arrays.asList(BranchProfileReport.builder()
+                                .fileEqual(false)
+                                .propertyValueEqual(false)
+                                .profile("Invalid")
+                                .build()))
+                        .build());
+                log.error("Exception while validating service : {}, {}", serviceSpec.getService(), e);
             }
-            final ConsistencyAcrossBranchesReport report = validateProfilesAcrossBranch(serviceBranchList.get(0), serviceBranchList
-                    .get(1), serviceSpec, validationAcrossBranchProperties
-                    .isPropertyValueEqual());
-            reportList.add(report);
+
         }
         return reportList;
     }
@@ -255,24 +268,38 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
 
         for (final ServiceSpec serviceSpec : serviceSpecList) {
 
-            final ServiceBranchData data = ServiceBranchData.builder().repository(serviceSpec.getGitRepository().getUrl()).branch(branchName).build();
-            final CompletableFuture<List<Pair<String, File>>> mapProfileToFileContent = fileService.getYamlFiles(
-                    mapServiceBranchToRepository.get(data).getDirectory(),
-                    serviceSpec.getService(),
-                    serviceSpec.getProfiles().stream().map(Profile::getName).collect(Collectors.toCollection(TreeSet::new))
-            );
+            try {
+                final ServiceBranchData data = ServiceBranchData.builder().repository(serviceSpec.getGitRepository().getUrl()).branch(branchName).build();
+                final CompletableFuture<List<Pair<String, File>>> mapProfileToFileContent = fileService.getYamlFiles(
+                        mapServiceBranchToRepository.get(data).getDirectory(),
+                        serviceSpec.getService(),
+                        serviceSpec.getProfiles().stream().map(Profile::getName).collect(Collectors.toCollection(TreeSet::new))
+                );
 
-            final Map<String, List<String>> suppressedPropertiesMap = isSuppressed ?
-                    Collections.emptyMap() : getSuppressPropertyUseCase.getSuppressedProperties(serviceSpec.getService());
+                final Map<String, List<String>> suppressedPropertiesMap = isSuppressed ?
+                        Collections.emptyMap() : getSuppressPropertyUseCase.getSuppressedProperties(serviceSpec.getService());
 
-            final List<String> alteredProperties = getAlteredPropertyUseCase.getAlteredProperties(serviceSpec.getService());
-            final ConsistencyAcrossProfilesReport report = this.validateYamlKeyInFiles(
-                    mapProfileToFileContent.get(), suppressedPropertiesMap,
-                    alteredProperties
-            );
+                final List<String> alteredProperties = getAlteredPropertyUseCase.getAlteredProperties(serviceSpec.getService());
+                final ConsistencyAcrossProfilesReport report = this.validateYamlKeyInFiles(
+                        mapProfileToFileContent.get(), suppressedPropertiesMap,
+                        alteredProperties
+                );
 
-            report.setService(serviceSpec.getService());
-            reportList.add(report);
+                final List<String> profiles = serviceSpec.getProfiles().stream().map(Profile::getName).collect(Collectors.toList());
+
+                for (final String profile : profiles) {
+                    report.getMissingProperty().putIfAbsent(profile, null);
+                }
+
+                report.setService(serviceSpec.getService());
+                reportList.add(report);
+            } catch (final Exception e) {
+                log.error("Exception while processing : {}, {}", serviceSpec.getService(), e);
+                final ConsistencyAcrossProfilesReport report = ConsistencyAcrossProfilesReport.builder()
+                        .service(serviceSpec.getService())
+                        .build();
+                reportList.add(report);
+            }
         }
 
         return reportList;

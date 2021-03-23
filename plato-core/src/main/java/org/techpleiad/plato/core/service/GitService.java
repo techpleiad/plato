@@ -17,7 +17,6 @@ import org.techpleiad.plato.core.domain.ServiceBranchData;
 import org.techpleiad.plato.core.domain.ServiceSpec;
 import org.techpleiad.plato.core.exceptions.GitBranchNotFoundException;
 import org.techpleiad.plato.core.exceptions.GitRepositoryNotFoundException;
-import org.techpleiad.plato.core.exceptions.InvalidGitCredentials;
 import org.techpleiad.plato.core.port.in.IFileServiceUserCase;
 import org.techpleiad.plato.core.port.in.IGitCloneRequestUseCase;
 import org.techpleiad.plato.core.port.in.IGitServiceUseCase;
@@ -234,22 +233,17 @@ public class GitService implements IGitServiceUseCase {
     }
 
     private GitRepository populateGitCredentials(final GitRepository gitRepository) {
-        if (StringUtils.isEmptyOrNull(gitRepository.getUsername())) {
-            return gitRepository;
+        if (gitRepository.isUseDefault()) {
+            final String defaultUsername = getCredentialUseCase.getUsername();
+            final String defaultGitPassword = getCredentialUseCase.getPassword();
+            return GitRepository.builder()
+                    .url(gitRepository.getUrl())
+                    .username(defaultUsername)
+                    .password(defaultGitPassword)
+                    .build();
         }
+        
+        return gitRepository;
 
-        if (!StringUtils.isEmptyOrNull(gitRepository.getPassword())) {
-            return gitRepository;
-        }
-
-        final String defaultGitPassword = getCredentialUseCase.getPassword();
-        if (StringUtils.isEmptyOrNull(defaultGitPassword)) {
-            throw new InvalidGitCredentials("Git credentials not available");
-        }
-        return GitRepository.builder()
-                .url(gitRepository.getUrl())
-                .username(gitRepository.getUsername())
-                .password(defaultGitPassword)
-                .build();
     }
 }

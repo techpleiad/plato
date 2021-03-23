@@ -16,8 +16,8 @@ plato:
         queueCapacity: 10
   config:
     workingDirectory: /tmp
-    branchConsistencyEmailSubject: "Branch Consistency Report"
-    profileConsistencyEmailSubject: "Profile Consistency Report"
+    branchConsistencyEmailSubject: "Plato :: Branch Consistency Report - {{branch1}} and {{branch2}} branch"
+    profileConsistencyEmailSubject: "Plato :: Profile Consistency Report - {{branch}} branch"
     emailFrom: "Plato"
 
   properties:

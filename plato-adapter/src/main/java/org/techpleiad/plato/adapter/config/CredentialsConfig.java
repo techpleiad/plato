@@ -17,9 +17,15 @@ public class CredentialsConfig implements IGetGitCredentialsPort {
     public static final String PREFIX = "git.default";
 
     private String password;
+    private String username;
 
     @Override
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 }

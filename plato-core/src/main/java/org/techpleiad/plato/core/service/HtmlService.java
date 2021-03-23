@@ -3,6 +3,7 @@ package org.techpleiad.plato.core.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.techpleiad.plato.core.domain.BranchProfileReport;
 import org.techpleiad.plato.core.domain.BranchReport;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossBranchesReport;
@@ -90,7 +91,6 @@ public class HtmlService implements IHtmlServiceUseCase {
             return "<td style=\"border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\" > N/A </td>";
         }
     }
-
 
     @Override
     public String createConsistencyLevelMailBody(final List<ConsistencyLevelAcrossBranchesReport> reportList) {
@@ -183,7 +183,6 @@ public class HtmlService implements IHtmlServiceUseCase {
         return htmlDocument;
     }
 
-
     private Map<String, Map<String, List<String>>> convertProfileReportToHashMap(final List<ConsistencyAcrossProfilesReport> reportList) {
         final Map<String, Map<String, List<String>>> reportMap = new HashMap<>();
         for (final ConsistencyAcrossProfilesReport consistencyAcrossProfilesReport : reportList) {
@@ -191,7 +190,6 @@ public class HtmlService implements IHtmlServiceUseCase {
         }
         return reportMap;
     }
-
 
     private String createProfileTable(final Map<String, Map<String, List<String>>> profileReport) {
         final Set<String> profileNames = new HashSet<>();
@@ -223,7 +221,7 @@ public class HtmlService implements IHtmlServiceUseCase {
     }
 
     private String createProfileTableColumn(final Map<String, List<String>> profileReport, final String profile) {
-        if (profileReport.containsKey(profile)) {
+        if (profileReport.containsKey(profile) && profileReport.get(profile) != null) {
             if (profileReport.get(profile).isEmpty()) {
                 return "<td style=\"background-color: green; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td>";
             } else {
@@ -236,15 +234,34 @@ public class HtmlService implements IHtmlServiceUseCase {
 
     private String createMissingPropertiesText(final List<ConsistencyAcrossProfilesReport> reportList) {
         final StringBuilder missingProperties = new StringBuilder("<h3> Missing Properties </h3>");
-        for (final ConsistencyAcrossProfilesReport consistencyAcrossProfilesReport : reportList) {
-            missingProperties.append("<p> <strong>").append(consistencyAcrossProfilesReport.getService()).append("</strong> </p>");
-            for (final Map.Entry<String, List<String>> missingProperty : consistencyAcrossProfilesReport.getMissingProperty().entrySet()) {
+        for (final ConsistencyAcrossProfilesReport report : reportList) {
+
+            if (noMissingProperties(report))
+                continue;
+
+            missingProperties.append("<p> <strong>").append(report.getService()).append("</strong> </p>");
+            for (final Map.Entry<String, List<String>> missingProperty : report.getMissingProperty().entrySet()) {
+                if (CollectionUtils.isEmpty(missingProperty.getValue()))
+                    continue;
+
                 missingProperties.append("<p> &nbsp; &nbsp; Profile: <strong>").append(missingProperty.getKey()).append(" </strong> </p>");
                 for (final String property : missingProperty.getValue()) {
                     missingProperties.append("<p> &nbsp; &nbsp; &nbsp; &nbsp; ").append(property).append("</p>");
                 }
             }
+            missingProperties.append("<br>");
         }
         return missingProperties.toString();
+    }
+
+    private boolean noMissingProperties(final ConsistencyAcrossProfilesReport report) {
+        if (CollectionUtils.isEmpty(report.getMissingProperty()))
+            return true;
+
+        return !report.getMissingProperty().values()
+                .stream()
+                .filter(e -> !CollectionUtils.isEmpty(e))
+                .findAny()
+                .isPresent();
     }
 }
