@@ -12,6 +12,7 @@ import org.techpleiad.plato.api.request.ServiceRequestTO;
 import org.techpleiad.plato.api.request.ServicesAcrossBranchValidateRequestTO;
 import org.techpleiad.plato.api.request.ServicesAcrossProfileValidateRequestTO;
 import org.techpleiad.plato.api.request.ServicesConsistencyLevelAcrossBranchValidateRequestTO;
+import org.techpleiad.plato.api.request.ValidationRuleRequestTO;
 import org.techpleiad.plato.api.response.ServiceResponseTO;
 
 import javax.validation.Valid;
@@ -48,4 +49,8 @@ public interface IServiceManagerController {
 
     @PostMapping(Constants.VERSION_SERVICES_BRANCHES + Constants.CONSISTENCY_LEVEL_VALIDATE)
     ResponseEntity validateAcrossBranchesConsistencyLevel(@Valid @RequestBody ServicesConsistencyLevelAcrossBranchValidateRequestTO servicesConsistencyLevelAcrossBranchValidateRequestTO) throws ExecutionException, InterruptedException;
+
+    @ApiOperation("Add validation rule")
+    @PostMapping(Constants.VERSION_RULES)
+    ResponseEntity addRule(@Valid @RequestBody ValidationRuleRequestTO validationRuleRequestTO) throws Exception;
 }

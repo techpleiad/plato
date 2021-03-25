@@ -11,6 +11,7 @@ import org.techpleiad.plato.api.request.ServiceRequestTO;
 import org.techpleiad.plato.api.request.ServicesAcrossBranchValidateRequestTO;
 import org.techpleiad.plato.api.request.ServicesAcrossProfileValidateRequestTO;
 import org.techpleiad.plato.api.request.ServicesConsistencyLevelAcrossBranchValidateRequestTO;
+import org.techpleiad.plato.api.request.ValidationRuleRequestTO;
 import org.techpleiad.plato.api.response.ConsistencyLevelValidateResponseTO;
 import org.techpleiad.plato.api.response.ServiceResponseTO;
 import org.techpleiad.plato.api.response.ServicesAcrossBranchValidateResponseTO;
@@ -23,6 +24,7 @@ import org.techpleiad.plato.core.domain.ConsistencyLevelAcrossBranchesReport;
 import org.techpleiad.plato.core.domain.ServiceSpec;
 import org.techpleiad.plato.core.domain.ValidationAcrossBranchProperties;
 import org.techpleiad.plato.core.port.in.IAddServiceUseCase;
+import org.techpleiad.plato.core.port.in.IAddValidationRuleUseCase;
 import org.techpleiad.plato.core.port.in.IDeleteServiceUseCase;
 import org.techpleiad.plato.core.port.in.IEmailServiceUseCase;
 import org.techpleiad.plato.core.port.in.IGetServiceUseCase;
@@ -43,6 +45,8 @@ public class ServiceManagerController implements IServiceManagerController {
 
     @Autowired
     private IAddServiceUseCase addServiceUseCase;
+    @Autowired
+    private IAddValidationRuleUseCase addValidationRuleUseCase;
     @Autowired
     private IDeleteServiceUseCase deleteServiceUseCase;
     @Autowired
@@ -178,8 +182,15 @@ public class ServiceManagerController implements IServiceManagerController {
         }
 
         final List<ConsistencyLevelValidateResponseTO> consistencyLevelValidateResponseTO = serviceManagerMapper
-                .ConsistencyLevelBranchesReportToConsistencyLevelResponse(reportList);
+                .convertConsistencyLevelBranchesReportToConsistencyLevelResponse(reportList);
 
         return ResponseEntity.ok(consistencyLevelValidateResponseTO);
+    }
+
+    @ExecutionTime
+    @Override
+    public ResponseEntity addRule(final ValidationRuleRequestTO validationRuleRequestTO) {
+        addValidationRuleUseCase.addValidationRule(serviceManagerMapper.convertValidationRuleRequestTOtoValidationRule(validationRuleRequestTO));
+        return ResponseEntity.ok().build();
     }
 }

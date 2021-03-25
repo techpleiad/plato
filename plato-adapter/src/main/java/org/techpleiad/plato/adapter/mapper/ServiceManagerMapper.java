@@ -2,7 +2,9 @@ package org.techpleiad.plato.adapter.mapper;
 
 
 import org.mapstruct.Mapper;
+import org.techpleiad.plato.api.request.RuleScopeRequestTO;
 import org.techpleiad.plato.api.request.ServiceRequestTO;
+import org.techpleiad.plato.api.request.ValidationRuleRequestTO;
 import org.techpleiad.plato.api.response.BranchProfileReportResponseTO;
 import org.techpleiad.plato.api.response.BranchReportResponseTO;
 import org.techpleiad.plato.api.response.ConsistencyLevelValidateResponseTO;
@@ -17,7 +19,9 @@ import org.techpleiad.plato.core.domain.ConsistencyAcrossBranchesReport;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossProfilesReport;
 import org.techpleiad.plato.core.domain.ConsistencyLevelAcrossBranchesReport;
 import org.techpleiad.plato.core.domain.Document;
+import org.techpleiad.plato.core.domain.RuleScope;
 import org.techpleiad.plato.core.domain.ServiceSpec;
+import org.techpleiad.plato.core.domain.ValidationRule;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,7 +34,7 @@ public interface ServiceManagerMapper {
 
     ServiceResponseTO convertServiceSpecToServiceResponseTO(final ServiceSpec serviceSpec);
 
-    List<ConsistencyLevelValidateResponseTO> ConsistencyLevelBranchesReportToConsistencyLevelResponse(final List<ConsistencyLevelAcrossBranchesReport> consistencyLevelAcrossBranchesReport);
+    List<ConsistencyLevelValidateResponseTO> convertConsistencyLevelBranchesReportToConsistencyLevelResponse(final List<ConsistencyLevelAcrossBranchesReport> consistencyLevelAcrossBranchesReport);
 
     List<BranchReportResponseTO> convertBranchReportToBranchReportResponse(final List<BranchReport> branchReports);
 
@@ -43,6 +47,10 @@ public interface ServiceManagerMapper {
     List<ServicesAcrossBranchValidateResponseTO> convertConsistencyAcrossBranchesReportListToServicesAcrossBranchListValidateResponseTO(final List<ConsistencyAcrossBranchesReport> consistencyAcrossBranchesReport);
 
     ServicesAcrossBranchValidateResponseTO convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(final ConsistencyAcrossBranchesReport consistencyAcrossBranchesReport);
+
+    ValidationRule convertValidationRuleRequestTOtoValidationRule(final ValidationRuleRequestTO validationRuleRequestTO);
+
+    RuleScope convertRuleScopeRequestToRuleScope(final RuleScopeRequestTO ruleScopeRequestTO);
 
 
     default ServicesAcrossProfileValidateResponseTO convertInconsistentProfilePropertyToProfilePropertyResponseTO(
