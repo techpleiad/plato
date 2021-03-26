@@ -5,7 +5,7 @@ import org.techpleiad.plato.core.domain.ValidationRule;
 import java.util.List;
 
 public interface IValidationRulePersistencePort {
-    void addValidationRule(ValidationRule validationRule);
+    ValidationRule addValidationRule(ValidationRule validationRule);
 
     List<ValidationRule> findExistingValidationRuleByScopeAndRuleOnProperty(ValidationRule validationRule);
 }

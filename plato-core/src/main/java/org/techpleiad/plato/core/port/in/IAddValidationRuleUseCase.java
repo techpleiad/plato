@@ -4,5 +4,5 @@ import org.techpleiad.plato.core.domain.ValidationRule;
 
 public interface IAddValidationRuleUseCase {
 
-    void addValidationRule(ValidationRule validationRule);
+    ValidationRule addValidationRule(ValidationRule validationRule);
 }

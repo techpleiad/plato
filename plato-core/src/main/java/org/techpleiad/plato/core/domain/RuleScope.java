@@ -11,6 +11,6 @@ import java.util.List;
 @Builder
 public class RuleScope {
     List<String> services;
-    List<Branch> branches;
-    List<Profile> profiles;
+    List<String> branches;
+    List<String> profiles;
 }

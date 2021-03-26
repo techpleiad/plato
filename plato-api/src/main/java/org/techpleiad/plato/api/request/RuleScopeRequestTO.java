@@ -15,6 +15,6 @@ import java.util.List;
 @ToString
 public class RuleScopeRequestTO {
     private List<String> services;
-    private List<BranchRequestTO> branches;
-    private List<ProfileRequestTO> profiles;
+    private List<String> branches;
+    private List<String> profiles;
 }

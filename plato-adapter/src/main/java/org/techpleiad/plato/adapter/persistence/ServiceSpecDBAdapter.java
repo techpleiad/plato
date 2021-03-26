@@ -33,9 +33,9 @@ public class ServiceSpecDBAdapter implements IServicePersistencePort {
     }
 
     @Override
-    public void addService(final ServiceSpec serviceSpec) {
-        serviceSpecDBRepository.insert(serviceSpec);
-        log.info("Created Service :: {}", serviceSpec);
+    public ServiceSpec addService(final ServiceSpec serviceSpec) {
+        log.info("Creating Service :: {}", serviceSpec);
+        return serviceSpecDBRepository.insert(serviceSpec);
     }
 
     @Override

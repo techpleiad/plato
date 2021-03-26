@@ -33,13 +33,13 @@ public class ServiceManager implements IAddServiceUseCase, IGetServiceUseCase, I
     private GitService gitService;
 
     @Override
-    public void addService(final ServiceSpec serviceSpec) {
+    public ServiceSpec addService(final ServiceSpec serviceSpec) {
         if (servicePersistencePort.getServiceById(serviceSpec.getService()).isPresent()) {
             throw new ServiceAlreadyExistException("service name already exists", serviceSpec.getService());
         }
 
         gitService.validateGitUrlAndBranches(serviceSpec.getGitRepository(), serviceSpec.getBranches().stream().map(Branch::getName).collect(Collectors.toList()));
-        servicePersistencePort.addService(serviceSpec);
+        return servicePersistencePort.addService(serviceSpec);
     }
 
     @Override
@@ -80,10 +80,10 @@ public class ServiceManager implements IAddServiceUseCase, IGetServiceUseCase, I
     }
 
     @Override
-    public void addValidationRule(final ValidationRule validationRule) {
+    public ValidationRule addValidationRule(final ValidationRule validationRule) {
         if (!validationRulePersistencePort.findExistingValidationRuleByScopeAndRuleOnProperty(validationRule).isEmpty()) {
-            throw new ValidationRuleAlreadyExistsException("Validation Rule for this property in given scope already exists", validationRule.getRule());
+            throw new ValidationRuleAlreadyExistsException("Validation Rule for this property in given scope already exists", validationRule.getRuleOnProperty());
         }
-        validationRulePersistencePort.addValidationRule(validationRule);
+        return validationRulePersistencePort.addValidationRule(validationRule);
     }
 }

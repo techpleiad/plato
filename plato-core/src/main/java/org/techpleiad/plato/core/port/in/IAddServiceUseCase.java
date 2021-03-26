@@ -4,5 +4,5 @@ import org.techpleiad.plato.core.domain.ServiceSpec;
 
 public interface IAddServiceUseCase {
 
-    void addService(ServiceSpec serviceSpec);
+    ServiceSpec addService(ServiceSpec serviceSpec);
 }

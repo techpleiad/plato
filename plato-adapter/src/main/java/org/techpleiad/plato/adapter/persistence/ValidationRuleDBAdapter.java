@@ -23,7 +23,8 @@ public class ValidationRuleDBAdapter implements IValidationRulePersistencePort {
     }
 
     @Override
-    public void addValidationRule(final ValidationRule validationRule) {
-        validationRuleDBRepository.insert(validationRule);
+    public ValidationRule addValidationRule(final ValidationRule validationRule) {
+        log.info("Creating Validation Rule :: {}", validationRule);
+        return validationRuleDBRepository.insert(validationRule);
     }
 }

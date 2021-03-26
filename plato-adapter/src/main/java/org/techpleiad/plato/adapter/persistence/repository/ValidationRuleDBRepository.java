@@ -11,6 +11,7 @@ import java.util.List;
 @Repository
 public interface ValidationRuleDBRepository extends MongoRepository<ValidationRule, String> {
 
+    //step by step filter inside service
     @Query("{ 'scope' : ?0, ruleOnProperty: ?1 }")
     List<ValidationRule> findValidationRuleByScopeAndRuleOnProperty(RuleScope scope, String ruleOnProperty);
 }
