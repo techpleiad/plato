@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.techpleiad.plato.core.domain.RuleScope;
 import org.techpleiad.plato.core.domain.ValidationRule;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Component
@@ -26,11 +27,10 @@ public class ValidationRuleReadConverter implements Converter<Document, Validati
                 .ruleId(objectId.toHexString())
                 .ruleOnProperty((String) dbObject.get("ruleOnProperty"))
                 .scope(RuleScope.builder()
-                        .branches((List<String>) docs.get("branches"))
-                        .services((List<String>) docs.get("services"))
-                        .profiles((List<String>) docs.get("branches"))
+                        .branches(new HashSet<String>((List<String>) docs.get("branches")))
+                        .services(new HashSet<String>((List<String>) docs.get("services")))
+                        .profiles(new HashSet<String>((List<String>) docs.get("profiles")))
                         .build())
                 .build();
-
     }
 }

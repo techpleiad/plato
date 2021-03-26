@@ -5,17 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.techpleiad.plato.core.domain.Branch;
 import org.techpleiad.plato.core.domain.ServiceSpec;
-import org.techpleiad.plato.core.domain.ValidationRule;
 import org.techpleiad.plato.core.exceptions.ServiceAlreadyExistException;
 import org.techpleiad.plato.core.exceptions.ServiceNotFoundException;
 import org.techpleiad.plato.core.exceptions.ServicesNotFoundException;
-import org.techpleiad.plato.core.exceptions.ValidationRuleAlreadyExistsException;
 import org.techpleiad.plato.core.port.in.IAddServiceUseCase;
-import org.techpleiad.plato.core.port.in.IAddValidationRuleUseCase;
 import org.techpleiad.plato.core.port.in.IDeleteServiceUseCase;
 import org.techpleiad.plato.core.port.in.IGetServiceUseCase;
 import org.techpleiad.plato.core.port.out.IServicePersistencePort;
-import org.techpleiad.plato.core.port.out.IValidationRulePersistencePort;
 
 import java.util.List;
 import java.util.Set;
@@ -23,10 +19,9 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class ServiceManager implements IAddServiceUseCase, IGetServiceUseCase, IDeleteServiceUseCase, IAddValidationRuleUseCase {
+public class ServiceManager implements IAddServiceUseCase, IGetServiceUseCase, IDeleteServiceUseCase {
 
-    @Autowired
-    private IValidationRulePersistencePort validationRulePersistencePort;
+
     @Autowired
     private IServicePersistencePort servicePersistencePort;
     @Autowired
@@ -77,13 +72,5 @@ public class ServiceManager implements IAddServiceUseCase, IGetServiceUseCase, I
         log.info("delete Service Id :: {}", serviceId);
         servicePersistencePort.deleteServiceById(serviceId)
                 .orElseThrow(() -> new ServiceNotFoundException("service name does not exist", serviceId));
-    }
-
-    @Override
-    public ValidationRule addValidationRule(final ValidationRule validationRule) {
-        if (!validationRulePersistencePort.findExistingValidationRuleByScopeAndRuleOnProperty(validationRule).isEmpty()) {
-            throw new ValidationRuleAlreadyExistsException("Validation Rule for this property in given scope already exists", validationRule.getRuleOnProperty());
-        }
-        return validationRulePersistencePort.addValidationRule(validationRule);
     }
 }

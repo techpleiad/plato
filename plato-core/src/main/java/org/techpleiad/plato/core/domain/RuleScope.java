@@ -4,13 +4,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.List;
+import java.util.Set;
 
 @ToString
 @Getter
 @Builder
 public class RuleScope {
-    List<String> services;
-    List<String> branches;
-    List<String> profiles;
+    Set<String> services;
+    Set<String> branches;
+    Set<String> profiles;
 }
