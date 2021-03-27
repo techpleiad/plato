@@ -28,21 +28,18 @@ public class ValidationRuleManager implements IAddValidationRuleUseCase {
                 final Set<String> ruleServices = rule.getScope().getServices();
                 final Set<String> ruleBranches = rule.getScope().getBranches();
                 final Set<String> ruleProfiles = rule.getScope().getProfiles();
+                final Set<String> ruleServices1 = rule.getScope().getServices();
+                final Set<String> ruleBranches1 = rule.getScope().getBranches();
+                final Set<String> ruleProfiles1 = rule.getScope().getProfiles();
 
-                if (services.isEmpty() && ruleServices.isEmpty()) {
-                    if (ruleBranches.isEmpty() && branches.isEmpty()) {
-                        if (ruleProfiles.isEmpty() && profiles.isEmpty()) {
-                            throw new ValidationRuleAlreadyExistsException("Validation Rule for this property in given scope already exists", validationRule.getRuleOnProperty());
-                        }
-                    }
-                }
+                //Addition of [Rm, GM] after [Rm] already exists
 
                 ruleServices.retainAll(services);
-                if (!ruleServices.isEmpty()) {
+                if (!ruleServices.isEmpty() || (ruleServices1.isEmpty() && services.isEmpty())) {
                     ruleBranches.retainAll(branches);
-                    if (!ruleBranches.isEmpty()) {
+                    if (!ruleBranches.isEmpty() || (ruleBranches1.isEmpty() && branches.isEmpty())) {
                         ruleProfiles.retainAll(profiles);
-                        if (!ruleProfiles.isEmpty()) {
+                        if (!ruleProfiles.isEmpty() || (ruleProfiles1.isEmpty() && profiles.isEmpty())) {
                             throw new ValidationRuleAlreadyExistsException("Validation Rule for this property in given scope already exists", validationRule.getRuleOnProperty());
                         }
                     }
