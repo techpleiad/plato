@@ -11,6 +11,6 @@ import java.util.List;
 @Builder
 @Getter
 public class RepositoryBranchMap {
-    GitRepository gitRepository;
-    List<String> branches;
+    private final GitRepository gitRepository;
+    private final List<String> branches;
 }

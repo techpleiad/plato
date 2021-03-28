@@ -7,7 +7,7 @@ import org.techpleiad.plato.core.domain.ValidationRule;
 import java.util.List;
 
 @Repository
-public interface ValidationRuleDBRepository extends MongoRepository<ValidationRule, String> {
+public interface ValidationRuleRepository extends MongoRepository<ValidationRule, String> {
 
     List<ValidationRule> findValidationRuleByRuleOnPropertyEquals(String ruleOnProperty);
 }

@@ -7,7 +7,7 @@ import org.techpleiad.plato.core.domain.ServiceSpec;
 import java.util.List;
 
 @Repository
-public interface ServiceSpecDBRepository extends MongoRepository<ServiceSpec, String> {
+public interface ServiceSpecRepository extends MongoRepository<ServiceSpec, String> {
 
     List<ServiceSpec> findServiceSpecsByServiceIn(List<String> serviceList);
 }

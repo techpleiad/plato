@@ -10,7 +10,7 @@ import java.util.Set;
 @Getter
 @Builder
 public class RuleScope {
-    Set<String> services;
-    Set<String> branches;
-    Set<String> profiles;
+    private final Set<String> services;
+    private final Set<String> branches;
+    private final Set<String> profiles;
 }

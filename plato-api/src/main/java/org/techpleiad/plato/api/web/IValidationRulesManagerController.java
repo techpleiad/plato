@@ -13,5 +13,5 @@ public interface IValidationRulesManagerController {
 
     @ApiOperation("Add validation rule")
     @PostMapping(Constants.VERSION_RULES)
-    ResponseEntity addRule(@Valid @RequestBody ValidationRuleRequestTO validationRuleRequestTO) throws Exception;
+    ResponseEntity addRule(@Valid @RequestBody ValidationRuleRequestTO validationRuleRequestTO);
 }

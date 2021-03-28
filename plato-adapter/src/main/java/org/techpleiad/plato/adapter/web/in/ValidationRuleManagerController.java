@@ -8,6 +8,7 @@ import org.techpleiad.plato.adapter.mapper.ValidationRuleMapper;
 import org.techpleiad.plato.api.request.ValidationRuleRequestTO;
 import org.techpleiad.plato.api.web.IValidationRulesManagerController;
 import org.techpleiad.plato.core.advice.ExecutionTime;
+import org.techpleiad.plato.core.domain.ValidationRule;
 import org.techpleiad.plato.core.port.in.IAddValidationRuleUseCase;
 
 @RestController
@@ -22,6 +23,7 @@ public class ValidationRuleManagerController implements IValidationRulesManagerC
     @ExecutionTime
     @Override
     public ResponseEntity addRule(final ValidationRuleRequestTO validationRuleRequestTO) {
-        return ResponseEntity.ok(addValidationRuleUseCase.addValidationRule(validationRuleMapper.convertValidationRuleRequestTOtoValidationRule(validationRuleRequestTO)));
+        final ValidationRule validationRule = validationRuleMapper.convertValidationRuleRequestTOtoValidationRule(validationRuleRequestTO);
+        return ResponseEntity.ok(addValidationRuleUseCase.addValidationRule(validationRule));
     }
 }

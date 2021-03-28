@@ -8,9 +8,9 @@ import java.util.List;
 @ToString
 @Getter
 public class GitBranchNotFoundException extends RuntimeException {
-    private String errorMessage;
-    private String url;
-    private List<String> branches;
+    private final String errorMessage;
+    private final String url;
+    private final List<String> branches;
 
     public GitBranchNotFoundException(final String errorMessage, final String url, final List<String> branches) {
         super(errorMessage + " : " + url);

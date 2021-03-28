@@ -9,9 +9,9 @@ import java.util.List;
 @Getter
 public class BranchNotSupportedException extends RuntimeException {
 
-    private String errorMessage = "service does not support these branches";
-    private String service;
-    private List<String> branches;
+    private static final String ERROR_MESSAGE = "service does not support these branches";
+    private final String service;
+    private final List<String> branches;
 
     public BranchNotSupportedException(final String service, final List<String> branches) {
         this.branches = branches;

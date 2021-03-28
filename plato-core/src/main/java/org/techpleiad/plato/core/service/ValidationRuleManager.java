@@ -22,9 +22,9 @@ public class ValidationRuleManager implements IAddValidationRuleUseCase {
         final Set<String> services = validationRule.getScope().getServices();
         final Set<String> branches = validationRule.getScope().getBranches();
         final Set<String> profiles = validationRule.getScope().getProfiles();
-        final List<ValidationRule> validationRules = validationRulePersistencePort.findExistingValidationRuleByScopeAndRuleOnProperty(validationRule);
-        if (!validationRules.isEmpty()) {
-            for (final ValidationRule rule : validationRules) {
+        final List<ValidationRule> existingValidationRules = validationRulePersistencePort.findExistingValidationRuleByScopeAndRuleOnProperty(validationRule);
+        if (!existingValidationRules.isEmpty()) {
+            for (final ValidationRule rule : existingValidationRules) {
                 final Set<String> ruleServices = rule.getScope().getServices();
                 final Set<String> ruleBranches = rule.getScope().getBranches();
                 final Set<String> ruleProfiles = rule.getScope().getProfiles();

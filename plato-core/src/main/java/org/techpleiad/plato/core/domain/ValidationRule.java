@@ -14,9 +14,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "rules")
 public class ValidationRule {
     @Id
-    String ruleId;
-    RuleScope scope;
-    String ruleOnProperty;
-    JsonNode rule;
+    private final String ruleId;
+    private final RuleScope scope;
+    private final String ruleOnProperty;
+    private final JsonNode rule;
 
 }

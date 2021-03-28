@@ -3,7 +3,7 @@ package org.techpleiad.plato.adapter.persistence;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.techpleiad.plato.adapter.persistence.repository.ValidationRuleDBRepository;
+import org.techpleiad.plato.adapter.persistence.repository.ValidationRuleRepository;
 import org.techpleiad.plato.core.domain.ValidationRule;
 import org.techpleiad.plato.core.port.out.IValidationRulePersistencePort;
 
@@ -14,17 +14,17 @@ import java.util.List;
 public class ValidationRuleDBAdapter implements IValidationRulePersistencePort {
 
     @Autowired
-    private ValidationRuleDBRepository validationRuleDBRepository;
+    private ValidationRuleRepository validationRuleRepository;
 
     @Override
     public List<ValidationRule> findExistingValidationRuleByScopeAndRuleOnProperty(final ValidationRule validationRule) {
-        return validationRuleDBRepository
+        return validationRuleRepository
                 .findValidationRuleByRuleOnPropertyEquals(validationRule.getRuleOnProperty());
     }
 
     @Override
     public ValidationRule addValidationRule(final ValidationRule validationRule) {
         log.info("Creating Validation Rule :: {}", validationRule);
-        return validationRuleDBRepository.insert(validationRule);
+        return validationRuleRepository.insert(validationRule);
     }
 }

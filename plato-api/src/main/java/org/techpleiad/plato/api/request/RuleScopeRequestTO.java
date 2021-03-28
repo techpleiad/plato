@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -14,7 +15,7 @@ import java.util.List;
 @Getter
 @ToString
 public class RuleScopeRequestTO {
-    private List<String> services;
-    private List<String> branches;
-    private List<String> profiles;
+    private final List<String> services = new ArrayList<>();
+    private final List<String> branches = new ArrayList<>();
+    private final List<String> profiles = new ArrayList<>();
 }

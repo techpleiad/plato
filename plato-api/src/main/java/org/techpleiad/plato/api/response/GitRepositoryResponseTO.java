@@ -9,8 +9,8 @@ import lombok.ToString;
 @ToString
 public class GitRepositoryResponseTO {
 
-    private String url;
-    private String username;
-    private boolean useDefault;
+    private final String url;
+    private final String username;
+    private final boolean useDefault;
 
 }

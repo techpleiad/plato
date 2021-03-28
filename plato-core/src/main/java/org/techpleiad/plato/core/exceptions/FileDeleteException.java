@@ -6,8 +6,9 @@ import lombok.ToString;
 @ToString
 @Getter
 public class FileDeleteException extends RuntimeException {
-    private String errorMessage;
-    private String filePath;
+    private final String errorMessage;
+    private final String filePath;
+
 
     public FileDeleteException(final String errorMessage, final String filePath) {
         this.errorMessage = errorMessage;

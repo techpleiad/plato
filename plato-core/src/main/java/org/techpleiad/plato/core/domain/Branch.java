@@ -8,6 +8,6 @@ import lombok.ToString;
 @Getter
 @Builder
 public class Branch {
-    private String name;
-    private int priority;
+    private final String name;
+    private final int priority;
 }

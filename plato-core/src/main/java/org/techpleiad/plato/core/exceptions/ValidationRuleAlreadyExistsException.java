@@ -6,11 +6,11 @@ import lombok.ToString;
 @ToString
 @Getter
 public class ValidationRuleAlreadyExistsException extends RuntimeException {
-    private String errorMessage;
-    private String id;
+    private final String errorMessage;
+    private final String ruleOnProperty;
 
-    public ValidationRuleAlreadyExistsException(final String errorMessage, final String id) {
+    public ValidationRuleAlreadyExistsException(final String errorMessage, final String ruleOnProperty) {
         this.errorMessage = errorMessage;
-        this.id = id;
+        this.ruleOnProperty = ruleOnProperty;
     }
 }

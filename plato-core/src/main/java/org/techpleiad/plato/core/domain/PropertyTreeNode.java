@@ -17,7 +17,7 @@ public class PropertyTreeNode {
     private final HashMap<String, PropertyTreeNode> child = new HashMap<>();
     @Builder.Default
     private boolean isLeaf = false;
-    private String property;
+    private final String property;
 
     public PropertyTreeNode getChild(final String... nodes) {
 

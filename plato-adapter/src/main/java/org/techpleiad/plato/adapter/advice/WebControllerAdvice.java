@@ -27,7 +27,7 @@ public class WebControllerAdvice {
     private static final String ERROR_MESSAGE = "errorMessage";
     private static final String BRANCHES = "branches";
     private static final String SERVICE = "service";
-    private static final String VALIDATION_RULE = "validation rule";
+    private static final String VALIDATION_RULE = "validationRule";
     private static final String URL = "url";
 
     @ExceptionHandler(value = GitRepositoryNotFoundException.class)
@@ -82,7 +82,7 @@ public class WebControllerAdvice {
 
         final Map<String, Object> error = new HashMap<>();
         error.put(ERROR_MESSAGE, exception.getErrorMessage());
-        error.put(VALIDATION_RULE, exception.getId());
+        error.put(VALIDATION_RULE, exception.getRuleOnProperty());
 
         return new ResponseEntity<>(new ErrorResponse(error, HttpStatus.BAD_REQUEST.value()),
                 HttpStatus.BAD_REQUEST);

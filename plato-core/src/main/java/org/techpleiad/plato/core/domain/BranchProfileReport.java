@@ -11,9 +11,9 @@ import java.util.List;
 @Builder
 @Getter
 public class BranchProfileReport {
-    private String profile;
-    private boolean fileEqual;
-    private Boolean propertyValueEqual;
-    private List<Pair<String, String>> propertyValuePair;
-    private List<Document> documents;
+    private final String profile;
+    private final boolean fileEqual;
+    private final Boolean propertyValueEqual;
+    private final List<Pair<String, String>> propertyValuePair;
+    private final List<Document> documents;
 }

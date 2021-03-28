@@ -8,7 +8,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class BranchReportResponseTO {
-    String fromBranch;
-    String toBranch;
-    ServicesAcrossBranchValidateResponseTO consistencyAcrossBranchesReport;
+    private final String fromBranch;
+    private final String toBranch;
+    private final ServicesAcrossBranchValidateResponseTO consistencyAcrossBranchesReport;
 }

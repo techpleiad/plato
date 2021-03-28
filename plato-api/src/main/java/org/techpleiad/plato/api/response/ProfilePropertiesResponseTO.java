@@ -10,6 +10,6 @@ import java.util.List;
 @Getter
 @ToString
 public class ProfilePropertiesResponseTO {
-    private List<String> properties;
-    private DocumentResponseTO document;
+    private final List<String> properties;
+    private final DocumentResponseTO document;
 }

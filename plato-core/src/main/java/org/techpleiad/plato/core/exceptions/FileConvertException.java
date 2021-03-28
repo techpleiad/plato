@@ -4,8 +4,9 @@ import lombok.Getter;
 
 @Getter
 public class FileConvertException extends RuntimeException {
-    private String errorMessage;
-    public FileConvertException(String errorMessage) {
+    private final String errorMessage;
+
+    public FileConvertException(final String errorMessage) {
         super(errorMessage);
         this.errorMessage = errorMessage;
     }

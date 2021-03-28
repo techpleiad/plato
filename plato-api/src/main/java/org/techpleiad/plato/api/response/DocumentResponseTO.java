@@ -10,7 +10,7 @@ import lombok.ToString;
 @Getter
 @ToString
 public class DocumentResponseTO {
-    private String branch;
-    private String profile;
-    private String document;
+    private final String branch;
+    private final String profile;
+    private final String document;
 }

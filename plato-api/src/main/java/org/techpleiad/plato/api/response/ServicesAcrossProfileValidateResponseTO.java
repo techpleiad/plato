@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @ToString
 public class ServicesAcrossProfileValidateResponseTO {
-    private String service;
-    private String branch;
-    private List<ProfilePropertiesResponseTO> missingProperty;
+    private final String service;
+    private final String branch;
+    private final List<ProfilePropertiesResponseTO> missingProperty;
 }

@@ -13,9 +13,9 @@ import java.util.List;
 @Getter
 @ToString
 public class BranchProfileReportResponseTO {
-    private String profile;
-    private boolean fileEqual;
-    private Boolean propertyValueEqual;
-    private List<Pair<String, String>> propertyValuePair;
+    private final String profile;
+    private final boolean fileEqual;
+    private final Boolean propertyValueEqual;
+    private final List<Pair<String, String>> propertyValuePair;
     List<DocumentResponseTO> documents;
 }

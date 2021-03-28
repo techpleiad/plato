@@ -9,7 +9,7 @@ import lombok.ToString;
 @Builder
 @Getter
 public class BranchReport {
-    String fromBranch;
-    String toBranch;
-    ConsistencyAcrossBranchesReport consistencyAcrossBranchesReport;
+    private final String fromBranch;
+    private final String toBranch;
+    private final ConsistencyAcrossBranchesReport consistencyAcrossBranchesReport;
 }

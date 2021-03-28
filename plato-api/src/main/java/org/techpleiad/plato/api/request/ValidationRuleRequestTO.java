@@ -5,11 +5,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotNull;
+
 @Builder
 @Getter
 @ToString
 public class ValidationRuleRequestTO {
+    @NotNull
     private final JsonNode rule;
-    final private String ruleOnProperty;
-    final private RuleScopeRequestTO scope;
+    @NotNull
+    private final String ruleOnProperty;
+    @NotNull
+    private final RuleScopeRequestTO scope;
 }

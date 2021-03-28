@@ -9,7 +9,7 @@ import lombok.ToString;
 @Getter
 @Builder
 public class ValidationAcrossBranchProperties {
-    String fromBranch;
-    String toBranch;
-    boolean propertyValueEqual;
+    private final String fromBranch;
+    private final String toBranch;
+    private final boolean propertyValueEqual;
 }
