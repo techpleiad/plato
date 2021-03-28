@@ -17,4 +17,8 @@ public class BranchNotSupportedException extends RuntimeException {
         this.branches = branches;
         this.service = service;
     }
+
+    public String getErrorMessage() {
+        return ERROR_MESSAGE;
+    }
 }
