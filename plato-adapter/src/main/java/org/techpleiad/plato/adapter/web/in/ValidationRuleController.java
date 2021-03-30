@@ -13,7 +13,7 @@ import org.techpleiad.plato.core.port.in.IAddValidationRuleUseCase;
 
 @RestController
 @Slf4j
-public class ValidationRuleManagerController implements IValidationRulesManagerController {
+public class ValidationRuleController implements IValidationRulesManagerController {
     @Autowired
     private IAddValidationRuleUseCase addValidationRuleUseCase;
     @Autowired

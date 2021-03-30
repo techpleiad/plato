@@ -6,7 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,7 +15,10 @@ import java.util.List;
 @Getter
 @ToString
 public class RuleScopeRequestTO {
-    private List<String> services;
-    private List<String> branches;
-    private List<String> profiles;
+    @Builder.Default
+    private final Set<String> services = new HashSet<>();
+    @Builder.Default
+    private final Set<String> branches = new HashSet<>();
+    @Builder.Default
+    private final Set<String> profiles = new HashSet<>();
 }

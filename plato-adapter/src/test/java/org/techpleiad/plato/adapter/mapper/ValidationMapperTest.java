@@ -11,9 +11,9 @@ import org.techpleiad.plato.core.domain.Document;
 import java.util.Arrays;
 import java.util.List;
 
-public class ValidationRuleMapperTest {
+public class ValidationMapperTest {
 
-    private ValidationRuleMapper validationRuleMapper = Mappers.getMapper(ValidationRuleMapper.class);
+    private final ValidationMapper validationMapper = Mappers.getMapper(ValidationMapper.class);
 
     @Test
     void givenConsistencyAcrossBranchReport_whenConvertToServiceAcrossBranchResponse_thenMap() {
@@ -65,10 +65,10 @@ public class ValidationRuleMapperTest {
 
         final List<ConsistencyAcrossBranchesReport> emptyConsistencyAcrossBranchesReport = Arrays.asList();
 
-        final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = validationRuleMapper
+        final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = validationMapper
                 .convertConsistencyAcrossBranchesReportListToServicesAcrossBranchListValidateResponseTO(consistencyAcrossBranchesReport);
 
-        final List<ServicesAcrossBranchValidateResponseTO> emptyServicesAcrossBranchValidateResponseTO = validationRuleMapper
+        final List<ServicesAcrossBranchValidateResponseTO> emptyServicesAcrossBranchValidateResponseTO = validationMapper
                 .convertConsistencyAcrossBranchesReportListToServicesAcrossBranchListValidateResponseTO(emptyConsistencyAcrossBranchesReport);
 
 

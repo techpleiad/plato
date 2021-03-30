@@ -7,7 +7,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RestController;
 import org.techpleiad.plato.adapter.config.ConfigToolConfig;
 import org.techpleiad.plato.adapter.mapper.ServiceManagerMapper;
-import org.techpleiad.plato.adapter.mapper.ValidationRuleMapper;
+import org.techpleiad.plato.adapter.mapper.ValidationMapper;
 import org.techpleiad.plato.api.request.ServicesAcrossBranchValidateRequestTO;
 import org.techpleiad.plato.api.request.ServicesAcrossProfileValidateRequestTO;
 import org.techpleiad.plato.api.request.ServicesConsistencyLevelAcrossBranchValidateRequestTO;
@@ -39,7 +39,7 @@ public class ValidationController implements IValidationController {
     @Autowired
     private IGetServiceUseCase getServiceUseCase;
     @Autowired
-    private ValidationRuleMapper validationRuleMapper;
+    private ValidationMapper validationMapper;
     @Autowired
     private IEmailServiceUseCase emailServiceUseCase;
     @Autowired
@@ -81,7 +81,7 @@ public class ValidationController implements IValidationController {
 
         final List<ServicesAcrossProfileValidateResponseTO> responseList =
                 reportList.stream().map(report ->
-                        validationRuleMapper.convertInconsistentProfilePropertyToProfilePropertyResponseTO(
+                        validationMapper.convertInconsistentProfilePropertyToProfilePropertyResponseTO(
                                 report.getService(),
                                 branchName,
                                 report
@@ -117,7 +117,7 @@ public class ValidationController implements IValidationController {
                     .getEmailFrom());
         }
 
-        final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = validationRuleMapper
+        final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = validationMapper
                 .convertConsistencyAcrossBranchesReportListToServicesAcrossBranchListValidateResponseTO(reportList);
 
         return ResponseEntity.ok(servicesAcrossBranchValidateResponseTO);
@@ -142,7 +142,7 @@ public class ValidationController implements IValidationController {
                     .getEmailFrom());
         }
 
-        final List<ConsistencyLevelValidateResponseTO> consistencyLevelValidateResponseTO = validationRuleMapper
+        final List<ConsistencyLevelValidateResponseTO> consistencyLevelValidateResponseTO = validationMapper
                 .convertConsistencyLevelBranchesReportToConsistencyLevelResponse(reportList);
 
         return ResponseEntity.ok(consistencyLevelValidateResponseTO);

@@ -8,9 +8,11 @@ import lombok.ToString;
 public class ValidationRuleAlreadyExistsException extends RuntimeException {
     private final String errorMessage;
     private final String ruleOnProperty;
+    private final String rule;
 
-    public ValidationRuleAlreadyExistsException(final String errorMessage, final String ruleOnProperty) {
+    public ValidationRuleAlreadyExistsException(final String errorMessage, final String ruleOnProperty, final String rule) {
         this.errorMessage = errorMessage;
         this.ruleOnProperty = ruleOnProperty;
+        this.rule = rule;
     }
 }

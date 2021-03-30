@@ -5,16 +5,20 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Builder
 @Getter
 @ToString
 public class ValidationRuleRequestTO {
+    //Custom Annotation to check if rule is a json schema
     @NotNull
     private final JsonNode rule;
-    @NotNull
+    @NotEmpty
     private final String ruleOnProperty;
     @NotNull
+    @Valid
     private final RuleScopeRequestTO scope;
 }
