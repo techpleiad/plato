@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @ToString
 public class ServicesAcrossBranchValidateResponseTO {
-    private String service;
-    private List<BranchProfileReportResponseTO> report;
+    private final String service;
+    private final List<BranchProfileReportResponseTO> report;
 
 }

@@ -39,9 +39,6 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
         final List<String> path = Arrays.stream(files).filter(e -> !StringUtils.isEmptyOrNull(e)).collect(Collectors.toList());
         System.out.println(WORKING_DIRECTORY.toString());
         final String directory = WORKING_DIRECTORY.get().getPath() + SEPARATOR + StringUtils.join(path, SEPARATOR);
-
-        System.out.println("Hi");
-
         return new File(directory);
     }
 

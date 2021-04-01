@@ -10,6 +10,6 @@ import java.util.List;
 @Getter
 @ToString
 public class ConsistencyAcrossBranchesReport {
-    private String service;
-    List<BranchProfileReport> report;
+    private final String service;
+    private final List<BranchProfileReport> report;
 }

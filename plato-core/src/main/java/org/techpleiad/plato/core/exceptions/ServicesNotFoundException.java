@@ -8,8 +8,8 @@ import java.util.List;
 @ToString
 @Getter
 public class ServicesNotFoundException extends RuntimeException {
-    private String errorMessage;
-    private List<String> serviceList;
+    private final String errorMessage;
+    private final List<String> serviceList;
 
     public ServicesNotFoundException(final String errorMessage, final List<String> serviceList) {
         this.errorMessage = errorMessage;

@@ -6,8 +6,8 @@ import lombok.ToString;
 @ToString
 @Getter
 public class GitRepositoryNotFoundException extends RuntimeException {
-    private String errorMessage;
-    private String url;
+    private final String errorMessage;
+    private final String url;
 
     public GitRepositoryNotFoundException(final String errorMessage, final String url) {
         this.errorMessage = errorMessage;

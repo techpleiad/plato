@@ -7,8 +7,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 public class PropertyNodeDetail {
-    private JsonNode rootNode;
-    private String pathRegex;
-    private boolean isPropertyArray;
-    private PropertyTreeNode alteredPropertyRoot;
+    private final JsonNode rootNode;
+    private final String pathRegex;
+    private final boolean isPropertyArray;
+    private final PropertyTreeNode alteredPropertyRoot;
 }

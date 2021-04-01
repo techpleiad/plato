@@ -12,14 +12,14 @@ import java.util.Objects;
 @ToString
 @Builder
 public class PropertyValueDetails {
-    private String property;
-    private String value;
+    private final String property;
+    private final String value;
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PropertyValueDetails that = (PropertyValueDetails) o;
+        final PropertyValueDetails that = (PropertyValueDetails) o;
         return property.equals(that.property);
     }
 

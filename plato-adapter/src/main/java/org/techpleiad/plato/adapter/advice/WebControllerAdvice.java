@@ -14,6 +14,7 @@ import org.techpleiad.plato.core.exceptions.GitRepositoryNotFoundException;
 import org.techpleiad.plato.core.exceptions.ServiceAlreadyExistException;
 import org.techpleiad.plato.core.exceptions.ServiceNotFoundException;
 import org.techpleiad.plato.core.exceptions.ServicesNotFoundException;
+import org.techpleiad.plato.core.exceptions.ValidationRuleAlreadyExistsException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +27,10 @@ public class WebControllerAdvice {
     private static final String ERROR_MESSAGE = "errorMessage";
     private static final String BRANCHES = "branches";
     private static final String SERVICE = "service";
+    private static final String VALIDATION_RULE = "validationRule";
     private static final String URL = "url";
+    private static final String VALIDATION_RULE_PROPERTY = "ValidationRuleProperty";
+
 
     @ExceptionHandler(value = GitRepositoryNotFoundException.class)
     public ResponseEntity<ErrorResponse> generateGitNotFoundException(final GitRepositoryNotFoundException exception) {
@@ -70,6 +74,18 @@ public class WebControllerAdvice {
         final Map<String, Object> error = new HashMap<>();
         error.put(ERROR_MESSAGE, exception.getErrorMessage());
         error.put(SERVICE, exception.getId());
+
+        return new ResponseEntity<>(new ErrorResponse(error, HttpStatus.BAD_REQUEST.value()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = ValidationRuleAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> generateValidationRuleExistsException(final ValidationRuleAlreadyExistsException exception) {
+
+        final Map<String, Object> error = new HashMap<>();
+        error.put(ERROR_MESSAGE, exception.getErrorMessage());
+        error.put(VALIDATION_RULE_PROPERTY, exception.getRuleOnProperty());
+        error.put(VALIDATION_RULE, exception.getRule());
 
         return new ResponseEntity<>(new ErrorResponse(error, HttpStatus.BAD_REQUEST.value()),
                 HttpStatus.BAD_REQUEST);

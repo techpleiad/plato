@@ -11,6 +11,6 @@ import java.util.List;
 @Getter
 @ToString
 public class ConsistencyLevelValidateResponseTO {
-    String service;
-    List<BranchReportResponseTO> branchReports;
+    private final String service;
+    private final List<BranchReportResponseTO> branchReports;
 }
