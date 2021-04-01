@@ -54,7 +54,7 @@ public class ServiceManagerController implements IServiceManagerController {
     }
 
     @Override
-    public ResponseEntity addService(@Valid final ServiceRequestTO serviceRequestTO) throws Exception {
+    public ResponseEntity<ServiceSpec> addService(@Valid final ServiceRequestTO serviceRequestTO) throws Exception {
         final ServiceSpec serviceSpec = serviceManagerMapper.convertServiceRequestTOToServiceSpec(serviceRequestTO);
         return ResponseEntity.ok(addServiceUseCase.addService(serviceSpec));
     }

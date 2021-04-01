@@ -14,7 +14,7 @@ import java.util.Set;
 
 @Service
 @Slf4j
-public class ValidationRuleManager implements IAddValidationRuleUseCase {
+public class ValidationRuleService implements IAddValidationRuleUseCase {
     @Autowired
     private IValidationRulePersistencePort validationRulePersistencePort;
 
@@ -33,7 +33,7 @@ public class ValidationRuleManager implements IAddValidationRuleUseCase {
                 final Set<String> ruleServices1 = new HashSet<>(rule.getScope().getServices());
                 final Set<String> ruleBranches1 = new HashSet<>(rule.getScope().getBranches());
                 final Set<String> ruleProfiles1 = new HashSet<>(rule.getScope().getProfiles());
-                
+
                 ruleServices.retainAll(services);
                 if (!ruleServices.isEmpty() || (ruleServices1.isEmpty() && services.isEmpty())) {
                     ruleBranches.retainAll(branches);

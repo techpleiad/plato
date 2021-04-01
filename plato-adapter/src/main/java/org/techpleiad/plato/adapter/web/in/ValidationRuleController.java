@@ -22,7 +22,7 @@ public class ValidationRuleController implements IValidationRulesManagerControll
 
     @ExecutionTime
     @Override
-    public ResponseEntity addRule(final ValidationRuleRequestTO validationRuleRequestTO) {
+    public ResponseEntity<ValidationRule> addRule(final ValidationRuleRequestTO validationRuleRequestTO) {
         final ValidationRule validationRule = validationRuleMapper.convertValidationRuleRequestTOtoValidationRule(validationRuleRequestTO);
         return ResponseEntity.ok(addValidationRuleUseCase.addValidationRule(validationRule));
     }
