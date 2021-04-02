@@ -13,8 +13,8 @@ import javax.validation.constraints.NotNull;
 @Getter
 @ToString
 public class ValidationRuleRequestTO {
-    //Custom Annotation to check if rule is a json schema
     @NotNull
+
     private final JsonNode rule;
     @NotEmpty
     private final String ruleOnProperty;
