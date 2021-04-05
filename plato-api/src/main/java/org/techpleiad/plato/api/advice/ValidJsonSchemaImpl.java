@@ -1,4 +1,4 @@
-package org.techpleiad.plato.core.advice;
+package org.techpleiad.plato.api.advice;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.networknt.schema.JsonSchema;
@@ -8,10 +8,9 @@ import com.networknt.schema.ValidationMessage;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.io.InputStream;
 import java.util.Set;
 
-public class JsonSchemaValidationAspect implements ConstraintValidator<JsonSchemaValidation, JsonNode> {
+public class ValidJsonSchemaImpl implements ConstraintValidator<ValidJsonSchema, JsonNode> {
 
     private static final String SCHEMA_TO_VALIDATE_JSON_SCHEMA = "{\n" +
             "    \"$schema\": \"http://json-schema.org/draft-06/schema#\",\n" +
@@ -44,10 +43,8 @@ public class JsonSchemaValidationAspect implements ConstraintValidator<JsonSchem
 
     @Override
     public boolean isValid(JsonNode jsonNode, ConstraintValidatorContext constraintValidatorContext) {
-        JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V4);
-        InputStream is = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream(SCHEMA_TO_VALIDATE_JSON_SCHEMA);
-        JsonSchema schemaToValidationJsonSchema = factory.getSchema(is);
+        JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7);
+        JsonSchema schemaToValidationJsonSchema = factory.getSchema(SCHEMA_TO_VALIDATE_JSON_SCHEMA);
         Set<ValidationMessage> errors = schemaToValidationJsonSchema.validate(jsonNode);
         System.out.println(errors);
         return false;

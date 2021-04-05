@@ -1,4 +1,4 @@
-package org.techpleiad.plato.core.advice;
+package org.techpleiad.plato.api.advice;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -9,8 +9,8 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = JsonSchemaValidationAspect.class)
-public @interface JsonSchemaValidation {
+@Constraint(validatedBy = ValidJsonSchemaImpl.class)
+public @interface ValidJsonSchema {
     String message() default "Invalid json schema";
 
     Class<?>[] groups() default {};
