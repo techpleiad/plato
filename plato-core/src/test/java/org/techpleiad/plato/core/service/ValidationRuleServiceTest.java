@@ -9,8 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.techpleiad.plato.core.domain.RuleScope;
 import org.techpleiad.plato.core.domain.ValidationRule;
+import org.techpleiad.plato.core.domain.ValidationRuleScope;
 import org.techpleiad.plato.core.exceptions.ValidationRuleAlreadyExistsException;
 import org.techpleiad.plato.core.port.out.IValidationRulePersistencePort;
 
@@ -35,7 +35,7 @@ class ValidationRuleServiceTest {
             .ruleOnProperty("mongo.property")
             .rule(new ObjectMapper().readTree("{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}"))
             .scope(
-                    RuleScope.builder()
+                    ValidationRuleScope.builder()
                             .services(new HashSet<>(Arrays.asList("RM", "DM")))
                             .branches(new HashSet<>(Collections.singletonList("dev")))
                             .profiles(new HashSet<>(Collections.singletonList("prod")))
@@ -47,7 +47,7 @@ class ValidationRuleServiceTest {
             .ruleOnProperty("mongo.property")
             .rule(new ObjectMapper().readTree("{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}"))
             .scope(
-                    RuleScope.builder()
+                    ValidationRuleScope.builder()
                             .services(new HashSet<>(Arrays.asList("RM", "DM")))
                             .branches(new HashSet<>(Collections.singletonList("dev")))
                             .profiles(new HashSet<>(Collections.singletonList("prod")))
@@ -59,7 +59,7 @@ class ValidationRuleServiceTest {
             .ruleOnProperty("mongo.property")
             .rule(new ObjectMapper().readTree("{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}"))
             .scope(
-                    RuleScope.builder()
+                    ValidationRuleScope.builder()
                             .services(new HashSet<>(Collections.singletonList("RM")))
                             .branches(new HashSet<>(Collections.singletonList("dev")))
                             .profiles(new HashSet<>(Collections.singletonList("prod")))
@@ -71,7 +71,7 @@ class ValidationRuleServiceTest {
             .ruleOnProperty("mongo.property")
             .rule(new ObjectMapper().readTree("{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}"))
             .scope(
-                    RuleScope.builder()
+                    ValidationRuleScope.builder()
                             .services(new HashSet<>(Collections.singletonList("RM")))
                             .branches(new HashSet<>())
                             .profiles(new HashSet<>(Collections.singletonList("prod")))
@@ -83,7 +83,7 @@ class ValidationRuleServiceTest {
             .ruleOnProperty("mongo.property")
             .rule(new ObjectMapper().readTree("{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}"))
             .scope(
-                    RuleScope.builder()
+                    ValidationRuleScope.builder()
                             .services(new HashSet<>())
                             .branches(new HashSet<>())
                             .profiles(new HashSet<>())
@@ -94,7 +94,7 @@ class ValidationRuleServiceTest {
             .ruleOnProperty("mongo.property")
             .rule(new ObjectMapper().readTree("{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}"))
             .scope(
-                    RuleScope.builder()
+                    ValidationRuleScope.builder()
                             .services(new HashSet<>())
                             .branches(new HashSet<>(Collections.singletonList("dev")))
                             .profiles(new HashSet<>())
@@ -106,7 +106,7 @@ class ValidationRuleServiceTest {
             .ruleOnProperty("mongo.property")
             .rule(new ObjectMapper().readTree("{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}"))
             .scope(
-                    RuleScope.builder()
+                    ValidationRuleScope.builder()
                             .services(new HashSet<>(Arrays.asList("RM", "DM")))
                             .branches(new HashSet<>(Collections.singletonList("dev")))
                             .profiles(new HashSet<>())
@@ -118,7 +118,7 @@ class ValidationRuleServiceTest {
             .ruleOnProperty("mongo.property")
             .rule(new ObjectMapper().readTree("{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}"))
             .scope(
-                    RuleScope.builder()
+                    ValidationRuleScope.builder()
                             .services(new HashSet<>())
                             .branches(new HashSet<>(Collections.singletonList("dev")))
                             .profiles(new HashSet<>(Collections.singletonList("prod")))
@@ -130,7 +130,7 @@ class ValidationRuleServiceTest {
             .ruleOnProperty("mongo.property")
             .rule(new ObjectMapper().readTree("{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}"))
             .scope(
-                    RuleScope.builder()
+                    ValidationRuleScope.builder()
                             .services(new HashSet<>(Arrays.asList("DM", "RM")))
                             .branches(new HashSet<>(Arrays.asList("dev", "prod")))
                             .profiles(new HashSet<>(Arrays.asList("dev", "test")))
@@ -142,7 +142,7 @@ class ValidationRuleServiceTest {
             .ruleOnProperty("mongo.property")
             .rule(new ObjectMapper().readTree("{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}"))
             .scope(
-                    RuleScope.builder()
+                    ValidationRuleScope.builder()
                             .services(new HashSet<>(Arrays.asList("DM", "RM")))
                             .branches(new HashSet<>(Arrays.asList("dev", "test")))
                             .profiles(new HashSet<>(Arrays.asList("dev", "test")))
@@ -154,7 +154,7 @@ class ValidationRuleServiceTest {
             .ruleOnProperty("mongo.property")
             .rule(new ObjectMapper().readTree("{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}"))
             .scope(
-                    RuleScope.builder()
+                    ValidationRuleScope.builder()
                             .services(new HashSet<>(Arrays.asList("DM", "RM")))
                             .branches(new HashSet<>(Arrays.asList("dev", "prod")))
                             .profiles(new HashSet<>(Arrays.asList("dev", "test")))
@@ -166,7 +166,7 @@ class ValidationRuleServiceTest {
             .ruleOnProperty("mongo.property")
             .rule(new ObjectMapper().readTree("{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}"))
             .scope(
-                    RuleScope.builder()
+                    ValidationRuleScope.builder()
                             .services(new HashSet<>(Arrays.asList("DM", "RM")))
                             .branches(new HashSet<>(Arrays.asList("uat", "test")))
                             .profiles(new HashSet<>(Arrays.asList("dev", "test")))

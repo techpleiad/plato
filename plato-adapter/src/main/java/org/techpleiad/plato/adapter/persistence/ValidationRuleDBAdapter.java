@@ -24,8 +24,17 @@ public class ValidationRuleDBAdapter implements IValidationRulePersistencePort {
     @Override
     public List<ValidationRule> findExistingValidationRuleByScopeAndRuleOnProperty(final ValidationRule validationRule) {
 
-        return validationRuleMapper.convertValidationRuleEntityListToValidationRuleList(validationRuleRepository
-                .findValidationRuleByRuleOnPropertyEquals(validationRule.getRuleOnProperty()));
+        List<ValidationRuleEntity> validationRuleEntityList = validationRuleRepository
+                .findValidationRuleByRuleOnPropertyEquals(validationRule.getRuleOnProperty());
+        List<ValidationRule> validationRules = validationRuleMapper.convertValidationRuleEntityListToValidationRuleList(validationRuleEntityList);
+        return validationRules;
+    }
+
+    @Override
+    public List<ValidationRule> getValidationRules() {
+        List<ValidationRuleEntity> validationRuleEntityList = validationRuleRepository.findAll();
+        List<ValidationRule> validationRules = validationRuleMapper.convertValidationRuleEntityListToValidationRuleList(validationRuleEntityList);
+        return validationRules;
     }
 
     @Override

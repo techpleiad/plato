@@ -10,8 +10,8 @@ import org.mapstruct.Named;
 import org.techpleiad.plato.adapter.domain.ValidationRuleEntity;
 import org.techpleiad.plato.api.request.RuleScopeRequestTO;
 import org.techpleiad.plato.api.request.ValidationRuleRequestTO;
-import org.techpleiad.plato.core.domain.RuleScope;
 import org.techpleiad.plato.core.domain.ValidationRule;
+import org.techpleiad.plato.core.domain.ValidationRuleScope;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ public interface ValidationRuleMapper {
 
     ValidationRule convertValidationRuleRequestTOtoValidationRule(final ValidationRuleRequestTO validationRuleRequestTO);
 
-    RuleScope convertRuleScopeRequestToRuleScope(final RuleScopeRequestTO ruleScopeRequestTO);
+    ValidationRuleScope convertRuleScopeRequestToRuleScope(final RuleScopeRequestTO ruleScopeRequestTO);
 
     @Mapping(source = "rule", target = "rule", qualifiedByName = "jsonRuleToString")
     ValidationRuleEntity convertValidationRuleToValidationRuleEntity(final ValidationRule validationRule);
