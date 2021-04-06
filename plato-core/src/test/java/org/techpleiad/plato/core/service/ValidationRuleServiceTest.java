@@ -174,6 +174,30 @@ class ValidationRuleServiceTest {
             )
             .build();
 
+    final ValidationRule existingRule5 = ValidationRule.builder()
+            .ruleOnProperty("mongo.property")
+            .rule(new ObjectMapper().readTree("{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}"))
+            .scope(
+                    ValidationRuleScope.builder()
+                            .services(new HashSet<>(Collections.singletonList("RM")))
+                            .branches(new HashSet<>(Collections.singletonList("dev")))
+                            .profiles(new HashSet<>(Collections.singletonList("test")))
+                            .build()
+            )
+            .build();
+
+    final ValidationRule newRule9 = ValidationRule.builder()
+            .ruleOnProperty("mongo.property")
+            .rule(new ObjectMapper().readTree("{\"name\":\"John\", \"age\":31, \"city\":\"New York\"}"))
+            .scope(
+                    ValidationRuleScope.builder()
+                            .services(new HashSet<>())
+                            .branches(new HashSet<>(Collections.singletonList("dev")))
+                            .profiles(new HashSet<>(Collections.singletonList("test")))
+                            .build()
+            )
+            .build();
+
 
     @Test
     void givenExistingRules_whenAddRule_thenThrowsValidationRuleAlreadyExistsException_1() {
@@ -264,5 +288,12 @@ class ValidationRuleServiceTest {
         Assertions.assertDoesNotThrow(() -> validationRuleService.addValidationRule(newRule8));
     }
 
+    @Test
+    void givenExistingRules_whenAddRule_thenDoesNotThrowsValidationRuleAlreadyExistsException_6() {
+
+        Mockito.when(validationRulePersistencePort.findExistingValidationRuleByScopeAndRuleOnProperty(Mockito.any())).thenReturn(Collections.singletonList(existingRule5));
+
+        Assertions.assertDoesNotThrow(() -> validationRuleService.addValidationRule(newRule9));
+    }
 
 }
