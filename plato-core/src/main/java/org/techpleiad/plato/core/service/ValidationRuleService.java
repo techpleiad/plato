@@ -58,7 +58,7 @@ public class ValidationRuleService implements IAddValidationRuleUseCase, IGetVal
     @Override
     public Map<String, ValidationRule> getValidationRuleMapByScope(String service, String branch, String profile) {
 
-        List<ValidationRule> requiredValidationRules = filterValidationRules(service, branch, profile);
+        List<ValidationRule> requiredValidationRules = getAppropriateValidationRules(service, branch, profile);
 
         Map<String, List<ValidationRule>> validationRuleMap = createValidationRuleMap(requiredValidationRules);
 
@@ -67,7 +67,7 @@ public class ValidationRuleService implements IAddValidationRuleUseCase, IGetVal
         return requiredValidationRuleMap;
     }
 
-    private List<ValidationRule> filterValidationRules(String service, String branch, String profile) {
+    private List<ValidationRule> getAppropriateValidationRules(String service, String branch, String profile) {
         //Step 1 Fetch Rules
         List<ValidationRule> validationRules = getValidationRules();
         //Step 2 Filtering
@@ -135,12 +135,24 @@ public class ValidationRuleService implements IAddValidationRuleUseCase, IGetVal
                 }
                 if (neServices && eServices) {
                     validationRuleList.removeIf(p -> p.getScope().getServices().isEmpty());
+                    if (validationRuleList.size() == 1) {
+                        requiredValidationRuleMap.put(validationRuleEntry.getKey(), validationRuleEntry.getValue().get(0));
+                        continue;
+                    }
                 }
                 if (neBranches && eBranches) {
                     validationRuleList.removeIf(p -> p.getScope().getBranches().isEmpty());
+                    if (validationRuleList.size() == 1) {
+                        requiredValidationRuleMap.put(validationRuleEntry.getKey(), validationRuleEntry.getValue().get(0));
+                        continue;
+                    }
                 }
                 if (neProfiles && eProfiles) {
                     validationRuleList.removeIf(p -> p.getScope().getProfiles().isEmpty());
+                    if (validationRuleList.size() == 1) {
+                        requiredValidationRuleMap.put(validationRuleEntry.getKey(), validationRuleEntry.getValue().get(0));
+                        continue;
+                    }
                 }
             }
             requiredValidationRuleMap.put(validationRuleEntry.getKey(), validationRuleEntry.getValue().get(0));
