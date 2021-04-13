@@ -9,14 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.techpleiad.plato.api.constant.Constants;
 import org.techpleiad.plato.api.request.ServiceRequestTO;
-import org.techpleiad.plato.api.request.ServicesAcrossBranchValidateRequestTO;
-import org.techpleiad.plato.api.request.ServicesAcrossProfileValidateRequestTO;
 import org.techpleiad.plato.api.response.ServiceResponseTO;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public interface IServiceManagerController {
 
@@ -36,12 +33,5 @@ public interface IServiceManagerController {
     @PostMapping(Constants.VERSION_SERVICES)
     ResponseEntity addService(@Valid @RequestBody ServiceRequestTO serviceRequestTO) throws Exception;
 
-    @ApiOperation("Validate across profiles")
-    @PostMapping(Constants.VERSION_SERVICES_BRANCHES + "/{branchName}" + Constants.ACROSS_PROFILES_VALIDATE)
-    ResponseEntity validateAcrossProfiles(@Valid @RequestBody ServicesAcrossProfileValidateRequestTO servicesAcrossProfileValidateRequestTO,
-                                          @Valid @PathVariable String branchName) throws ExecutionException, InterruptedException;
 
-    @ApiOperation("Validate across branches")
-    @PostMapping(Constants.VERSION_SERVICES_BRANCHES + Constants.ACROSS_BRANCHES_VALIDATE)
-    ResponseEntity validateAcrossBranches(@Valid @RequestBody ServicesAcrossBranchValidateRequestTO servicesAcrossBranchValidateRequestTO) throws ExecutionException, InterruptedException;
 }

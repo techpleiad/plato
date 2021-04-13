@@ -8,5 +8,5 @@ import lombok.ToString;
 @Getter
 @ToString
 public class BranchResponseTO {
-    private String name;
+    private final String name;
 }

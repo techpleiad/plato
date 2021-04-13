@@ -13,9 +13,9 @@ import java.io.File;
 @EqualsAndHashCode
 public class ServiceBranchData {
 
-    private String repository;
-    private String branch;
+    private final String repository;
+    private final String branch;
 
     @EqualsAndHashCode.Exclude
-    private File directory;
+    private final File directory;
 }

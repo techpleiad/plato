@@ -6,5 +6,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Getter
 public class MissingPropertyDetail extends PropertyNodeDetail {
-    private String actualPath;
+    private final String actualPath;
 }

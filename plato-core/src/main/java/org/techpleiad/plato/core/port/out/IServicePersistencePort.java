@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface IServicePersistencePort {
 
-    void addService(ServiceSpec serviceSpec);
+    ServiceSpec addService(ServiceSpec serviceSpec);
 
     Optional<ServiceSpec> deleteServiceById(String serviceId);
 

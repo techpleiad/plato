@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import org.springframework.data.util.Pair;
 
 import java.util.List;
 
@@ -12,8 +13,9 @@ import java.util.List;
 @Getter
 @ToString
 public class BranchProfileReportResponseTO {
-    private String profile;
-    private boolean fileEqual;
-    private Boolean propertyValueEqual;
+    private final String profile;
+    private final boolean fileEqual;
+    private final Boolean propertyValueEqual;
+    private final List<Pair<String, String>> propertyValuePair;
     List<DocumentResponseTO> documents;
 }

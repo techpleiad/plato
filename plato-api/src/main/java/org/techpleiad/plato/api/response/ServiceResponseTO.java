@@ -10,11 +10,11 @@ import java.util.List;
 @Getter
 @ToString
 public class ServiceResponseTO {
-    private String service;
-    private String description;
-    private String directory;
-    private GitRepositoryResponseTO gitRepository;
-    private List<ProfileResponseTO> profiles;
-    private List<BranchResponseTO> branches;
+    private final String service;
+    private final String description;
+    private final String directory;
+    private final GitRepositoryResponseTO gitRepository;
+    private final List<ProfileResponseTO> profiles;
+    private final List<BranchResponseTO> branches;
 
 }

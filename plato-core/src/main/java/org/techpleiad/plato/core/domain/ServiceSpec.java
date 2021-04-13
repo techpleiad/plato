@@ -15,12 +15,12 @@ import java.util.List;
 public class ServiceSpec {
 
     @Id
-    private String service;
-    private String description;
-    private String directory;
-    private GitRepository gitRepository;
-    private List<Profile> profiles;
-    private List<Branch> branches;
+    private final String service;
+    private final String description;
+    private final String directory;
+    private final GitRepository gitRepository;
+    private final List<Profile> profiles;
+    private final List<Branch> branches;
 
 }
 

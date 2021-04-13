@@ -37,6 +37,7 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
     @Override
     public File generateFileFromLocalDirectoryPath(final String... files) {
         final List<String> path = Arrays.stream(files).filter(e -> !StringUtils.isEmptyOrNull(e)).collect(Collectors.toList());
+        System.out.println(WORKING_DIRECTORY.toString());
         final String directory = WORKING_DIRECTORY.get().getPath() + SEPARATOR + StringUtils.join(path, SEPARATOR);
         return new File(directory);
     }
@@ -148,8 +149,7 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
         final String expectedProfile = filename.substring(serviceName.length(), filename.lastIndexOf("."));
         if (!expectedProfile.isEmpty() && expectedProfile.charAt(0) == '-') {
             return Optional.of(expectedProfile.substring(1));
-        }
-        else if (expectedProfile.isEmpty()) {
+        } else if (expectedProfile.isEmpty()) {
             return Optional.of(expectedProfile);
         }
         return Optional.empty();

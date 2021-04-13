@@ -21,19 +21,20 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ServiceManager implements IAddServiceUseCase, IGetServiceUseCase, IDeleteServiceUseCase {
 
+
     @Autowired
     private IServicePersistencePort servicePersistencePort;
     @Autowired
     private GitService gitService;
 
     @Override
-    public void addService(final ServiceSpec serviceSpec) {
+    public ServiceSpec addService(final ServiceSpec serviceSpec) {
         if (servicePersistencePort.getServiceById(serviceSpec.getService()).isPresent()) {
             throw new ServiceAlreadyExistException("service name already exists", serviceSpec.getService());
         }
 
         gitService.validateGitUrlAndBranches(serviceSpec.getGitRepository(), serviceSpec.getBranches().stream().map(Branch::getName).collect(Collectors.toList()));
-        servicePersistencePort.addService(serviceSpec);
+        return servicePersistencePort.addService(serviceSpec);
     }
 
     @Override

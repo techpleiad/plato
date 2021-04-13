@@ -20,6 +20,7 @@ import org.techpleiad.plato.core.port.in.IFilterSuppressPropertyUseCase;
 import org.techpleiad.plato.core.port.in.IGetAlteredPropertyUseCase;
 import org.techpleiad.plato.core.port.in.IGetSuppressPropertyUseCase;
 import org.techpleiad.plato.core.port.in.IGitServiceUseCase;
+import org.techpleiad.plato.core.port.in.IValidateAcrossBranchConsistencyLevelUseCase;
 import org.techpleiad.plato.core.port.in.IValidateAcrossBranchUseCase;
 import org.techpleiad.plato.core.port.in.IValidateAcrossProfileUseCase;
 import org.techpleiad.plato.core.port.in.IValidateBranchUseCase;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class ValidateService implements IValidateAcrossProfileUseCase, IValidateBranchUseCase, IValidateAcrossBranchUseCase {
+public class ValidateService implements IValidateAcrossProfileUseCase, IValidateBranchUseCase, IValidateAcrossBranchUseCase, IValidateAcrossBranchConsistencyLevelUseCase {
 
     @Autowired
     private IFileServiceUserCase fileService;
@@ -77,7 +78,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
 
         final List<BranchProfileReport> branchProfileReportList = new LinkedList<>();
 
-        final List<Profile> profileList = serviceSpec.getProfiles().stream().collect(Collectors.toList());
+        final List<Profile> profileList = new ArrayList<>(serviceSpec.getProfiles());
         profileList.add(Profile.builder().name("").build());
 
         profileList.forEach(profile -> {
@@ -125,14 +126,89 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 .build();
     }
 
+    @Override
+    public ConsistencyAcrossBranchesReport validateProfilesAcrossBranchDownflow(
+            final ServiceBranchData fromServiceBranchData,
+            final ServiceBranchData toServiceBranchData,
+            final ServiceSpec serviceSpec,
+            final boolean checkPropertyValue) throws ExecutionException, InterruptedException {
+
+        final List<ServiceBranchData> serviceBranchList = Arrays.asList(fromServiceBranchData, toServiceBranchData);
+
+        final HashMap<String, TreeMap<String, File>> branchToProfileMap = new HashMap<>();
+        for (final ServiceBranchData serviceBranch : serviceBranchList) {
+            final CompletableFuture<TreeMap<String, File>> profileToFileMap = fileService.getYamlFiles(
+                    serviceBranch.getDirectory(),
+                    serviceSpec.getService()
+            );
+            branchToProfileMap.put(serviceBranch.getBranch(), profileToFileMap.get());
+        }
+
+        final String fromBranch = serviceBranchList.get(0).getBranch();
+        final String toBranch = serviceBranchList.get(1).getBranch();
+
+        final List<BranchProfileReport> branchProfileReportList = new LinkedList<>();
+
+        final List<Profile> profileList = new ArrayList<>(serviceSpec.getProfiles());
+        profileList.add(Profile.builder().name("").build());
+
+        profileList.forEach(profile -> {
+            final File fromFile = branchToProfileMap.get(fromBranch).get(profile.getName());
+            final File toFile = branchToProfileMap.get(toBranch).get(profile.getName());
+
+            if (Objects.isNull(fromFile) || Objects.isNull(toFile)) {
+                log.error("from file {}, toFile {}", fromFile, toFile);
+            } else {
+                final String profileName = profile.getName().isEmpty() ? "default" : profile.getName();
+
+                final String fromOriginal = fileService.getFileToString(fromFile);
+                final String toOriginal = fileService.getFileToString(toFile);
+
+                final JsonNode sortFromOriginal = convertFileToJsonNode(fromFile, true);
+                final JsonNode sortToOriginal = convertFileToJsonNode(toFile, true);
+
+                final List<Pair<String, String>> downFlowMissingData = generateDownFlowBetweenBranch(profileName, fromFile, toFile);
+
+                final List<Document> documentList = Arrays.asList(
+                        Document.builder().profile(profileName).branch(fromBranch).build(),
+                        Document.builder().profile(profileName).branch(toBranch).build()
+                );
+                final boolean fileEqual = fromOriginal.equals(toOriginal);
+
+                final Boolean propertyValueEqual = checkPropertyValue ?
+                        Objects.nonNull(sortFromOriginal) &&
+                                Objects.nonNull(sortToOriginal) &&
+                                sortFromOriginal.toString().equals(sortToOriginal.toString())
+                        : null;
+
+                branchProfileReportList.add(
+                        BranchProfileReport.builder()
+                                .propertyValueEqual(propertyValueEqual)
+                                .profile(profileName)
+                                .documents(documentList)
+                                .propertyValuePair(downFlowMissingData)
+                                .fileEqual(fileEqual)
+                                .build()
+                );
+            }
+        });
+
+        return ConsistencyAcrossBranchesReport
+                .builder()
+                .service(serviceSpec.getService())
+                .report(branchProfileReportList)
+                .build();
+    }
+
+
     @ThreadDirectory
     @Override
     public List<ConsistencyAcrossBranchesReport> validateAcrossBranchesInServiceBatch(
             final List<ServiceSpec> serviceSpecList,
-            final ValidationAcrossBranchConfig validationAcrossBranchConfig) throws ExecutionException, InterruptedException {
+            final ValidationAcrossBranchProperties validationAcrossBranchProperties) throws ExecutionException, InterruptedException {
 
         final List<ConsistencyAcrossBranchesReport> reportList = new LinkedList<>();
-        final List<String> branchList = Arrays.asList(validationAcrossBranchConfig.getFromBranch(), validationAcrossBranchConfig.getToBranch());
+        final List<String> branchList = Arrays.asList(validationAcrossBranchProperties.getFromBranch(), validationAcrossBranchProperties.getToBranch());
 
         serviceSpecList.forEach(serviceSpec -> validateBranchesInService(serviceSpec, branchList));
 
@@ -155,7 +231,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                     );
                 }
                 final ConsistencyAcrossBranchesReport report = validateProfilesAcrossBranch(serviceBranchList.get(0), serviceBranchList
-                        .get(1), serviceSpec, validationAcrossBranchConfig.isPropertyValueEqual());
+                        .get(1), serviceSpec, validationAcrossBranchProperties.isPropertyValueEqual());
                 reportList.add(report);
 
             } catch (final Exception e) {
@@ -450,6 +526,41 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
         }
     }
 
+    private List<Pair<String, String>> generateDownFlowBetweenBranch(final String profileName, final File fromFile, final File toFile) {
+        // lower branch
+        final Map<String, HashMap<String, String>> fromGlobalProperty =
+                buildGlobalObjectToPropertiesMappingForBranch(
+                        Collections.singletonList(Pair.of(profileName, fromFile)),
+                        PropertyTreeNode.builder().build()
+                );
+        // higher branch
+        final Map<String, HashMap<String, String>> toGlobalProperty = // preprod
+                buildGlobalObjectToPropertiesMappingForBranch(
+                        Collections.singletonList(Pair.of(profileName, toFile)),
+                        PropertyTreeNode.builder().build()
+                );
+
+        final List<Pair<String, String>> downFlowMissingData = new LinkedList<>();
+        toGlobalProperty.forEach((path, propertyValue) -> {
+            final HashMap<String, String> fromPropertyValue = fromGlobalProperty.getOrDefault(path, null);
+            if (Objects.isNull(fromPropertyValue)) {
+                propertyValue.forEach((key, value) -> System.out.println("MISSING : " + path + "." + key));
+            } else {
+                propertyValue.forEach((property, value) -> {
+                    final String val = fromPropertyValue.getOrDefault(property, null);
+                    final String invalidProperty = path + "." + property;
+                    if (Objects.isNull(val)) {
+                        downFlowMissingData.add(Pair.of(invalidProperty, "MISSING"));
+                    } else if (!value.equalsIgnoreCase(val)) {
+                        downFlowMissingData.add(Pair.of(invalidProperty, "MISMATCH"));
+                    }
+                });
+            }
+        });
+
+        return downFlowMissingData;
+    }
+
     private boolean isJsonNodeValueOrNull(final JsonNode rootNode) {
         return !rootNode.isObject() && !rootNode.isArray();
     }
@@ -497,5 +608,157 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
         } catch (final Exception exception) {
             throw new FileConvertException(exception.getMessage());
         }
+    }
+
+    @ExecutionTime
+    public Map<String, HashMap<String, String>> buildGlobalObjectToPropertiesMappingForBranch(
+            final List<Pair<String, File>> fileContentMap,
+            final PropertyTreeNode alteredPropertyTree) {
+
+        propertyToAlteredProperty = new HashMap<>();
+        propertyToAlteredProperty.put("", "");
+
+        final HashMap<String, HashMap<String, String>> objectPropertyMap = new HashMap<>();
+        fileContentMap.forEach(pairProfileFile ->
+                traverseObjectToPropertiesMappingForBranch(convertFileToJsonNode(pairProfileFile.getSecond(), false), objectPropertyMap,
+                        alteredPropertyTree)
+        );
+        return objectPropertyMap;
+    }
+
+    private boolean checkIfJsonNodeValue(final JsonNode node) {
+        if (Objects.isNull(node)) return false;
+
+        return node.isValueNode();
+    }
+
+    @ExecutionTime
+    private void traverseObjectToPropertiesMappingForBranch(final JsonNode rootNode,
+                                                            final HashMap<String, HashMap<String, String>> objectPropertyMap,
+                                                            final PropertyTreeNode alteredPropertyRoot) {
+
+        final Queue<PropertyNodeDetail> queue = new LinkedList<>();
+        queue.add(PropertyNodeDetail.builder().alteredPropertyRoot(alteredPropertyRoot)
+                .rootNode(rootNode).pathRegex("")
+                .isPropertyArray(false)
+                .build()
+        );
+
+        while (!queue.isEmpty()) {
+            final PropertyNodeDetail propertyNodeDetail = queue.remove();
+
+            final boolean getObjectPropertiesMapped = propertyNodeDetail.getRootNode().isObject() && (propertyNodeDetail.getAlteredPropertyRoot() == null || !propertyNodeDetail
+                    .getAlteredPropertyRoot().contains("*"));
+
+            if (getObjectPropertiesMapped || propertyNodeDetail.isPropertyArray()) {
+
+                objectPropertyMap.putIfAbsent(propertyNodeDetail.getPathRegex(), new HashMap<>());
+                final HashMap<String, String> propertySet = objectPropertyMap.get(propertyNodeDetail.getPathRegex());
+
+                propertyNodeDetail.getRootNode().fields().forEachRemaining(property -> {
+                    propertySet.put(property.getKey(), checkIfJsonNodeValue(property.getValue()) ? property.getValue().toString() : "$");
+                });
+            }
+
+            propertyNodeDetail.getRootNode().fields().forEachRemaining(object -> {
+                final JsonNode value = object.getValue();
+                final String key = object.getKey();
+
+                PropertyTreeNode childNode = null;
+                boolean isPropertyAltered = false;
+
+                if (Objects.nonNull(propertyNodeDetail.getAlteredPropertyRoot())) {
+                    if (propertyNodeDetail.getAlteredPropertyRoot().contains("*")) {
+                        isPropertyAltered = true;
+                    }
+                    childNode = propertyNodeDetail.getAlteredPropertyRoot().getChild("*", key);
+                }
+
+                if (value.isObject()) {
+                    final String alterRegexPath = generatePropertyPath(propertyNodeDetail.getPathRegex(), isPropertyAltered ? "*" : key);
+
+                    propertyToAlteredProperty.put(generatePropertyPath(propertyNodeDetail.getPathRegex(), key), alterRegexPath);
+                    queue.add(PropertyNodeDetail.builder().alteredPropertyRoot(childNode)
+                            .rootNode(value).pathRegex(alterRegexPath)
+                            .isPropertyArray(false)
+                            .build()
+                    );
+                } else if (value.isArray()) {
+                    final String regexPath = generatePropertyPath(propertyNodeDetail.getPathRegex(), key, "*");
+                    propertyToAlteredProperty.put(regexPath, regexPath);
+
+                    final PropertyTreeNode finalChildNode = childNode;
+                    value.forEach(subRoot ->
+                            queue.add(PropertyNodeDetail.builder().alteredPropertyRoot(finalChildNode)
+                                    .rootNode(subRoot).pathRegex(regexPath)
+                                    .isPropertyArray(true)
+                                    .build()
+                            ));
+                }
+            });
+        }
+    }
+
+    @ThreadDirectory
+    @Override
+    public List<ConsistencyLevelAcrossBranchesReport> validateAcrossBranchesConsistencyLevelServiceBatch(final List<ServiceSpec> serviceSpecList, final boolean isPropertyValueEqual, final String targetBranch) throws ExecutionException, InterruptedException {
+
+        final Map<ServiceBranchData, ServiceBranchData> mapServiceBranchToRepository = gitService.cloneGitRepositoryByBranchInBatchAsyncDifferentBranches(serviceSpecList);
+
+        final List<ConsistencyLevelAcrossBranchesReport> consistencyLevelAcrossBranchesReports = new ArrayList<>();
+
+        for (final ServiceSpec serviceSpec : serviceSpecList) {
+            final List<BranchReport> branchReports = new ArrayList<>();
+
+            final List<ServiceBranchData> serviceBranchList = new ArrayList<>();
+
+            final List<Branch> branches = sortByPriority(serviceSpec.getBranches());
+
+            int x = 0;
+            for (int i = 0; i < branches.size(); i++) {
+                if (branches.get(i).getName().equals(targetBranch)) {
+                    x = i;
+                    break;
+                }
+            }
+
+            for (int i = 0; i <= x; i++) {
+                final ServiceBranchData data = ServiceBranchData.builder().repository(serviceSpec.getGitRepository().getUrl()).branch(branches.get(i).getName()).build();
+
+                serviceBranchList.add(ServiceBranchData.builder().repository(data.getRepository())
+                        .branch(data.getBranch())
+                        .directory(mapServiceBranchToRepository.get(data).getDirectory())
+                        .build()
+                );
+            }
+
+
+            for (int i = 0; i < serviceBranchList.size() - 1; i++) {
+
+                final ConsistencyAcrossBranchesReport report = validateProfilesAcrossBranchDownflow(serviceBranchList.get(i), serviceBranchList
+                        .get(i + 1), serviceSpec, isPropertyValueEqual);
+
+                branchReports.add(BranchReport.builder()
+                        .consistencyAcrossBranchesReport(report)
+                        .fromBranch(serviceBranchList.get(i).getBranch())
+                        .toBranch(serviceBranchList.get(i + 1).getBranch())
+                        .build());
+            }
+
+            consistencyLevelAcrossBranchesReports.add(ConsistencyLevelAcrossBranchesReport.builder()
+                    .branchReports(branchReports)
+                    .service(serviceSpec.getService())
+                    .build());
+        }
+
+        return consistencyLevelAcrossBranchesReports;
+    }
+
+    public List<Branch> sortByPriority(final List<Branch> branches) {
+        return branches.stream().sorted(this::compareBranchPriority).collect(Collectors.toList());
+    }
+
+    private int compareBranchPriority(final Branch a, final Branch b) {
+        return b.getPriority() - a.getPriority();
     }
 }

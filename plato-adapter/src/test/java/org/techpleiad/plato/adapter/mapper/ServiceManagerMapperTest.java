@@ -8,21 +8,12 @@ import org.techpleiad.plato.api.request.GitRepositoryRequestTO;
 import org.techpleiad.plato.api.request.ProfileRequestTO;
 import org.techpleiad.plato.api.request.ServiceRequestTO;
 import org.techpleiad.plato.api.response.ServiceResponseTO;
-import org.techpleiad.plato.api.response.ServicesAcrossBranchValidateResponseTO;
-import org.techpleiad.plato.api.response.ServicesAcrossProfileValidateResponseTO;
 import org.techpleiad.plato.core.domain.Branch;
-import org.techpleiad.plato.core.domain.BranchProfileReport;
-import org.techpleiad.plato.core.domain.ConsistencyAcrossBranchesReport;
-import org.techpleiad.plato.core.domain.ConsistencyAcrossProfilesReport;
-import org.techpleiad.plato.core.domain.Document;
 import org.techpleiad.plato.core.domain.GitRepository;
 import org.techpleiad.plato.core.domain.Profile;
 import org.techpleiad.plato.core.domain.ServiceSpec;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.stream.Collectors;
 
 class ServiceManagerMapperTest {
@@ -111,109 +102,4 @@ class ServiceManagerMapperTest {
                 .collect(Collectors.toList()), serviceResponseTo.getBranches().stream().map(e -> e.getName()).collect(Collectors.toList()));
     }
 
-
-    @Test
-    void givenConsistencyAcrossBranchReport_whenConvertToServiceAcrossBranchResponse_thenMap() {
-        final List<ConsistencyAcrossBranchesReport> consistencyAcrossBranchesReport = Arrays.asList(ConsistencyAcrossBranchesReport.builder()
-                .service("data-manager")
-                .report(
-                        Arrays.asList(
-                                BranchProfileReport.builder()
-                                        .profile("dev")
-                                        .fileEqual(true)
-                                        .propertyValueEqual(true)
-                                        .documents(
-                                                Arrays.asList(
-                                                        Document.builder()
-                                                                .branch("dev")
-                                                                .profile("dev")
-                                                                .document("test-document")
-                                                                .build(),
-                                                        Document.builder()
-                                                                .branch("test")
-                                                                .profile("test")
-                                                                .document("test-document")
-                                                                .build()
-                                                )
-                                        )
-                                        .build(),
-                                BranchProfileReport.builder()
-                                        .profile("dev")
-                                        .fileEqual(true)
-                                        .propertyValueEqual(true)
-                                        .documents(
-                                                Arrays.asList(
-                                                        Document.builder()
-                                                                .branch("dev")
-                                                                .profile("dev")
-                                                                .document("test-document")
-                                                                .build(),
-                                                        Document.builder()
-                                                                .branch("test")
-                                                                .profile("test")
-                                                                .document("test-document")
-                                                                .build()
-                                                )
-                                        )
-                                        .build()
-                        )
-                ).build());
-
-
-
-        final List<ConsistencyAcrossBranchesReport> emptyConsistencyAcrossBranchesReport = Arrays.asList();
-
-        final List<ServicesAcrossBranchValidateResponseTO> servicesAcrossBranchValidateResponseTO = serviceManagerMapper
-                .convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(consistencyAcrossBranchesReport);
-
-        final List<ServicesAcrossBranchValidateResponseTO> emptyServicesAcrossBranchValidateResponseTO = serviceManagerMapper
-                .convertConsistencyAcrossBranchesReportToServicesAcrossBranchValidateResponseTO(emptyConsistencyAcrossBranchesReport);
-
-
-        Assertions.assertEquals(1, servicesAcrossBranchValidateResponseTO.size());
-        Assertions.assertEquals(0, emptyServicesAcrossBranchValidateResponseTO.size());
-        Assertions.assertEquals("data-manager", servicesAcrossBranchValidateResponseTO.get(0).getService());
-        Assertions.assertEquals(2, servicesAcrossBranchValidateResponseTO.get(0).getReport().size());
-
-
-    }
-
-    @Test
-    void convertInconsistentProfilePropertyToProfilePropertyResponseTO() {
-        //Creating ConsistencyAcrossProfilesReport Object
-
-        final HashMap<String, List<String>> missingProperty = new HashMap<String, List<String>>();
-        final List<String> arraylist1 = new ArrayList<>();
-        final List<String> arraylist2 = new ArrayList<>();
-        arraylist1.add("missingProperty1");
-        arraylist1.add("missingProperty2");
-        arraylist2.add("missingProperty3");
-        arraylist2.add("missingProperty4");
-
-
-        missingProperty.put("key1", arraylist1);
-        missingProperty.put("key2", arraylist2);
-
-        final HashMap<String, String> profileDocument = new HashMap<String, String>();
-        profileDocument.put("key1", "devDocs");
-        profileDocument.put("key2", "testDocs");
-
-
-        final ConsistencyAcrossProfilesReport consistencyAcrossProfilesReport = ConsistencyAcrossProfilesReport.builder()
-                .missingProperty(missingProperty)
-                .profileDocument(profileDocument)
-                .build();
-
-        //Mapping into ServicesAcrossProfileValidateResponseTO
-
-
-        final ServicesAcrossProfileValidateResponseTO servicesAcrossProfileValidateResponseTO =
-                serviceManagerMapper.convertInconsistentProfilePropertyToProfilePropertyResponseTO("Rule_Manager", "dev", consistencyAcrossProfilesReport);
-
-        //Testing if the mapper is successful
-
-        //Testing part1, check if convertMissingPropertyMapToList works fine
-        //final List<ProfilePropertiesResponseTO> profilePropertiesTOList = serviceManagerMapper.convertMissingPropertyMapToList(missingProperty, profileDocument);
-
-    }
 }
