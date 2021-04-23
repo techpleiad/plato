@@ -5,6 +5,7 @@ import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
+import org.techpleiad.plato.api.exceptions.InvalidRuleException;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -13,7 +14,7 @@ import java.util.Set;
 public class ValidJsonSchemaImpl implements ConstraintValidator<ValidJsonSchema, JsonNode> {
 
     private static final String SCHEMA_TO_VALIDATE_JSON_SCHEMA = "{\n" +
-            "    \"$schema\": \"http://json-schema.org/draft-06/schema#\",\n" +
+            "    \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n" +
             "    \"title\": \"SchemaValidation\",\n" +
             "    \"description\": \"JsonSchema to validate Jsonschema from API request body\",\n" +
             "    \"type\": \"object\",\n" +
@@ -35,10 +36,10 @@ public class ValidJsonSchemaImpl implements ConstraintValidator<ValidJsonSchema,
             "        },\n" +
             "        \"properties\":{\n" +
             "            \"type\":\"object\",\n" +
-            "            \"description\": \"rules for validaton\"\n" +
+            "            \"description\": \"rules for validation\"\n" +
             "        }\n" +
             "    },\n" +
-            "    \"required\": [\"$schema\", \"title\", \"description\", \"type\", \"properties\"]\n" +
+            "    \"required\": [\"$schema\", \"title\", \"type\", \"properties\"]\n" +
             "}";
 
     @Override
@@ -46,7 +47,9 @@ public class ValidJsonSchemaImpl implements ConstraintValidator<ValidJsonSchema,
         JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7);
         JsonSchema schemaToValidationJsonSchema = factory.getSchema(SCHEMA_TO_VALIDATE_JSON_SCHEMA);
         Set<ValidationMessage> errors = schemaToValidationJsonSchema.validate(jsonNode);
-        System.out.println(errors);
-        return false;
+        if (errors.isEmpty()) {
+            return true;
+        }
+        throw new InvalidRuleException(errors.toString());
     }
 }
