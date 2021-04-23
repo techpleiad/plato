@@ -14,11 +14,11 @@ import org.techpleiad.plato.core.domain.ValidationRuleScope;
 @Builder
 @AllArgsConstructor
 @Document(collection = "rules")
+@Setter
 public class ValidationRuleEntity {
     @Id
     private String ruleId;
     private ValidationRuleScope scope;
     private String ruleOnProperty;
-    @Setter
     private String rule;
 }
