@@ -10,8 +10,9 @@ import org.techpleiad.plato.api.exceptions.InvalidRuleException;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public class ValidJsonSchemaImpl implements ConstraintValidator<ValidJsonSchema, JsonNode> {
+public class JsonSchemaValidator implements ConstraintValidator<ValidJsonSchema, JsonNode> {
 
     private static final String SCHEMA_TO_VALIDATE_JSON_SCHEMA = "{\n" +
             "    \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n" +
@@ -50,6 +51,6 @@ public class ValidJsonSchemaImpl implements ConstraintValidator<ValidJsonSchema,
         if (errors.isEmpty()) {
             return true;
         }
-        throw new InvalidRuleException(errors.toString());
+        throw new InvalidRuleException("Invalid Json Schema", errors.stream().map(ValidationMessage::getMessage).collect(Collectors.toSet()));
     }
 }

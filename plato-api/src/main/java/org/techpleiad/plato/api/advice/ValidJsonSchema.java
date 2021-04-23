@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = ValidJsonSchemaImpl.class)
+@Constraint(validatedBy = JsonSchemaValidator.class)
 public @interface ValidJsonSchema {
     String message() default "Invalid json schema";
 
