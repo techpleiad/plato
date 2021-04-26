@@ -27,14 +27,14 @@ public class CustomValidateService implements ICustomValidateUseCase {
 
     @ThreadDirectory
     @Override
-    public void customValidateYamlFile(ServiceSpec serviceSpec, String service, String branch, String profile) throws ExecutionException, InterruptedException {
+    public void customValidateYamlFile(final ServiceSpec serviceSpec, final String service, final String branch, final String profile) throws ExecutionException, InterruptedException {
         final ServiceBranchData serviceBranchData = gitService.cloneGitRepositoryByBranchAsync(serviceSpec.getGitRepository(), branch);
 
         final CompletableFuture<TreeMap<String, File>> profileToFileMap = fileService.getYamlFiles(
                 serviceBranchData.getDirectory(),
                 serviceSpec.getService()
         );
-        File yamlByProfile = profileToFileMap.get().get(profile);
+        final File yamlByProfile = profileToFileMap.get().get(profile); // missed application.yml (no profile file)
         log.info(yamlByProfile.getName());
 
     }
