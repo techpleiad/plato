@@ -1,5 +1,6 @@
 package org.techpleiad.plato.api.request;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
@@ -10,7 +11,7 @@ public class ServiceCustomValidateRequestTO {
     private String service;
     @NotBlank(message = "Branch name can not be blank")
     private String branch;
-    @NotBlank(message = "Profile name can not be blank")
-    private String profile;
+    @Builder.Default
+    private String profile = "";
     private EmailRequestTO email;
 }
