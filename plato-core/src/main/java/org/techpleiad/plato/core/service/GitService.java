@@ -25,6 +25,7 @@ import org.techpleiad.plato.core.port.out.IGetGitCredentialsPort;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -127,6 +128,40 @@ public class GitService implements IGitServiceUseCase {
         allCompletableFutures.thenApply(ArrayList::new).get();
 
         return mapRepoToDirectory;
+    }
+
+    @ExecutionTime
+    @Override
+    public ServiceBranchData cloneGitRepositoryByBranchAsync(final GitRepository gitRepository, final String branch) throws ExecutionException, InterruptedException {
+
+        List<String> branches = Collections.singletonList(branch);
+        final List<CompletableFuture<Boolean>> completableFutures = new LinkedList<>();
+        validateGitUrlAndBranches(gitRepository, branches);
+        final String directory = fileService.generateDirectory(getGitRepositoryName(gitRepository.getUrl()), branch);
+        final File directoryFile = fileService.generateFileFromLocalDirectoryPath(directory);
+
+        final ServiceBranchData serviceBranchData = ServiceBranchData.builder()
+                .repository(gitRepository.getUrl())
+                .branch(branch)
+                .directory(directoryFile)
+                .build();
+
+        completableFutures.add(
+                gitCloneRequestUseCase.cloneGitRepositoryByBranchAsync(
+                        createCloneCommand(gitRepository),
+                        gitRepository,
+                        branch,
+                        directoryFile
+                )
+        );
+
+        final CompletableFuture<Void> allFutures = CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[completableFutures.size()]));
+        final CompletableFuture<List<Boolean>> allCompletableFutures = allFutures.thenApply(future ->
+                completableFutures.stream().map(CompletableFuture::join)
+                        .collect(Collectors.toList())
+        );
+        allCompletableFutures.thenApply(ArrayList::new).get();
+        return serviceBranchData;
     }
 
 
@@ -242,7 +277,7 @@ public class GitService implements IGitServiceUseCase {
                     .password(defaultGitPassword)
                     .build();
         }
-        
+
         return gitRepository;
 
     }
