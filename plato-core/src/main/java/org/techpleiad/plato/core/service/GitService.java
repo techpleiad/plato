@@ -277,7 +277,7 @@ public class GitService implements IGitServiceUseCase {
                     .password(defaultGitPassword)
                     .build();
         }
-
+        
         return gitRepository;
 
     }

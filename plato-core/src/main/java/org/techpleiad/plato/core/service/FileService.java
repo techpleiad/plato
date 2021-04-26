@@ -37,10 +37,7 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
     @Override
     public File generateFileFromLocalDirectoryPath(final String... files) {
         final List<String> path = Arrays.stream(files).filter(e -> !StringUtils.isEmptyOrNull(e)).collect(Collectors.toList());
-        System.out.println(WORKING_DIRECTORY.toString());
-        System.out.println(WORKING_DIRECTORY.get());
         final String directory = WORKING_DIRECTORY.get().getPath() + SEPARATOR + StringUtils.join(path, SEPARATOR);
-        System.out.println(directory);
         return new File(directory);
     }
 
