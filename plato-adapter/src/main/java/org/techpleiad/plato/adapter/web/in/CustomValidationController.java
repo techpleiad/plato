@@ -8,10 +8,13 @@ import org.techpleiad.plato.api.request.ServiceCustomValidateRequestTO;
 import org.techpleiad.plato.api.web.ICustomValidationController;
 import org.techpleiad.plato.core.advice.ExecutionTime;
 import org.techpleiad.plato.core.domain.ServiceSpec;
+import org.techpleiad.plato.core.domain.ValidationRule;
 import org.techpleiad.plato.core.port.in.ICustomValidateUseCase;
 import org.techpleiad.plato.core.port.in.IGetServiceUseCase;
+import org.techpleiad.plato.core.port.in.IGetValidationRuleUseCase;
 
 import javax.validation.Valid;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @RestController
@@ -20,6 +23,9 @@ public class CustomValidationController implements ICustomValidationController {
 
     @Autowired
     private IGetServiceUseCase getServiceUseCase;
+
+    @Autowired
+    private IGetValidationRuleUseCase getValidationRuleUseCase;
 
     @Autowired
     private ICustomValidateUseCase customValidateUseCase;
@@ -31,6 +37,12 @@ public class CustomValidationController implements ICustomValidationController {
         customValidateUseCase
                 .customValidateYamlFile(serviceSpec, serviceCustomValidateRequestTO.getService(), serviceCustomValidateRequestTO.getBranch(), serviceCustomValidateRequestTO
                         .getProfile());
+
+        Map<String, ValidationRule> validationRuleMap = getValidationRuleUseCase
+                .getValidationRuleMapByScope(serviceCustomValidateRequestTO.getService(), serviceCustomValidateRequestTO.getBranch(), serviceCustomValidateRequestTO
+                        .getProfile());
+
+
         return null;
     }
 }
