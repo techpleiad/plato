@@ -174,10 +174,4 @@ class JsonSchemaValidatorTest {
         Assertions.assertThrows(InvalidRuleException.class, () -> jsonSchemaValidator.isValid(json2, context));
 
     }
-
-    @Test
-    void givenSchema_whenAddValidationRule_thenThrowsInvalidRuleException_2() {
-        Assertions.assertThrows(InvalidRuleException.class, () -> jsonSchemaValidator.isValid(json4, context));
-
-    }
 }

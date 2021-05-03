@@ -3,15 +3,17 @@ package org.techpleiad.plato.api.request;
 import lombok.Builder;
 import lombok.Getter;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import java.util.Collections;
+import java.util.List;
 
 @Getter
 public class ServiceCustomValidateRequestTO {
-    @NotBlank(message = "Service name can not be blank")
-    private String service;
-    @NotBlank(message = "Branch name can not be blank")
-    private String branch;
+    @NotEmpty(message = "Services can not be empty")
+    private List<String> services;
+    @NotEmpty(message = "Branches can not be empty")
+    private List<String> branches;
     @Builder.Default
-    private String profile = "";
+    private List<String> profiles = Collections.singletonList("");
     private EmailRequestTO email;
 }

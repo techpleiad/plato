@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.techpleiad.plato.api.constant.Constants;
 import org.techpleiad.plato.api.request.ServiceCustomValidateRequestTO;
-import org.techpleiad.plato.api.response.CustomValidateResponseTO;
+import org.techpleiad.plato.api.response.CustomValidateBatchResponseTO;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 
 public interface ICustomValidationController {
 
-    @ApiOperation("Custom Validate file")
-    @PostMapping(Constants.VERSION_SERVICES_BRANCHES + Constants.CUSTOM_VALIDATE)
-    ResponseEntity<List<CustomValidateResponseTO>> customValidate(@Valid @RequestBody ServiceCustomValidateRequestTO serviceCustomValidateRequestTO) throws ExecutionException, InterruptedException;
+    @ApiOperation("Custom Validate files")
+    @PostMapping(Constants.VERSION_SERVICES_BRANCHES + Constants.CUSTOM_VALIDATE_BATCH)
+    ResponseEntity<List<CustomValidateBatchResponseTO>> customValidateInBatch(@Valid @RequestBody ServiceCustomValidateRequestTO serviceCustomValidateBatchRequestTO) throws ExecutionException, InterruptedException;
 }

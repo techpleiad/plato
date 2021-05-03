@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.networknt.schema.JsonSchema;
+import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SpecVersion;
+import com.networknt.schema.ValidationMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -11,14 +15,19 @@ import org.springframework.stereotype.Service;
 import org.techpleiad.plato.core.advice.ExecutionTime;
 import org.techpleiad.plato.core.advice.ThreadDirectory;
 import org.techpleiad.plato.core.convert.SortingNodeFactory;
+import org.techpleiad.plato.core.domain.CustomValidateInBatchReport;
+import org.techpleiad.plato.core.domain.CustomValidateReport;
 import org.techpleiad.plato.core.domain.PropertyNodeDetail;
 import org.techpleiad.plato.core.domain.PropertyTreeNode;
 import org.techpleiad.plato.core.domain.ServiceBranchData;
 import org.techpleiad.plato.core.domain.ServiceSpec;
+import org.techpleiad.plato.core.domain.ValidationRule;
 import org.techpleiad.plato.core.exceptions.FileConvertException;
 import org.techpleiad.plato.core.port.in.ICustomValidateUseCase;
 import org.techpleiad.plato.core.port.in.IFileServiceUserCase;
 import org.techpleiad.plato.core.port.in.IGetAlteredPropertyUseCase;
+import org.techpleiad.plato.core.port.in.IGetServiceUseCase;
+import org.techpleiad.plato.core.port.in.IGetValidationRuleUseCase;
 import org.techpleiad.plato.core.port.in.IGitServiceUseCase;
 
 import java.io.File;
@@ -29,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -42,14 +52,71 @@ public class CustomValidateService implements ICustomValidateUseCase {
     private IGitServiceUseCase gitService;
 
     @Autowired
+    private IGetServiceUseCase getServiceUseCase;
+
+    @Autowired
     private IFileServiceUserCase fileService;
+
+    @Autowired
+    private IGetValidationRuleUseCase getValidationRuleUseCase;
 
     @Autowired
     private IGetAlteredPropertyUseCase getAlteredPropertyUseCase;
 
-    @ThreadDirectory
     @Override
-    public Map<String, List<JsonNode>> customValidateYamlFile(final ServiceSpec serviceSpec, final String service, final String branch, final String profile) throws ExecutionException, InterruptedException {
+    public List<CustomValidateInBatchReport> customValidateInBatch(List<String> services, List<String> branches, List<String> profiles) throws ExecutionException, InterruptedException {
+        List<CustomValidateInBatchReport> customValidateInBatchReports = new ArrayList<>();
+        for (String service : services) {
+            for (String branch : branches) {
+                for (String profile : profiles) {
+                    List<CustomValidateReport> customValidateReportList = customValidate(service, branch, profile);
+                    CustomValidateInBatchReport customValidateInBatchReport = CustomValidateInBatchReport.builder()
+                            .service(service)
+                            .branch(branch)
+                            .profile(profile)
+                            .customValidateReportList(customValidateReportList)
+                            .build();
+                    customValidateInBatchReports.add(customValidateInBatchReport);
+                }
+            }
+        }
+        return customValidateInBatchReports;
+    }
+
+    private List<CustomValidateReport> customValidate(String service, String branch, String profile) throws ExecutionException, InterruptedException {
+        ServiceSpec serviceSpec = getServiceUseCase.getService(service);
+        Map<String, List<JsonNode>> yamlPropertyToJsonNodeList = customValidateYamlFile(serviceSpec, service, branch, profile);
+
+        Map<String, ValidationRule> validationRuleMap = getValidationRuleUseCase
+                .getValidationRuleMapByScope(service, branch, profile);
+
+        JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7);
+
+        List<CustomValidateReport> responseList = new ArrayList<>();
+
+        for (Map.Entry<String, ValidationRule> validationRuleEntry : validationRuleMap.entrySet()) {
+            if (yamlPropertyToJsonNodeList.get(validationRuleEntry.getKey()) != null) {
+                List<JsonNode> jsonNodes = yamlPropertyToJsonNodeList.get(validationRuleEntry.getKey());
+                for (JsonNode jsonNode : jsonNodes) {
+                    JsonSchema schemaToValidationJsonSchema = factory.getSchema(validationRuleEntry.getValue().getRule());
+                    Set<ValidationMessage> errors = schemaToValidationJsonSchema.validate(jsonNode);
+                    if (!errors.isEmpty()) {
+                        responseList.add(
+                                CustomValidateReport.builder()
+                                        .property(validationRuleEntry.getKey())
+                                        .value(jsonNode)
+                                        .validationMessages(errors)
+                                        .build()
+                        );
+                    }
+                }
+            }
+        }
+        return responseList;
+    }
+
+    @ThreadDirectory
+    private Map<String, List<JsonNode>> customValidateYamlFile(final ServiceSpec serviceSpec, final String service, final String branch, final String profile) throws ExecutionException, InterruptedException {
         final ServiceBranchData serviceBranchData = gitService.cloneGitRepositoryByBranchAsync(serviceSpec.getGitRepository(), branch);
 
         final CompletableFuture<TreeMap<String, File>> profileToFileMap = fileService.getYamlFiles(
@@ -164,4 +231,6 @@ public class CustomValidateService implements ICustomValidateUseCase {
             throw new FileConvertException(exception.getMessage());
         }
     }
+
+
 }
