@@ -11,4 +11,5 @@ public interface IValidationRulePersistencePort {
 
     List<ValidationRule> getValidationRules();
 
+    ValidationRule deleteValidationRuleById(String serviceId);
 }
