@@ -13,5 +13,4 @@ public class CustomValidateResponseTO {
     String property;
     JsonNode value;
     Set<ValidationMessage> validationMessages;
-
 }

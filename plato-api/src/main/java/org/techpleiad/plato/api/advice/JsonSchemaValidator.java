@@ -40,7 +40,7 @@ public class JsonSchemaValidator implements ConstraintValidator<ValidJsonSchema,
             "            \"description\": \"rules for validation\"\n" +
             "        }\n" +
             "    },\n" +
-            "    \"required\": [\"$schema\", \"title\", \"type\", \"properties\"]\n" +
+            "    \"required\": [\"$schema\", \"type\"]\n" +
             "}";
 
     @Override
