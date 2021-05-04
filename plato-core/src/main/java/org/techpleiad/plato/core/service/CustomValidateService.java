@@ -64,6 +64,7 @@ public class CustomValidateService implements ICustomValidateUseCase {
     private IGetAlteredPropertyUseCase getAlteredPropertyUseCase;
 
     @Override
+    @ThreadDirectory
     public List<CustomValidateInBatchReport> customValidateInBatch(List<String> services, List<String> branches, List<String> profiles) throws ExecutionException, InterruptedException {
         List<CustomValidateInBatchReport> customValidateInBatchReports = new ArrayList<>();
         for (String service : services) {
@@ -105,7 +106,7 @@ public class CustomValidateService implements ICustomValidateUseCase {
                                 CustomValidateReport.builder()
                                         .property(validationRuleEntry.getKey())
                                         .value(jsonNode)
-                                        .validationMessages(errors)
+                                        .validationMessages(errors.stream().map(ValidationMessage::getMessage).collect(Collectors.toSet()))
                                         .build()
                         );
                     }
@@ -115,7 +116,7 @@ public class CustomValidateService implements ICustomValidateUseCase {
         return responseList;
     }
 
-    @ThreadDirectory
+
     private Map<String, List<JsonNode>> customValidateYamlFile(final ServiceSpec serviceSpec, final String service, final String branch, final String profile) throws ExecutionException, InterruptedException {
         final ServiceBranchData serviceBranchData = gitService.cloneGitRepositoryByBranchAsync(serviceSpec.getGitRepository(), branch);
 

@@ -15,6 +15,6 @@ import java.util.concurrent.ExecutionException;
 public interface ICustomValidationController {
 
     @ApiOperation("Custom Validate files")
-    @PostMapping(Constants.VERSION_SERVICES_BRANCHES + Constants.CUSTOM_VALIDATE_BATCH)
+    @PostMapping(Constants.VERSION_SERVICES_BRANCHES + Constants.CUSTOM_VALIDATE)
     ResponseEntity<List<CustomValidateBatchResponseTO>> customValidateInBatch(@Valid @RequestBody ServiceCustomValidateRequestTO serviceCustomValidateBatchRequestTO) throws ExecutionException, InterruptedException;
 }
