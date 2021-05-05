@@ -18,6 +18,7 @@ plato:
     workingDirectory: /tmp
     branchConsistencyEmailSubject: "Plato :: Branch Consistency Report - {{branch1}} and {{branch2}} branch"
     profileConsistencyEmailSubject: "Plato :: Profile Consistency Report - {{branch}} branch"
+    customValidationEmailSubject: "Plato :: Custom Validation Report"
     emailFrom: "Plato"
 
   properties:
