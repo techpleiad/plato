@@ -3,6 +3,7 @@ package org.techpleiad.plato.core.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
@@ -31,15 +32,7 @@ import org.techpleiad.plato.core.port.in.IGetValidationRuleUseCase;
 import org.techpleiad.plato.core.port.in.IGitServiceUseCase;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -86,7 +79,7 @@ public class CustomValidateService implements ICustomValidateUseCase {
 
     private List<CustomValidateReport> customValidate(String service, String branch, String profile) throws ExecutionException, InterruptedException {
         ServiceSpec serviceSpec = getServiceUseCase.getService(service);
-        Map<String, List<JsonNode>> yamlPropertyToJsonNodeList = customValidateYamlFile(serviceSpec, service, branch, profile);
+        Map<String, List<JsonNode>> yamlPropertyToJsonNodeList = customValidateYamlFile(serviceSpec, branch, profile);
 
         Map<String, ValidationRule> validationRuleMap = getValidationRuleUseCase
                 .getValidationRuleMapByScope(service, branch, profile);
@@ -117,19 +110,33 @@ public class CustomValidateService implements ICustomValidateUseCase {
     }
 
 
-    private Map<String, List<JsonNode>> customValidateYamlFile(final ServiceSpec serviceSpec, final String service, final String branch, final String profile) throws ExecutionException, InterruptedException {
+    private Map<String, List<JsonNode>> customValidateYamlFile(final ServiceSpec serviceSpec, final String branch, final String profile) throws ExecutionException, InterruptedException {
         final ServiceBranchData serviceBranchData = gitService.cloneGitRepositoryByBranchAsync(serviceSpec.getGitRepository(), branch);
 
-        final CompletableFuture<TreeMap<String, File>> profileToFileMap = fileService.getYamlFiles(
+        final CompletableFuture<TreeMap<String, File>> serviceProfileToFileMap = fileService.getYamlFiles(
                 serviceBranchData.getDirectory(),
                 serviceSpec.getService()
         );
-        final File yamlByProfile = profileToFileMap.get().get(profile);
-        log.info(yamlByProfile.getName());
+        final CompletableFuture<TreeMap<String, File>> applicationProfileToFileMap = fileService.getYamlFiles(
+                serviceBranchData.getDirectory(),
+                "application"
+        );
+        final File serviceYamlByProfile = serviceProfileToFileMap.get().get(profile);
+        final File serviceYaml = serviceProfileToFileMap.get().get("");
+
+        final File applicationYamlByProfile = applicationProfileToFileMap.get().get(profile);
+        final File applicationYaml = applicationProfileToFileMap.get().get("");
+
+        JsonNode serviceYamlByProfileAsJsonNode = convertFileToJsonNode(serviceYamlByProfile, false);
+        JsonNode serviceYamlAsJsonNode = convertFileToJsonNode(serviceYaml, false);
+        JsonNode applicationYamlByProfileAsJsonNode = convertFileToJsonNode(applicationYamlByProfile, false);
+        JsonNode applicationYamlAsJsonNode = convertFileToJsonNode(applicationYaml, false);
+
+        JsonNode mergedYamlAsJsonNode = mergeYaml(serviceYamlByProfileAsJsonNode, serviceYamlAsJsonNode, applicationYamlByProfileAsJsonNode, applicationYamlAsJsonNode);
+
         final List<String> alteredProperties = getAlteredPropertyUseCase.getAlteredProperties(serviceSpec.getService());
         final PropertyTreeNode alteredPropertyTree = PropertyTreeNode.convertPropertiesToPropertyTree(alteredProperties);
-        JsonNode yamlAsJsonNode = convertFileToJsonNode(yamlByProfile, false);
-        Map<String, List<JsonNode>> yamlPropertyToJsonNodeList = traverseObjectToJsonNodeMapping(yamlAsJsonNode, alteredPropertyTree);
+        Map<String, List<JsonNode>> yamlPropertyToJsonNodeList = traverseObjectToJsonNodeMapping(mergedYamlAsJsonNode, alteredPropertyTree);
         return yamlPropertyToJsonNodeList;
     }
 
@@ -198,6 +205,39 @@ public class CustomValidateService implements ICustomValidateUseCase {
         }
         Map<String, List<JsonNode>> mapTree = mapTree(treeMap);
         return mapTree;
+    }
+
+    private JsonNode mergeYaml(JsonNode serviceYamlByProfileAsJsonNode, JsonNode serviceYamlAsJsonNode, JsonNode applicationYamlByProfileAsJsonNode, JsonNode applicationYamlAsJsonNode) {
+        JsonNode mergeLevel1 = merge(applicationYamlAsJsonNode, serviceYamlAsJsonNode);
+        JsonNode mergeLevel2 = merge(mergeLevel1, applicationYamlByProfileAsJsonNode);
+        JsonNode mergeLevel3 = merge(mergeLevel2, serviceYamlByProfileAsJsonNode);
+        return mergeLevel3;
+    }
+
+    private JsonNode merge(JsonNode mainNode, JsonNode updateNode) {
+        Iterator<String> fieldNames = updateNode.fieldNames();
+        while (fieldNames.hasNext()) {
+            String updateNodeFieldName = fieldNames.next();
+            JsonNode nodeFromMainNode = mainNode.get(updateNodeFieldName);
+            JsonNode nodeFromUpdateNode = updateNode.get(updateNodeFieldName);
+            // If the node is an @ArrayNode replace existing Array Node property in main node
+            if (nodeFromMainNode != null && nodeFromMainNode.isArray() &&
+                    nodeFromUpdateNode.isArray()) {
+                if (mainNode instanceof ObjectNode) {
+                    ((ObjectNode) mainNode).replace(updateNodeFieldName, nodeFromUpdateNode);
+                }
+                // if the Node is an @ObjectNode
+            } else if (nodeFromMainNode != null && nodeFromMainNode.isObject()) {
+                merge(nodeFromMainNode, nodeFromUpdateNode);//
+            }
+            //Else if node is a property node then we simply replace, or if main node doesn't exist then we simply add
+            else {
+                if (mainNode instanceof ObjectNode) {
+                    ((ObjectNode) mainNode).replace(updateNodeFieldName, nodeFromUpdateNode);
+                }
+            }
+        }
+        return mainNode;
     }
 
     private Map<String, List<JsonNode>> mapTree(Map<String, List<Pair<String, JsonNode>>> originalTree) {
