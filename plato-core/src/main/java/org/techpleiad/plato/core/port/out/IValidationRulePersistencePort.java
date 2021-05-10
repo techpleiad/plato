@@ -8,4 +8,8 @@ public interface IValidationRulePersistencePort {
     ValidationRule addValidationRule(ValidationRule validationRule);
 
     List<ValidationRule> findExistingValidationRuleByScopeAndRuleOnProperty(ValidationRule validationRule);
+
+    List<ValidationRule> getValidationRules();
+
+    ValidationRule deleteValidationRuleById(String serviceId);
 }
