@@ -20,6 +20,8 @@ public interface IGitServiceUseCase {
 
     HashMap<ServiceBranchData, ServiceBranchData> cloneGitRepositoryByBranchInBatchAsync(final List<GitRepository> repositoryList, final List<String> branches) throws ExecutionException, InterruptedException;
 
+    ServiceBranchData cloneGitRepositoryByBranchAsync(final GitRepository gitRepository, final String branch) throws ExecutionException, InterruptedException;
+
     HashMap<ServiceBranchData, ServiceBranchData> cloneGitRepositoryByBranchInBatchAsyncDifferentBranches(final List<ServiceSpec> serviceSpecs) throws ExecutionException, InterruptedException;
 
 }

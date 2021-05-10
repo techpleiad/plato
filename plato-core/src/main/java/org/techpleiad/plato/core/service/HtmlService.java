@@ -9,6 +9,8 @@ import org.techpleiad.plato.core.domain.BranchReport;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossBranchesReport;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossProfilesReport;
 import org.techpleiad.plato.core.domain.ConsistencyLevelAcrossBranchesReport;
+import org.techpleiad.plato.core.domain.CustomValidateInBatchReport;
+import org.techpleiad.plato.core.domain.CustomValidateReport;
 import org.techpleiad.plato.core.port.in.IHtmlServiceUseCase;
 
 import java.util.HashMap;
@@ -16,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 
@@ -30,6 +33,110 @@ public class HtmlService implements IHtmlServiceUseCase {
 
     private static final String LEGENDBRANCH = "<br><table style=\" border: 1px solid black; border-collapse: collapse;\"><tr><th>Legend</th></tr><tr><td style=\"background-color: red;  border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td><td style=\"border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\">Inconsistent with other branches</td></tr><tr><td style=\"background-color: green; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td><td style=\"border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\">Consistent and good to go</td></tr><tr><td style=\"background-color: yellow; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td><td style=\"border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\">Properties match but the formatting does not</td></tr></table>";
     private static final String LEGENDPROFILE = "<br><table style=\" border: 1px solid black; border-collapse: collapse;\"><tr><th>Legend</th></tr><tr><td style=\"background-color: red;  border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td><td style=\"border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\">Inconsistent with other profiles</td></tr><tr><td style=\"background-color: green; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td><td style=\"border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\">Consistent and good to go</td></tr></table>";
+
+
+    @Override
+    public String createCustomValidationInBatchReportMailBody(List<CustomValidateInBatchReport> customValidateInBatchReports) {
+        Map<String, Map<String, Map<String, List<CustomValidateReport>>>> serviceToMap = convertCustomValidateBranchReportToMap(customValidateInBatchReports);
+        String htmlDocument = "<h1>Custom Validation Report</h1>";
+        htmlDocument += createCustomValidationTable(serviceToMap);
+        htmlDocument += createCustomValidationText(serviceToMap);
+        return htmlDocument;
+    }
+
+    public Map<String, Map<String, Map<String, List<CustomValidateReport>>>> convertCustomValidateBranchReportToMap(List<CustomValidateInBatchReport> customValidateInBatchReports) {
+        Map<String, Map<String, Map<String, List<CustomValidateReport>>>> serviceToMap = new TreeMap<>();
+        for (CustomValidateInBatchReport customValidateInBatchReport : customValidateInBatchReports) {
+            if (serviceToMap.containsKey(customValidateInBatchReport.getService())) {
+                Map<String, Map<String, List<CustomValidateReport>>> branchToMap = serviceToMap.get(customValidateInBatchReport.getService());
+                if (branchToMap.containsKey(customValidateInBatchReport.getBranch())) {
+                    Map<String, List<CustomValidateReport>> profileToMap = branchToMap.get(customValidateInBatchReport.getBranch());
+                    profileToMap.putIfAbsent(customValidateInBatchReport.getProfile(), customValidateInBatchReport.getCustomValidateReportList());
+                } else {
+                    Map<String, List<CustomValidateReport>> profileToMap = new TreeMap<>();
+                    profileToMap.put(customValidateInBatchReport.getProfile(), customValidateInBatchReport.getCustomValidateReportList());
+                    branchToMap.put(customValidateInBatchReport.getBranch(), profileToMap);
+                }
+            } else {
+                Map<String, List<CustomValidateReport>> profileToMap = new TreeMap<>();
+                profileToMap.put(customValidateInBatchReport.getProfile(), customValidateInBatchReport.getCustomValidateReportList());
+                Map<String, Map<String, List<CustomValidateReport>>> branchToMap = new TreeMap<>();
+                branchToMap.put(customValidateInBatchReport.getBranch(), profileToMap);
+                serviceToMap.put(customValidateInBatchReport.getService(), branchToMap);
+            }
+        }
+        return serviceToMap;
+    }
+
+    private String createCustomValidationTable(final Map<String, Map<String, Map<String, List<CustomValidateReport>>>> serviceToMap) {
+        final String tableHead = createCustomValidationTableHead(serviceToMap);
+        final String tableRows = createCustomValidationTableRows(serviceToMap);
+        return "<table style=\"border: 1px solid black; border-collapse: collapse;\">" + tableHead + tableRows + "</table>";
+
+    }
+
+    private String createCustomValidationTableHead(final Map<String, Map<String, Map<String, List<CustomValidateReport>>>> serviceToMap) {
+        final StringBuilder tableHead = new StringBuilder("<tr style=\"border: 1px solid black;border-collapse: collapse;\"><th style=\"border: 1px solid black;border-collapse: collapse;\" rowspan=\"2\">Service Name</th>");
+        for (final Map.Entry<String, Map<String, List<CustomValidateReport>>> branchMap : serviceToMap.entrySet().iterator().next().getValue().entrySet()) {
+            tableHead.append("<th  colspan=\" ").append(branchMap.getValue().size())
+                    .append("\" style=\"text-align: center; border: 1px solid black; border-collapse: collapse;\">")
+                    .append(branchMap.getKey()).append(TH);
+        }
+        tableHead.append("</tr> <tr style=\"border: 1px solid black; border-collapse: collapse;\">");
+        for (final Map.Entry<String, Map<String, List<CustomValidateReport>>> branchMap : serviceToMap.entrySet().iterator().next().getValue().entrySet()) {
+            for (final Map.Entry<String, List<CustomValidateReport>> profileMap : branchMap.getValue().entrySet()) {
+                tableHead.append("<td style=\"border: 1px solid black; border-collapse: collapse;\">").append(profileMap.getKey()).append(TD);
+            }
+        }
+        tableHead.append(TR);
+        return tableHead.toString();
+    }
+
+    private String createCustomValidationTableRows(final Map<String, Map<String, Map<String, List<CustomValidateReport>>>> serviceToMap) {
+        final StringBuilder tableRows = new StringBuilder();
+        for (final Map.Entry<String, Map<String, Map<String, List<CustomValidateReport>>>> serviceMap : serviceToMap.entrySet()) {
+            final StringBuilder tableRow = new StringBuilder("<tr style=\"border: 1px solid black;\"><td style=\"border: 1px solid black;border-collapse: collapse;\">" + serviceMap
+                    .getKey()
+                    + TD);
+            for (final Map.Entry<String, Map<String, List<CustomValidateReport>>> branchMap : serviceMap.getValue().entrySet()) {
+                for (final Map.Entry<String, List<CustomValidateReport>> profileMap : branchMap.getValue().entrySet()) {
+                    if (profileMap.getValue().isEmpty()) {
+                        tableRow.append("<td style=\"background-color: green; border: 1px solid black;border-collapse: collapse;\"></td>");
+                    } else {
+                        tableRow.append("<td style=\"background-color: red; border: 1px solid black;border-collapse: collapse;\"></td>");
+                    }
+                }
+            }
+            tableRow.append(TR);
+            tableRows.append(tableRow.toString());
+        }
+        return tableRows.toString();
+    }
+
+    private String createCustomValidationText(final Map<String, Map<String, Map<String, List<CustomValidateReport>>>> serviceToMap) {
+        final StringBuilder htmlDocument = new StringBuilder();
+        for (final Map.Entry<String, Map<String, Map<String, List<CustomValidateReport>>>> serviceMap : serviceToMap.entrySet()) {
+            final StringBuilder serviceText = new StringBuilder("<h3>" + serviceMap.getKey() + "</h3>");
+            for (final Map.Entry<String, Map<String, List<CustomValidateReport>>> branchMap : serviceMap.getValue().entrySet()) {
+                final StringBuilder incorrectValueReport = new StringBuilder();
+                incorrectValueReport.append("<P> <strong>").append(branchMap.getKey()).append("</strong></p>\n");
+                for (final Map.Entry<String, List<CustomValidateReport>> profileMap : branchMap.getValue().entrySet()) {
+                    incorrectValueReport.append(" <p> &nbsp; Profile: <strong>").append(profileMap.getKey()).append("</strong></p>");
+                    for (final CustomValidateReport customValidateReport : profileMap.getValue()) {
+                        incorrectValueReport.append("<P> &nbsp; &nbsp;Incorrect value in property :").append(customValidateReport.getProperty()).append("</p>");
+                        for (String message : customValidateReport.getValidationMessages()) {
+                            incorrectValueReport.append("<P> &nbsp; &nbsp; &nbsp;").append(message).append("</p>");
+                        }
+                    }
+
+                }
+                serviceText.append(incorrectValueReport.toString());
+            }
+            htmlDocument.append(serviceText.toString());
+        }
+        return htmlDocument.toString();
+    }
+
 
     @Override
     public String createBranchReportMailBody(final List<ConsistencyAcrossBranchesReport> reportList, final String fromBranch, final String toBranch) {
@@ -84,9 +191,11 @@ public class HtmlService implements IHtmlServiceUseCase {
 
     private String createBranchTableColumn(final Map<String, BranchProfileReport> profileReport, final String profile) {
         if (profileReport.containsKey(profile)) {
-            if (profileReport.get(profile).isFileEqual() && profileReport.get(profile).getPropertyValueEqual()) {
+            boolean fileEqual = profileReport.get(profile).isFileEqual();
+            Boolean propertyValueEqual = profileReport.get(profile).getPropertyValueEqual();
+            if (fileEqual && Boolean.TRUE.equals(propertyValueEqual)) {
                 return "<td style=\"background-color: green; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td>";
-            } else if (!profileReport.get(profile).isFileEqual() && profileReport.get(profile).getPropertyValueEqual()) {
+            } else if (!fileEqual && Boolean.TRUE.equals(propertyValueEqual)) {
                 return "<td style=\"background-color: yellow; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td>";
             } else {
                 return "<td style=\"background-color: red; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td>";

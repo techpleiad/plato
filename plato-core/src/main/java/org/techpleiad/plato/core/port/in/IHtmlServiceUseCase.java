@@ -3,6 +3,7 @@ package org.techpleiad.plato.core.port.in;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossBranchesReport;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossProfilesReport;
 import org.techpleiad.plato.core.domain.ConsistencyLevelAcrossBranchesReport;
+import org.techpleiad.plato.core.domain.CustomValidateInBatchReport;
 
 import java.util.List;
 
@@ -13,4 +14,6 @@ public interface IHtmlServiceUseCase {
     String createProfileReportMailBody(List<ConsistencyAcrossProfilesReport> reportList, String branchName);
 
     String createConsistencyLevelMailBody(List<ConsistencyLevelAcrossBranchesReport> reportList);
+
+    String createCustomValidationInBatchReportMailBody(List<CustomValidateInBatchReport> customValidateInBatchReports);
 }

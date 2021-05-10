@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RestController;
 import org.techpleiad.plato.adapter.config.ConfigToolConfig;
-import org.techpleiad.plato.adapter.mapper.ServiceManagerMapper;
 import org.techpleiad.plato.adapter.mapper.ValidationMapper;
 import org.techpleiad.plato.api.request.ServicesAcrossBranchValidateRequestTO;
 import org.techpleiad.plato.api.request.ServicesAcrossProfileValidateRequestTO;
@@ -52,8 +51,6 @@ public class ValidationController implements IValidationController {
     private IHtmlServiceUseCase htmlServiceUseCase;
     @Autowired
     private ConfigToolConfig configToolConfig;
-    @Autowired
-    private ServiceManagerMapper serviceManagerMapper;
 
     @ExecutionTime
     @Override

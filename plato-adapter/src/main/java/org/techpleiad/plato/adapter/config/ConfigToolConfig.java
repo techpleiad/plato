@@ -20,6 +20,8 @@ public class ConfigToolConfig implements IGetWorkingDirectoryPort {
     private String branchConsistencyEmailSubject;
     private String profileConsistencyEmailSubject;
     private String emailFrom;
+    private String customValidationEmailSubject;
+
 
     @Override
     public String getRootWorkingDirectory() {
