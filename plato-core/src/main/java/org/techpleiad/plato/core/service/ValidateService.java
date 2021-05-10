@@ -66,7 +66,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
 
         final HashMap<String, TreeMap<String, File>> branchToProfileMap = new HashMap<>();
         for (final ServiceBranchData serviceBranch : serviceBranchList) {
-            final CompletableFuture<TreeMap<String, File>> profileToFileMap = fileService.getYamlFiles(
+            final CompletableFuture<TreeMap<String, File>> profileToFileMap = fileService.getYamlFileTree(
                     serviceBranch.getDirectory(),
                     serviceSpec.getService()
             );
@@ -137,7 +137,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
 
         final HashMap<String, TreeMap<String, File>> branchToProfileMap = new HashMap<>();
         for (final ServiceBranchData serviceBranch : serviceBranchList) {
-            final CompletableFuture<TreeMap<String, File>> profileToFileMap = fileService.getYamlFiles(
+            final CompletableFuture<TreeMap<String, File>> profileToFileMap = fileService.getYamlFileTree(
                     serviceBranch.getDirectory(),
                     serviceSpec.getService()
             );
@@ -272,8 +272,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 final ServiceBranchData data = ServiceBranchData.builder().repository(serviceSpec.getGitRepository().getUrl()).branch(branchName).build();
                 final CompletableFuture<List<Pair<String, File>>> mapProfileToFileContent = fileService.getYamlFiles(
                         mapServiceBranchToRepository.get(data).getDirectory(),
-                        serviceSpec.getService(),
-                        serviceSpec.getProfiles().stream().map(Profile::getName).collect(Collectors.toCollection(TreeSet::new))
+                        serviceSpec.getService()
                 );
 
                 final Map<String, List<String>> suppressedPropertiesMap = isSuppressed ?

@@ -5,7 +5,6 @@ import org.springframework.data.util.Pair;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 
@@ -19,9 +18,9 @@ public interface IFileServiceUserCase {
 
     String convertToFormattedString(String path, JsonNode root);
 
-    CompletableFuture<List<Pair<String, File>>> getYamlFiles(File directory, String serviceName, Set<String> profiles);
+    CompletableFuture<List<Pair<String, File>>> getYamlFiles(File directory, String serviceName);
 
-    CompletableFuture<TreeMap<String, File>> getYamlFiles(File directory, String serviceName);
+    CompletableFuture<TreeMap<String, File>> getYamlFileTree(File directory, String serviceName);
 
     String getFileToString(final File file);
 }

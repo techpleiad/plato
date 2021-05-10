@@ -113,11 +113,11 @@ public class CustomValidateService implements ICustomValidateUseCase {
     private Map<String, List<JsonNode>> customValidateYamlFile(final ServiceSpec serviceSpec, final String branch, final String profile) throws ExecutionException, InterruptedException {
         final ServiceBranchData serviceBranchData = gitService.cloneGitRepositoryByBranchAsync(serviceSpec.getGitRepository(), branch);
 
-        final CompletableFuture<TreeMap<String, File>> serviceProfileToFileMap = fileService.getYamlFiles(
+        final CompletableFuture<TreeMap<String, File>> serviceProfileToFileMap = fileService.getYamlFileTree(
                 serviceBranchData.getDirectory(),
                 serviceSpec.getService()
         );
-        final CompletableFuture<TreeMap<String, File>> applicationProfileToFileMap = fileService.getYamlFiles(
+        final CompletableFuture<TreeMap<String, File>> applicationProfileToFileMap = fileService.getYamlFileTree(
                 serviceBranchData.getDirectory(),
                 "application"
         );

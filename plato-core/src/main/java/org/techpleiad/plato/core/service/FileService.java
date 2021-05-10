@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -77,16 +76,12 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
     }
 
     @Override
-    public CompletableFuture<List<Pair<String, File>>> getYamlFiles(final File directory, final String serviceName, final Set<String> profiles) {
+    public CompletableFuture<List<Pair<String, File>>> getYamlFiles(final File directory, final String serviceName) {
 
         final List<Pair<String, File>> profileToFileList = new LinkedList<>();
         log.info("directory : " + directory.getPath());
-        Arrays.stream(Objects.requireNonNull(directory.listFiles())).forEach(files ->
-                validateFileAndGetProfile(files, serviceName).ifPresent(profile -> {
-                    if (profiles.contains(profile)) {
-                        profileToFileList.add(Pair.of(profile, files));
-                    }
-                })
+        Arrays.stream(Objects.requireNonNull(directory.listFiles())).forEach(file ->
+                validateFileAndGetProfile(file, serviceName).ifPresent(profile -> profileToFileList.add(Pair.of(profile, file)))
         );
         log.info("directory copied : " + directory.getPath());
         return CompletableFuture.completedFuture(profileToFileList);
@@ -106,7 +101,7 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
     }
 
     @Override
-    public CompletableFuture<TreeMap<String, File>> getYamlFiles(final File directory, final String serviceName) {
+    public CompletableFuture<TreeMap<String, File>> getYamlFileTree(final File directory, final String serviceName) {
 
         final TreeMap<String, File> profileToFileList = new TreeMap<>();
         log.info("directory :: " + directory.getPath());
