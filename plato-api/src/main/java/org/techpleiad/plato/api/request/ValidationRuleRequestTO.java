@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import org.techpleiad.plato.api.advice.ValidJsonSchema;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -13,8 +14,8 @@ import javax.validation.constraints.NotNull;
 @Getter
 @ToString
 public class ValidationRuleRequestTO {
-    //Custom Annotation to check if rule is a json schema
     @NotNull
+    @ValidJsonSchema
     private final JsonNode rule;
     @NotEmpty
     private final String ruleOnProperty;

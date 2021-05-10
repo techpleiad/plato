@@ -7,18 +7,18 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.techpleiad.plato.core.domain.RuleScope;
+import org.techpleiad.plato.core.domain.ValidationRuleScope;
 
 @ToString
 @Getter
 @Builder
 @AllArgsConstructor
 @Document(collection = "rules")
+@Setter
 public class ValidationRuleEntity {
     @Id
     private String ruleId;
-    private RuleScope scope;
+    private ValidationRuleScope scope;
     private String ruleOnProperty;
-    @Setter
     private String rule;
 }

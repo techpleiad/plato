@@ -6,15 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.techpleiad.plato.adapter.exception.ErrorResponse;
-import org.techpleiad.plato.core.exceptions.BranchNotSupportedException;
-import org.techpleiad.plato.core.exceptions.FileConvertException;
-import org.techpleiad.plato.core.exceptions.FileDeleteException;
-import org.techpleiad.plato.core.exceptions.GitBranchNotFoundException;
-import org.techpleiad.plato.core.exceptions.GitRepositoryNotFoundException;
-import org.techpleiad.plato.core.exceptions.ServiceAlreadyExistException;
-import org.techpleiad.plato.core.exceptions.ServiceNotFoundException;
-import org.techpleiad.plato.core.exceptions.ServicesNotFoundException;
-import org.techpleiad.plato.core.exceptions.ValidationRuleAlreadyExistsException;
+import org.techpleiad.plato.api.exceptions.InvalidRuleException;
+import org.techpleiad.plato.core.exceptions.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +22,9 @@ public class WebControllerAdvice {
     private static final String SERVICE = "service";
     private static final String VALIDATION_RULE = "validationRule";
     private static final String URL = "url";
-    private static final String VALIDATION_RULE_PROPERTY = "ValidationRuleProperty";
+    private static final String ID = "Id";
+    private static final String VALIDATION_RULE_PROPERTY = "validationRuleProperty";
+    private static final String ERROR_IN_JSON_SCHEMA = "errorInJsonSchema";
 
 
     @ExceptionHandler(value = GitRepositoryNotFoundException.class)
@@ -91,6 +86,27 @@ public class WebControllerAdvice {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = ValidationRuleDoesNotExistException.class)
+    public ResponseEntity<ErrorResponse> generateValidationRuleDoesNotExistsException(final ValidationRuleDoesNotExistException exception) {
+
+        final Map<String, Object> error = new HashMap<>();
+        error.put(ERROR_MESSAGE, exception.getErrorMessage());
+        error.put(VALIDATION_RULE + ID, exception.getRuleId());
+
+        return new ResponseEntity<>(new ErrorResponse(error, HttpStatus.BAD_REQUEST.value()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = InvalidRuleException.class)
+    public ResponseEntity<ErrorResponse> generateInvalidRuleException(final InvalidRuleException exception) {
+        final Map<String, Object> error = new HashMap<>();
+        error.put(ERROR_MESSAGE, exception.getErrorMessage());
+        error.put(ERROR_IN_JSON_SCHEMA, exception.getDetailMessage());
+
+        return new ResponseEntity<>(new ErrorResponse(error, HttpStatus.BAD_REQUEST.value()),
+                HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(value = ServiceNotFoundException.class)
     public ResponseEntity<ErrorResponse> generateServiceNotFoundException(final ServiceNotFoundException exception) {
 
@@ -105,6 +121,9 @@ public class WebControllerAdvice {
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ErrorResponse> generateException(final Exception exception) {
 
+        if (exception.getCause() != null && exception.getCause().getClass().equals(InvalidRuleException.class)) {
+            return generateInvalidRuleException((InvalidRuleException) exception.getCause());
+        }
         final HashMap<String, Object> error = new HashMap<>();
         final Throwable exp = exception.getCause();
 

@@ -25,6 +25,7 @@ import org.techpleiad.plato.core.port.out.IGetGitCredentialsPort;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -127,6 +128,14 @@ public class GitService implements IGitServiceUseCase {
         allCompletableFutures.thenApply(ArrayList::new).get();
 
         return mapRepoToDirectory;
+    }
+
+    @ExecutionTime
+    @Override
+    public ServiceBranchData cloneGitRepositoryByBranchAsync(final GitRepository gitRepository, final String branch) throws ExecutionException, InterruptedException {
+        final HashMap<ServiceBranchData, ServiceBranchData> serviceBranchDataServiceBranchDataHashMap = cloneGitRepositoryByBranchInBatchAsync(Collections
+                .singletonList(gitRepository), Collections.singletonList(branch));
+        return serviceBranchDataServiceBranchDataHashMap.values().stream().findAny().get();
     }
 
 
@@ -242,7 +251,7 @@ public class GitService implements IGitServiceUseCase {
                     .password(defaultGitPassword)
                     .build();
         }
-        
+
         return gitRepository;
 
     }
