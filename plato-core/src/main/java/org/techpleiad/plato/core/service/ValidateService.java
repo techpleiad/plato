@@ -210,7 +210,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
         final List<ConsistencyAcrossBranchesReport> reportList = new LinkedList<>();
         final List<String> branchList = Arrays.asList(validationAcrossBranchProperties.getFromBranch(), validationAcrossBranchProperties.getToBranch());
 
-        serviceSpecList.forEach(serviceSpec -> validateBranchesInService(serviceSpec, branchList));
+//        serviceSpecList.forEach(serviceSpec -> validateBranchesInService(serviceSpec, branchList));
 
 
         final Map<ServiceBranchData, ServiceBranchData> mapServiceBranchToRepository = gitService.cloneGitRepositoryByBranchInBatchAsync(

@@ -1,33 +1,53 @@
 package org.techpleiad.plato.core.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.LineIterator;
 import org.eclipse.jgit.util.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.techpleiad.plato.core.advice.ThreadDirectory;
+import org.techpleiad.plato.core.convert.SortingNodeFactory;
+import org.techpleiad.plato.core.domain.ServiceBranchData;
+import org.techpleiad.plato.core.domain.ServiceSpec;
+import org.techpleiad.plato.core.exceptions.FileConvertException;
 import org.techpleiad.plato.core.exceptions.FileDeleteException;
+import org.techpleiad.plato.core.exceptions.ProfileNotSupportedException;
+import org.techpleiad.plato.core.exceptions.ServiceNotFoundException;
 import org.techpleiad.plato.core.port.in.IFileServiceUserCase;
 import org.techpleiad.plato.core.port.in.IFileThreadServiceUseCase;
+import org.techpleiad.plato.core.port.in.IGetFileUseCase;
+import org.techpleiad.plato.core.port.in.IGitServiceUseCase;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class FileService implements IFileServiceUserCase, IFileThreadServiceUseCase {
+public class FileService implements IFileServiceUserCase, IFileThreadServiceUseCase, IGetFileUseCase {
+
+    @Autowired
+    private IGitServiceUseCase gitService;
 
     public static final ThreadLocal<File> WORKING_DIRECTORY = new ThreadLocal<>();
 
@@ -114,6 +134,77 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
         return CompletableFuture.completedFuture(profileToFileList);
     }
 
+
+    @Override
+    public String getFileAsYaml(ServiceSpec serviceSpec, String branch, String profile, boolean merged) throws JsonProcessingException, ExecutionException, InterruptedException {
+        JsonNode jsonNode = getFileAsJson(serviceSpec, branch, profile, merged);
+        String jsonAsYaml = new YAMLMapper().writeValueAsString(jsonNode);
+        return jsonAsYaml;
+    }
+
+    @ThreadDirectory
+    @Override
+    public JsonNode getFileAsJson(ServiceSpec serviceSpec, String branch, String profile, boolean merged) throws ExecutionException, InterruptedException {
+        final ServiceBranchData serviceBranchData = gitService.cloneGitRepositoryByBranchAsync(serviceSpec.getGitRepository(), branch);
+
+        final CompletableFuture<TreeMap<String, File>> serviceProfileToFileMap = getYamlFileTree(
+                serviceBranchData.getDirectory(),
+                serviceSpec.getService()
+        );
+
+        TreeMap<String, File> treeMap = serviceProfileToFileMap.get();
+        if (treeMap.get(profile) == null) {
+            log.info("File linked to profile not found");
+        }
+        JsonNode jsonNode;
+        if (merged) {
+            jsonNode = getMergedYamlFiles(treeMap, serviceBranchData, profile, serviceSpec.getService());
+        } else {
+            final File serviceYamlByProfile = treeMap.get(profile);
+            if (serviceYamlByProfile == null) {
+                throw new ProfileNotSupportedException(serviceSpec.getService(), profile);
+            }
+            jsonNode = convertFileToJsonNode(serviceYamlByProfile, false);
+        }
+        return jsonNode;
+    }
+
+
+    @Override
+    public JsonNode getMergedYamlFiles(TreeMap<String, File> serviceProfileToFileMap, ServiceBranchData serviceBranchData, String profile, String service) throws ExecutionException, InterruptedException {
+        final CompletableFuture<TreeMap<String, File>> applicationProfileToFileMap = getYamlFileTree(
+                serviceBranchData.getDirectory(),
+                "application"
+        );
+        List<File> files = new ArrayList<>();
+
+        final File serviceYamlByProfile = serviceProfileToFileMap.get(profile);
+        final File serviceYaml = serviceProfileToFileMap.get("");
+        final File applicationYamlByProfile = applicationProfileToFileMap.get().get(profile);
+        final File applicationYaml = applicationProfileToFileMap.get().get("");
+
+        if (applicationYaml != null)
+            files.add(applicationYaml);
+        if (serviceYaml != null)
+            files.add(serviceYaml);
+        if (applicationYamlByProfile != null)
+            files.add(applicationYamlByProfile);
+        if (serviceYamlByProfile != null)
+            files.add(serviceYamlByProfile);
+
+        if (files.isEmpty())
+            throw new ServiceNotFoundException("Service Configs not found", service);
+
+        List<JsonNode> jsonNodes = new ArrayList<>();
+
+        for (File file : files) {
+            jsonNodes.add(convertFileToJsonNode(file, false));
+        }
+
+        JsonNode mergedYamlAsJsonNode = mergeYaml(jsonNodes);
+        return mergedYamlAsJsonNode;
+    }
+
     public String getFileToString(final File file) {
         final StringBuilder sb = new StringBuilder();
         LineIterator it = null;
@@ -148,4 +239,52 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
         }
         return Optional.empty();
     }
+
+    private JsonNode convertFileToJsonNode(final File file, final boolean isSorted) {
+        final ObjectMapper sortedMapper = JsonMapper.builder().nodeFactory(new SortingNodeFactory()).build();
+        try {
+            final JsonNode root = file.getName().endsWith(".yml") ?
+                    new YAMLMapper().readTree(file) : new ObjectMapper().readTree(file);
+
+            return isSorted ? sortedMapper.readTree(root.toString()) : root;
+        } catch (final Exception exception) {
+            throw new FileConvertException(exception.getMessage());
+        }
+    }
+
+    private JsonNode mergeYaml(List<JsonNode> jsonNodes) {
+        JsonNode mergedJsonNode = jsonNodes.get(0);
+        for (int i = 1; i < jsonNodes.size(); i++) {
+            merge(mergedJsonNode, jsonNodes.get(i));
+        }
+        return mergedJsonNode;
+    }
+
+    private JsonNode merge(JsonNode mainNode, JsonNode updateNode) {
+        Iterator<String> fieldNames = updateNode.fieldNames();
+        while (fieldNames.hasNext()) {
+            String updateNodeFieldName = fieldNames.next();
+            JsonNode nodeFromMainNode = mainNode.get(updateNodeFieldName);
+            JsonNode nodeFromUpdateNode = updateNode.get(updateNodeFieldName);
+            // If the node is an @ArrayNode replace existing Array Node property in main node
+            if (nodeFromMainNode != null && nodeFromMainNode.isArray() &&
+                    nodeFromUpdateNode.isArray()) {
+                if (mainNode instanceof ObjectNode) {
+                    ((ObjectNode) mainNode).replace(updateNodeFieldName, nodeFromUpdateNode);
+                }
+                // if the Node is an @ObjectNode
+            } else if (nodeFromMainNode != null && nodeFromMainNode.isObject()) {
+                merge(nodeFromMainNode, nodeFromUpdateNode);//
+            }
+            //Else if node is a property node then we simply replace, or if main node doesn't exist then we simply add
+            else {
+                if (mainNode instanceof ObjectNode) {
+                    ((ObjectNode) mainNode).replace(updateNodeFieldName, nodeFromUpdateNode);
+                }
+            }
+        }
+        return mainNode;
+    }
+
+
 }

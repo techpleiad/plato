@@ -57,11 +57,10 @@ class FileServiceTest {
         final Set<String> profiles = new HashSet<>(Arrays.asList("dev", "prod", "test"));
 
         final CompletableFuture<List<Pair<String, File>>> profileToFileList = fileService.getYamlFiles(directory, SERVICE_NAME);
-        Assertions.assertEquals(2, profileToFileList.get().size());
+        Assertions.assertEquals(4, profileToFileList.get().size());
         for (final Pair<String, File> item : profileToFileList.get()) {
             Assertions.assertNotNull(item.getSecond());
             Assertions.assertNotNull(item.getFirst());
-            Assertions.assertTrue(profiles.contains(item.getFirst()));
         }
 
         final CompletableFuture<List<Pair<String, File>>> profileToFileListEmpty = fileService.getYamlFiles(directory, "custom-mana");
