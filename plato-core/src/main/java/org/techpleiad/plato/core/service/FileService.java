@@ -136,6 +136,7 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
 
 
     @Override
+    @ThreadDirectory
     public String getFileAsYaml(ServiceSpec serviceSpec, String branch, String profile, boolean merged) throws JsonProcessingException, ExecutionException, InterruptedException {
         JsonNode jsonNode = getFileAsJson(serviceSpec, branch, profile, merged);
         String jsonAsYaml = new YAMLMapper().writeValueAsString(jsonNode);

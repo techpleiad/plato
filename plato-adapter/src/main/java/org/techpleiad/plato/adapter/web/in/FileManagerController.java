@@ -25,15 +25,8 @@ public class FileManagerController implements IYamlFileManagerController {
     @Override
     public ResponseEntity getFileByName(String serviceName, String branchName, String format, String type, String profile) throws InterruptedException, ExecutionException, JsonProcessingException {
         ServiceSpec serviceSpec = servicePersistencePort.getServiceById(serviceName).orElseThrow(() -> new ServiceNotFoundException("service not found", serviceName));
-        boolean merged = true;
-        boolean yaml = true;
-
-        if (!format.equals("yaml")) {
-            yaml = false;
-        }
-        if (!type.equals("merged")) {
-            merged = false;
-        }
+        boolean yaml = format.equals("yaml");
+        boolean merged = type.equals("merged");
 
         if (yaml) {
             String yamlFile = getFile.getFileAsYaml(serviceSpec, branchName, profile, merged);
