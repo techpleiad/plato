@@ -498,7 +498,7 @@ class ValidateServiceTest {
         Mockito.when(gitService.cloneGitRepositoryByBranchInBatchAsync(Mockito.anyList(), Mockito.anyList()))
                 .thenReturn(mapServiceBranchToRepository);
 
-        Mockito.when(fileService.getYamlFiles(Mockito.any(), Mockito.any(), Mockito.anySet())).thenReturn(mapProfileToFileContent);
+        Mockito.when(fileService.getYamlFiles(Mockito.any(), Mockito.any())).thenReturn(mapProfileToFileContent);
 
         Mockito.when(getSuppressPropertyUseCase.getSuppressedProperties(Mockito.anyString())).thenReturn(suppressedPropertiesMap);
 
@@ -522,7 +522,7 @@ class ValidateServiceTest {
         final File preprodFile = getFileContent("repo/" + PREPROD);
         final File devFile = getFileContent("repo/" + DEV);
 
-        Mockito.when(fileService.getYamlFiles(Mockito.any(), Mockito.anyString())).thenAnswer(invocation -> {
+        Mockito.when(fileService.getYamlFileTree(Mockito.any(), Mockito.anyString())).thenAnswer(invocation -> {
             final File file = invocation.getArgument(0);
 
             final TreeMap<String, File> profileToFileMap = new TreeMap<>();
