@@ -19,6 +19,7 @@ public class WebControllerAdvice {
 
     private static final String ERROR_MESSAGE = "errorMessage";
     private static final String BRANCHES = "branches";
+    private static final String PROFILES = "profiles";
     private static final String SERVICE = "service";
     private static final String VALIDATION_RULE = "validationRule";
     private static final String URL = "url";
@@ -57,6 +58,18 @@ public class WebControllerAdvice {
         final Map<String, Object> error = new HashMap<>();
         error.put(ERROR_MESSAGE, exception.getErrorMessage());
         error.put(BRANCHES, exception.getBranches());
+        error.put(SERVICE, exception.getService());
+
+        return new ResponseEntity<>(new ErrorResponse(error, HttpStatus.BAD_REQUEST.value()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = ProfileNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> generateBranchNotSupportedException(final ProfileNotSupportedException exception) {
+
+        final Map<String, Object> error = new HashMap<>();
+        error.put(ERROR_MESSAGE, exception.getErrorMessage());
+        error.put(PROFILES, exception.getProfile());
         error.put(SERVICE, exception.getService());
 
         return new ResponseEntity<>(new ErrorResponse(error, HttpStatus.BAD_REQUEST.value()),
