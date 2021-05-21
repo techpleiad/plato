@@ -1,6 +1,7 @@
 package org.techpleiad.plato.api.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -12,5 +13,5 @@ import lombok.ToString;
 public class DocumentResponseTO {
     private final String branch;
     private final String profile;
-    private final String document;
+    private final JsonNode document;
 }

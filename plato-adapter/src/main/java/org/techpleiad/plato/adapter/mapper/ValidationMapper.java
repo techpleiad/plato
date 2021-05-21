@@ -1,6 +1,8 @@
 package org.techpleiad.plato.adapter.mapper;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.mapstruct.Mapper;
+import org.springframework.data.util.Pair;
 import org.techpleiad.plato.api.response.BranchProfileReportResponseTO;
 import org.techpleiad.plato.api.response.BranchReportResponseTO;
 import org.techpleiad.plato.api.response.ConsistencyLevelValidateResponseTO;
@@ -43,21 +45,43 @@ public interface ValidationMapper {
                 .build();
     }
 
-
-    default List<ProfilePropertiesResponseTO> convertMissingPropertyMapToList(final HashMap<String, List<String>> missingProperty, final HashMap<String, String> profileDocument) {
+    default List<ProfilePropertiesResponseTO> convertMissingPropertyMapToList(final HashMap<String, List<String>> missingProperty, final HashMap<String, JsonNode> profileDocument) {
         final List<ProfilePropertiesResponseTO> profilePropertiesResponseTOList = new LinkedList<>();
         missingProperty.forEach((profile, properties) ->
-                        profilePropertiesResponseTOList.add(ProfilePropertiesResponseTO.builder()
-                                        .properties(properties)
-                                        .document(DocumentResponseTO.builder().
-                                                        profile(profile)
-//                                                .document(profileDocument.get(profile))
-                                                        .build()
-                                        )
-                                        .build()
+                profilePropertiesResponseTOList.add(ProfilePropertiesResponseTO.builder()
+                        .properties(properties)
+                        .document(DocumentResponseTO.builder().
+                                profile(profile)
+                                .document(profileDocument.get(profile))
+                                .build()
                         )
+                        .build()
+                )
         );
         return profilePropertiesResponseTOList;
     }
 
+    default ConsistencyAcrossProfilesReport convertServicesAcrossProfileValidateResponseTOToConsistencyAcrossProfile(final ServicesAcrossProfileValidateResponseTO servicesAcrossProfileValidateResponseTO) {
+//        Pair<HashMap<String, List<String>>, HashMap<String, JsonNode>> pair = convertMissingPropertyListToMap(servicesAcrossProfileValidateResponseTO.getMissingProperty());
+        ConsistencyAcrossProfilesReport consistencyAcrossProfilesReport = ConsistencyAcrossProfilesReport.builder()
+//                .profileDocument(pair.getSecond())
+                .service(servicesAcrossProfileValidateResponseTO.getService())
+//                .missingProperty(pair.getFirst())
+                .build();
+
+        return consistencyAcrossProfilesReport;
+    }
+
+    default Pair<HashMap<String, List<String>>, HashMap<String, JsonNode>> convertMissingPropertyListToMap(final List<ProfilePropertiesResponseTO> profilePropertiesResponseTOList) {
+
+        HashMap<String, List<String>> missingProperty = new HashMap<>();
+        HashMap<String, JsonNode> profileDocument = new HashMap<>();
+
+        for (ProfilePropertiesResponseTO profilePropertiesResponseTO : profilePropertiesResponseTOList) {
+            missingProperty.put(profilePropertiesResponseTO.getDocument().getProfile(), profilePropertiesResponseTO.getProperties());
+            profileDocument.put(profilePropertiesResponseTO.getDocument().getProfile(), profilePropertiesResponseTO.getDocument().getDocument());
+        }
+
+        return Pair.of(missingProperty, profileDocument);
+    }
 }

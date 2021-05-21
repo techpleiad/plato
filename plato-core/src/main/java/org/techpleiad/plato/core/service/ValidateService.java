@@ -322,7 +322,7 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
 
             final JsonNode rootNode = convertFileToJsonNode(pairProfileFile.getSecond(), false);
             profilePropertyDetails.addProfileDocument(pairProfileFile.getFirst(),
-                    fileService.convertToFormattedString(pairProfileFile.getFirst(), rootNode));
+                    rootNode);
 
             final List<String> missingProperties = new LinkedList<>();
             findMissingProfileProperties(rootNode, alteredPropertyTree, missingProperties);

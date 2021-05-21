@@ -30,12 +30,12 @@ public class ValidationMapperTest {
                                                         Document.builder()
                                                                 .branch("dev")
                                                                 .profile("dev")
-                                                                .document("test-document")
+
                                                                 .build(),
                                                         Document.builder()
                                                                 .branch("test")
                                                                 .profile("test")
-                                                                .document("test-document")
+
                                                                 .build()
                                                 )
                                         )
@@ -49,12 +49,12 @@ public class ValidationMapperTest {
                                                         Document.builder()
                                                                 .branch("dev")
                                                                 .profile("dev")
-                                                                .document("test-document")
+
                                                                 .build(),
                                                         Document.builder()
                                                                 .branch("test")
                                                                 .profile("test")
-                                                                .document("test-document")
+                                                                
                                                                 .build()
                                                 )
                                         )
