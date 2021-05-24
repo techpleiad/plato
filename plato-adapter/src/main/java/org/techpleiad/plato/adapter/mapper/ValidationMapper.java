@@ -2,7 +2,8 @@ package org.techpleiad.plato.adapter.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.mapstruct.Mapper;
-import org.springframework.data.util.Pair;
+import org.techpleiad.plato.api.request.DocumentRequestTO;
+import org.techpleiad.plato.api.request.ResolveInconsistencyRequestTO;
 import org.techpleiad.plato.api.response.BranchProfileReportResponseTO;
 import org.techpleiad.plato.api.response.BranchReportResponseTO;
 import org.techpleiad.plato.api.response.ConsistencyLevelValidateResponseTO;
@@ -16,6 +17,7 @@ import org.techpleiad.plato.core.domain.ConsistencyAcrossBranchesReport;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossProfilesReport;
 import org.techpleiad.plato.core.domain.ConsistencyLevelAcrossBranchesReport;
 import org.techpleiad.plato.core.domain.Document;
+import org.techpleiad.plato.core.domain.ResolveConsistencyAcrossProfiles;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -61,27 +63,22 @@ public interface ValidationMapper {
         return profilePropertiesResponseTOList;
     }
 
-    default ConsistencyAcrossProfilesReport convertServicesAcrossProfileValidateResponseTOToConsistencyAcrossProfile(final ServicesAcrossProfileValidateResponseTO servicesAcrossProfileValidateResponseTO) {
-//        Pair<HashMap<String, List<String>>, HashMap<String, JsonNode>> pair = convertMissingPropertyListToMap(servicesAcrossProfileValidateResponseTO.getMissingProperty());
-        ConsistencyAcrossProfilesReport consistencyAcrossProfilesReport = ConsistencyAcrossProfilesReport.builder()
-//                .profileDocument(pair.getSecond())
-                .service(servicesAcrossProfileValidateResponseTO.getService())
-//                .missingProperty(pair.getFirst())
+    default ResolveConsistencyAcrossProfiles convertResolveInconsistencyRequestTOToConsistencyAcrossProfile(final ResolveInconsistencyRequestTO resolveInconsistencyRequestTO) {
+        HashMap<String, String> profileDocumentMap = convertDocumentRequestTOListToProfileDocumentMap(resolveInconsistencyRequestTO.getDocuments());
+        ResolveConsistencyAcrossProfiles resolveConsistencyAcrossProfiles = ResolveConsistencyAcrossProfiles.builder()
+                .profileDocument(profileDocumentMap)
+                .service(resolveInconsistencyRequestTO.getService())
                 .build();
 
-        return consistencyAcrossProfilesReport;
+        return resolveConsistencyAcrossProfiles;
     }
 
-    default Pair<HashMap<String, List<String>>, HashMap<String, JsonNode>> convertMissingPropertyListToMap(final List<ProfilePropertiesResponseTO> profilePropertiesResponseTOList) {
+    default HashMap<String, String> convertDocumentRequestTOListToProfileDocumentMap(final List<DocumentRequestTO> documentRequestTOList) {
 
-        HashMap<String, List<String>> missingProperty = new HashMap<>();
-        HashMap<String, JsonNode> profileDocument = new HashMap<>();
-
-        for (ProfilePropertiesResponseTO profilePropertiesResponseTO : profilePropertiesResponseTOList) {
-            missingProperty.put(profilePropertiesResponseTO.getDocument().getProfile(), profilePropertiesResponseTO.getProperties());
-            profileDocument.put(profilePropertiesResponseTO.getDocument().getProfile(), profilePropertiesResponseTO.getDocument().getDocument());
+        HashMap<String, String> profileDocument = new HashMap<>();
+        for (DocumentRequestTO documentRequestTO : documentRequestTOList) {
+            profileDocument.put(documentRequestTO.getProfile(), documentRequestTO.getDocument());
         }
-
-        return Pair.of(missingProperty, profileDocument);
+        return profileDocument;
     }
 }

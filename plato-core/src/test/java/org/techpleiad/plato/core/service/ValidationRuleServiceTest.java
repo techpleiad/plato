@@ -24,7 +24,7 @@ import java.util.Map;
 
 @ExtendWith(MockitoExtension.class)
 class ValidationRuleServiceTest {
-
+    
     @InjectMocks
     private ValidationRuleService validationRuleService;
 

@@ -7,12 +7,14 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.techpleiad.plato.core.advice.ThreadDirectory;
 import org.techpleiad.plato.core.convert.SortingNodeFactory;
-import org.techpleiad.plato.core.domain.ConsistencyAcrossProfilesReport;
+import org.techpleiad.plato.core.domain.ResolveConsistencyAcrossProfiles;
 import org.techpleiad.plato.core.domain.ServiceBranchData;
 import org.techpleiad.plato.core.domain.ServiceSpec;
 import org.techpleiad.plato.core.exceptions.FileConvertException;
@@ -48,7 +50,7 @@ public class ResolveInconsistencyService implements IResolveInconsistencyUseCase
 
     @Override
     @ThreadDirectory
-    public String resolveInconsistencyAcrossProfiles(ServiceSpec serviceSpec, String branchName, ConsistencyAcrossProfilesReport updatedFilesReport) throws ExecutionException, InterruptedException, GitAPIException, IOException {
+    public String resolveInconsistencyAcrossProfiles(ServiceSpec serviceSpec, String branchName, ResolveConsistencyAcrossProfiles updatedFilesReport) throws ExecutionException, InterruptedException, GitAPIException, IOException {
 
         validateBranchService.validateBranchInService(serviceSpec, branchName);
 
@@ -63,20 +65,23 @@ public class ResolveInconsistencyService implements IResolveInconsistencyUseCase
 
         overWriteFiles(fileNameToUpdatedFileContentMap, serviceBranchData.getDirectory());
 
-        //commit
-        //merge
+        gitAddCommit(serviceBranchData);
+
+        //push
+        pushCode(serviceBranchData, serviceSpec);
+
+        //MR
 
         return null;
     }
 
-    private Map<String, String> profileJsonNodeToProfileFileContentMap(final ConsistencyAcrossProfilesReport consistencyAcrossProfilesReport, final TreeMap<String, File> profileFileMap) throws JsonProcessingException {
+
+    private Map<String, String> profileJsonNodeToProfileFileContentMap(final ResolveConsistencyAcrossProfiles resolveConsistencyAcrossProfiles, final TreeMap<String, File> profileFileMap) throws JsonProcessingException {
         TreeMap<String, String> fileContentTreeMap = new TreeMap<>();
-        for (Map.Entry<String, JsonNode> jsonNodeEntry : consistencyAcrossProfilesReport.getProfileDocument().entrySet()) {
+        for (Map.Entry<String, String> jsonNodeEntry : resolveConsistencyAcrossProfiles.getProfileDocument().entrySet()) {
             String fileName = profileFileMap.get(jsonNodeEntry.getKey()).getName();
-            if (!jsonNodeEntry.getValue().equals(convertFileToJsonNode(profileFileMap.get(jsonNodeEntry.getKey()), false))) {
-                String jsonAsYaml = new YAMLMapper().writeValueAsString(jsonNodeEntry.getValue());
-                fileContentTreeMap.put(fileName, jsonAsYaml);
-            }
+            String yamlFileContent = jsonNodeEntry.getValue();
+            fileContentTreeMap.put(fileName, yamlFileContent);
         }
         return fileContentTreeMap;
     }
@@ -109,6 +114,23 @@ public class ResolveInconsistencyService implements IResolveInconsistencyUseCase
         }
     }
 
+    private void gitAddCommit(ServiceBranchData serviceBranchData) throws IOException, GitAPIException {
+        String preFix = "Changes made through Plato";
+        Git git = Git.open(serviceBranchData.getDirectory());
+        git.add().addFilepattern(".").call();
+        git.commit().setMessage(preFix).call();
+        git.getRepository().getBranch();
+        git.close();
+    }
+
+
+    private void pushCode(ServiceBranchData serviceBranchData, ServiceSpec serviceSpec) throws IOException, GitAPIException {
+        Git git = Git.open(serviceBranchData.getDirectory());
+        PushCommand pushCommand = git.push();
+        pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(serviceSpec.getGitRepository().getUsername(), serviceSpec.getGitRepository().getPassword()));
+        pushCommand.call();
+        git.close();
+    }
 
     private void gitCheckout(ServiceBranchData serviceBranchData) throws IOException, GitAPIException {
         String preFix = "Plato/" + serviceBranchData.getBranch() + "/";

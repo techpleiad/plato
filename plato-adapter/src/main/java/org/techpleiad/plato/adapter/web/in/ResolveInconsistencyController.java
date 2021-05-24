@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.techpleiad.plato.adapter.mapper.ValidationMapper;
-import org.techpleiad.plato.api.response.ServicesAcrossProfileValidateResponseTO;
+import org.techpleiad.plato.api.request.ResolveInconsistencyRequestTO;
 import org.techpleiad.plato.api.web.IResolveInconsistencyController;
-import org.techpleiad.plato.core.domain.ConsistencyAcrossProfilesReport;
+import org.techpleiad.plato.core.domain.ResolveConsistencyAcrossProfiles;
 import org.techpleiad.plato.core.domain.ServiceSpec;
 import org.techpleiad.plato.core.port.in.IGetServiceUseCase;
 import org.techpleiad.plato.core.port.in.IResolveInconsistencyUseCase;
@@ -32,15 +32,15 @@ public class ResolveInconsistencyController implements IResolveInconsistencyCont
     private IResolveInconsistencyUseCase resolveInconsistencyUseCase;
 
     @Override
-    public ResponseEntity resolveInconsistencyAcrossProfiles(ServicesAcrossProfileValidateResponseTO servicesAcrossProfileValidateResponseTO) throws ExecutionException, InterruptedException, GitAPIException, IOException {
+    public ResponseEntity resolveInconsistencyAcrossProfiles(ResolveInconsistencyRequestTO resolveInconsistencyRequestTO) throws ExecutionException, InterruptedException, GitAPIException, IOException {
 
-        final List<ServiceSpec> serviceSpecList = getServiceUseCase.getServicesList(Collections.singletonList(servicesAcrossProfileValidateResponseTO.getService()));
+        final List<ServiceSpec> serviceSpecList = getServiceUseCase.getServicesList(Collections.singletonList(resolveInconsistencyRequestTO.getService()));
 
-        ConsistencyAcrossProfilesReport consistencyAcrossProfilesReport = validationMapper
-                .convertServicesAcrossProfileValidateResponseTOToConsistencyAcrossProfile(servicesAcrossProfileValidateResponseTO);
+        ResolveConsistencyAcrossProfiles resolveConsistencyAcrossProfiles = validationMapper
+                .convertResolveInconsistencyRequestTOToConsistencyAcrossProfile(resolveInconsistencyRequestTO);
 
         resolveInconsistencyUseCase
-                .resolveInconsistencyAcrossProfiles(serviceSpecList.get(0), servicesAcrossProfileValidateResponseTO.getBranch(), consistencyAcrossProfilesReport);
+                .resolveInconsistencyAcrossProfiles(serviceSpecList.get(0), resolveInconsistencyRequestTO.getBranch(), resolveConsistencyAcrossProfiles);
 
         return null;
     }
