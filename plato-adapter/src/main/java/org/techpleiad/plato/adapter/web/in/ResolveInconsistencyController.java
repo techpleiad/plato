@@ -39,9 +39,9 @@ public class ResolveInconsistencyController implements IResolveInconsistencyCont
         ResolveConsistencyAcrossProfiles resolveConsistencyAcrossProfiles = validationMapper
                 .convertResolveInconsistencyRequestTOToConsistencyAcrossProfile(resolveInconsistencyRequestTO);
 
-        resolveInconsistencyUseCase
+        List<String> resolveInconsistencyAcrossProfileResult = resolveInconsistencyUseCase
                 .resolveInconsistencyAcrossProfiles(serviceSpecList.get(0), resolveInconsistencyRequestTO.getBranch(), resolveConsistencyAcrossProfiles);
 
-        return null;
+        return ResponseEntity.ok(resolveInconsistencyAcrossProfileResult);
     }
 }

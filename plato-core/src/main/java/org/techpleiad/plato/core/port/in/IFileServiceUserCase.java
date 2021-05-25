@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.data.util.Pair;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
@@ -24,4 +26,6 @@ public interface IFileServiceUserCase {
     CompletableFuture<TreeMap<String, File>> getYamlFiles(File directory, String serviceName);
 
     String getFileToString(final File file);
+
+    void overWriteFiles(Map<String, String> fileNameToUpdatedFileContentMap, File directory) throws IOException;
 }
