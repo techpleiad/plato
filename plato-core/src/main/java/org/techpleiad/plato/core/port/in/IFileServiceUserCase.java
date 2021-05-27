@@ -5,7 +5,9 @@ import org.springframework.data.util.Pair;
 import org.techpleiad.plato.core.domain.ServiceBranchData;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -25,6 +27,8 @@ public interface IFileServiceUserCase {
     CompletableFuture<TreeMap<String, File>> getYamlFileTree(File directory, String serviceName);
 
     String getFileToString(final File file);
+
+    void overWriteFiles(Map<String, String> fileNameToUpdatedFileContentMap, File directory) throws IOException;
 
     JsonNode getMergedYamlFiles(TreeMap<String, File> serviceProfileToFileMap, ServiceBranchData serviceBranchData, String profile, String service) throws ExecutionException, InterruptedException;
 

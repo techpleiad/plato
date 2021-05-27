@@ -43,12 +43,12 @@ public class ValidationRuleController implements IValidationRulesManagerControll
 
     @ExecutionTime
     @Override
-    public ResponseEntity<List<ValidationRule>> getRulesByService(String service) {
+    public ResponseEntity<List<ValidationRule>> getRulesByService(String serviceName) {
         List<ValidationRule> validationRules = validationRulePersistencePort.getValidationRules();
         List<ValidationRule> requiredValidationRules = new ArrayList<>();
         for (ValidationRule validationRule : validationRules) {
             ValidationRuleScope scope = validationRule.getScope();
-            if (scope.getServices().contains(service) || scope.getServices().isEmpty()) {
+            if (scope.getServices().contains(serviceName) || scope.getServices().isEmpty()) {
                 requiredValidationRules.add(validationRule);
 
             }

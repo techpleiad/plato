@@ -4,8 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.CloneCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.LsRemoteCommand;
+import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ import org.techpleiad.plato.core.port.in.IGitServiceUseCase;
 import org.techpleiad.plato.core.port.out.IGetGitCredentialsPort;
 
 import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -184,6 +189,45 @@ public class GitService implements IGitServiceUseCase {
         allCompletableFutures.thenApply(ArrayList::new).get();
 
         return mapRepoToDirectory;
+    }
+
+    @Override
+    public void gitAddCommit(ServiceBranchData serviceBranchData) throws IOException, GitAPIException {
+        String preFix = "Changes made through Plato";
+        Git git = Git.open(serviceBranchData.getDirectory());
+        git.add().addFilepattern(".").call();
+        git.commit().setMessage(preFix).call();
+        git.getRepository().getBranch();
+        git.close();
+    }
+
+    @Override
+    public List<String> pushCode(ServiceBranchData serviceBranchData, ServiceSpec serviceSpec) throws IOException, GitAPIException {
+        Git git = Git.open(serviceBranchData.getDirectory());
+        PushCommand pushCommand = git.push();
+        pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(serviceSpec.getGitRepository().getUsername(), serviceSpec.getGitRepository().getPassword()));
+        Iterable<PushResult> pushCommandResult = pushCommand.call();
+        List<String> output = new ArrayList<>();
+        pushCommandResult.forEach(pushResult -> output.add(pushResult.getMessages()));
+        git.close();
+        return output;
+    }
+
+    @Override
+    public void gitCheckout(ServiceBranchData serviceBranchData) throws IOException, GitAPIException {
+        String preFix = "Plato/" + serviceBranchData.getBranch() + "/";
+        Git git = Git.open(serviceBranchData.getDirectory());
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-HH-mm-ss");
+        LocalDateTime now = LocalDateTime.now();
+        preFix = preFix + dtf.format(now);
+
+        git.checkout()
+                .setCreateBranch(true)
+                .setName(preFix)
+                .call();
+
+        git.close();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.techpleiad.plato.core.domain;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -10,5 +11,5 @@ import lombok.ToString;
 public class Document {
     private final String branch;
     private final String profile;
-    private final String document;
+    private final JsonNode document;
 }

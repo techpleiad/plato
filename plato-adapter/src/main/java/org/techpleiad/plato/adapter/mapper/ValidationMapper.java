@@ -1,6 +1,9 @@
 package org.techpleiad.plato.adapter.mapper;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.mapstruct.Mapper;
+import org.techpleiad.plato.api.request.DocumentRequestTO;
+import org.techpleiad.plato.api.request.ResolveInconsistencyRequestTO;
 import org.techpleiad.plato.api.response.BranchProfileReportResponseTO;
 import org.techpleiad.plato.api.response.BranchReportResponseTO;
 import org.techpleiad.plato.api.response.ConsistencyLevelValidateResponseTO;
@@ -14,6 +17,7 @@ import org.techpleiad.plato.core.domain.ConsistencyAcrossBranchesReport;
 import org.techpleiad.plato.core.domain.ConsistencyAcrossProfilesReport;
 import org.techpleiad.plato.core.domain.ConsistencyLevelAcrossBranchesReport;
 import org.techpleiad.plato.core.domain.Document;
+import org.techpleiad.plato.core.domain.ResolveConsistencyAcrossProfiles;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -43,21 +47,38 @@ public interface ValidationMapper {
                 .build();
     }
 
-
-    default List<ProfilePropertiesResponseTO> convertMissingPropertyMapToList(final HashMap<String, List<String>> missingProperty, final HashMap<String, String> profileDocument) {
+    default List<ProfilePropertiesResponseTO> convertMissingPropertyMapToList(final HashMap<String, List<String>> missingProperty, final HashMap<String, JsonNode> profileDocument) {
         final List<ProfilePropertiesResponseTO> profilePropertiesResponseTOList = new LinkedList<>();
         missingProperty.forEach((profile, properties) ->
-                        profilePropertiesResponseTOList.add(ProfilePropertiesResponseTO.builder()
-                                        .properties(properties)
-                                        .document(DocumentResponseTO.builder().
-                                                        profile(profile)
-//                                                .document(profileDocument.get(profile))
-                                                        .build()
-                                        )
-                                        .build()
+                profilePropertiesResponseTOList.add(ProfilePropertiesResponseTO.builder()
+                        .properties(properties)
+                        .document(DocumentResponseTO.builder().
+                                profile(profile)
+                                .document(profileDocument.get(profile))
+                                .build()
                         )
+                        .build()
+                )
         );
         return profilePropertiesResponseTOList;
     }
 
+    default ResolveConsistencyAcrossProfiles convertResolveInconsistencyRequestTOToConsistencyAcrossProfile(final ResolveInconsistencyRequestTO resolveInconsistencyRequestTO) {
+        HashMap<String, String> profileDocumentMap = convertDocumentRequestTOListToProfileDocumentMap(resolveInconsistencyRequestTO.getDocuments());
+        ResolveConsistencyAcrossProfiles resolveConsistencyAcrossProfiles = ResolveConsistencyAcrossProfiles.builder()
+                .profileDocument(profileDocumentMap)
+                .service(resolveInconsistencyRequestTO.getService())
+                .build();
+
+        return resolveConsistencyAcrossProfiles;
+    }
+
+    default HashMap<String, String> convertDocumentRequestTOListToProfileDocumentMap(final List<DocumentRequestTO> documentRequestTOList) {
+
+        HashMap<String, String> profileDocument = new HashMap<>();
+        for (DocumentRequestTO documentRequestTO : documentRequestTOList) {
+            profileDocument.put(documentRequestTO.getProfile(), documentRequestTO.getDocument());
+        }
+        return profileDocument;
+    }
 }

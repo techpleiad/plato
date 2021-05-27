@@ -1,5 +1,6 @@
 package org.techpleiad.plato.core.domain;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +18,7 @@ public class ConsistencyAcrossProfilesReport {
     @Builder.Default
     private final HashMap<String, List<String>> missingProperty = new HashMap<>();
     @Builder.Default
-    private final HashMap<String, String> profileDocument = new HashMap<>();
+    private final HashMap<String, JsonNode> profileDocument = new HashMap<>();
 
     @Setter
     private String service;
@@ -26,7 +27,7 @@ public class ConsistencyAcrossProfilesReport {
         missingProperty.put(profile, missingProperties);
     }
 
-    public void addProfileDocument(final String serviceProfile, final String document) {
+    public void addProfileDocument(final String serviceProfile, final JsonNode document) {
         missingProperty.put(serviceProfile, new LinkedList<>());
         profileDocument.put(serviceProfile, document);
     }

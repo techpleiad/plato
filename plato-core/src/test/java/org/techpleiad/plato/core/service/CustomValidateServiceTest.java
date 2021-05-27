@@ -57,14 +57,4 @@ class CustomValidateServiceTest {
             throw new FileConvertException(exception.getMessage());
         }
     }
-
-
-    @Test
-    void traverseObjectToJsonNodeMapping() throws Exception {
-
-        init(1, Arrays.asList("redirection.*"));
-
-        customValidateService.traverseObjectToJsonNodeMapping(jsonNode, alteredPropertyTree);
-
-    }
 }

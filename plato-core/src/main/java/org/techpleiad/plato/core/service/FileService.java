@@ -26,7 +26,9 @@ import org.techpleiad.plato.core.port.in.IFileThreadServiceUseCase;
 import org.techpleiad.plato.core.port.in.IGetFileUseCase;
 import org.techpleiad.plato.core.port.in.IGitServiceUseCase;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -35,8 +37,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -56,6 +60,7 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
     @Override
     public File generateFileFromLocalDirectoryPath(final String... files) {
         final List<String> path = Arrays.stream(files).filter(e -> !StringUtils.isEmptyOrNull(e)).collect(Collectors.toList());
+        System.out.println(WORKING_DIRECTORY.toString());
         final String directory = WORKING_DIRECTORY.get().getPath() + SEPARATOR + StringUtils.join(path, SEPARATOR);
         return new File(directory);
     }
@@ -132,6 +137,21 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
         );
         log.info("directory copied :: " + directory.getPath());
         return CompletableFuture.completedFuture(profileToFileList);
+    }
+
+    @Override
+    public void overWriteFiles(Map<String, String> fileNameToUpdatedFileContentMap, File directory) throws IOException {
+        File[] files = Objects.requireNonNull(directory.listFiles());
+        for (Map.Entry<String, String> fileNameToContent : fileNameToUpdatedFileContentMap.entrySet()) {
+            for (File file : files) {
+                if (file.getName().equals(fileNameToContent.getKey())) {
+                    FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                    BufferedWriter bw = new BufferedWriter(fw);
+                    bw.write(fileNameToContent.getValue());
+                    bw.close();
+                }
+            }
+        }
     }
 
 
