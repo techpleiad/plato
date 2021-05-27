@@ -24,7 +24,7 @@ import java.util.Map;
 
 @ExtendWith(MockitoExtension.class)
 class ValidationRuleServiceTest {
-    
+
     @InjectMocks
     private ValidationRuleService validationRuleService;
 
@@ -480,23 +480,4 @@ class ValidationRuleServiceTest {
 
     }
 
-
-    boolean compareMaps(Map<String, ValidationRule> a, Map<String, ValidationRule> b) {
-        boolean check = true;
-        for (Map.Entry<String, ValidationRule> validationRuleEntry : a.entrySet()) {
-            ValidationRule validationRule = b.get(validationRuleEntry.getKey());
-            if (validationRule == null) {
-                return false;
-            } else {
-                check = check && compareValidationRuleScope(validationRuleEntry.getValue(), validationRule);
-            }
-        }
-        return check;
-    }
-
-    boolean compareValidationRuleScope(ValidationRule a, ValidationRule b) {
-        ValidationRuleScope scopeA = a.getScope();
-        ValidationRuleScope scopeB = b.getScope();
-        return scopeA.getServices().equals(scopeB.getServices()) && scopeA.getBranches().equals(scopeB.getBranches()) && scopeA.getProfiles().equals(scopeB.getProfiles());
-    }
 }

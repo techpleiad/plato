@@ -109,6 +109,7 @@ class HtmlServiceTest {
 
     );
 
+
     @Test
     void createCustomValidationInBatchReportMailBody() {
 
