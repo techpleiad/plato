@@ -24,9 +24,9 @@ public interface IValidationRulesManagerController {
 
     @ApiOperation("Get validation rules By Service")
     @GetMapping(value = Constants.VERSION_RULES + "/{serviceName}")
-    ResponseEntity getRulesByService(@PathVariable String serviceName);
+    ResponseEntity getRulesByService(@Valid @PathVariable String serviceName);
 
     @ApiOperation("Delete validation rule By ID")
     @DeleteMapping(value = Constants.VERSION_RULES + "/{validationRuleId}")
-    ResponseEntity deleteRuleByID(@PathVariable String validationRuleId);
+    ResponseEntity deleteRuleByID(@Valid @PathVariable String validationRuleId);
 }

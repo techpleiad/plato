@@ -480,7 +480,6 @@ class ValidationRuleServiceTest {
 
     }
 
-
     boolean compareMaps(Map<String, ValidationRule> a, Map<String, ValidationRule> b) {
         boolean check = true;
         for (Map.Entry<String, ValidationRule> validationRuleEntry : a.entrySet()) {
@@ -499,4 +498,5 @@ class ValidationRuleServiceTest {
         ValidationRuleScope scopeB = b.getScope();
         return scopeA.getServices().equals(scopeB.getServices()) && scopeA.getBranches().equals(scopeB.getBranches()) && scopeA.getProfiles().equals(scopeB.getProfiles());
     }
+
 }
