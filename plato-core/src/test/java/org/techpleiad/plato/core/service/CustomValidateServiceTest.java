@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,7 +14,6 @@ import org.techpleiad.plato.core.exceptions.FileConvertException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -56,15 +54,5 @@ class CustomValidateServiceTest {
         } catch (final Exception exception) {
             throw new FileConvertException(exception.getMessage());
         }
-    }
-
-
-    @Test
-    void traverseObjectToJsonNodeMapping() throws Exception {
-
-        init(1, Arrays.asList("redirection.*"));
-
-        customValidateService.traverseObjectToJsonNodeMapping(jsonNode, alteredPropertyTree);
-
     }
 }

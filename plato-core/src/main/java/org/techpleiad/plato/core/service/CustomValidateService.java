@@ -142,7 +142,7 @@ public class CustomValidateService implements ICustomValidateUseCase {
 
 
     @ExecutionTime
-    public Map<String, List<JsonNode>> traverseObjectToJsonNodeMapping(final JsonNode rootNode, final PropertyTreeNode alteredPropertyRoot) {
+    private Map<String, List<JsonNode>> traverseObjectToJsonNodeMapping(final JsonNode rootNode, final PropertyTreeNode alteredPropertyRoot) {
 
         TreeMap<String, List<Pair<String, JsonNode>>> treeMap = new TreeMap<>();
 
