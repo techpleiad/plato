@@ -98,7 +98,7 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
         log.info("directory : " + directory.getPath());
         Arrays.stream(Objects.requireNonNull(directory.listFiles())).forEach(file ->
                 validateFileAndGetProfile(file, serviceName).ifPresent(profile -> {
-                    if (profile.contains(profile)) {
+                    if (profiles.contains(profile)) {
                         profileToFileList.add(Pair.of(profile, file));
                     }
                 })
