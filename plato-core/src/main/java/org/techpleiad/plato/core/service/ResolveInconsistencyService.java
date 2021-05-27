@@ -43,7 +43,7 @@ public class ResolveInconsistencyService implements IResolveInconsistencyUseCase
 
         final ServiceBranchData serviceBranchData = gitService.cloneGitRepositoryByBranchAsync(serviceSpec.getGitRepository(), branchName);
 
-        CompletableFuture<TreeMap<String, File>> treeMap = fileService.getYamlFiles(serviceBranchData.getDirectory(), serviceSpec.getService());
+        CompletableFuture<TreeMap<String, File>> treeMap = fileService.getYamlFileTree(serviceBranchData.getDirectory(), serviceSpec.getService());
         TreeMap<String, File> profileFileMap = treeMap.get();
 
         Map<String, String> fileNameToUpdatedFileContentMap = profileJsonNodeToProfileFileContentMap(updatedFilesReport, profileFileMap);
