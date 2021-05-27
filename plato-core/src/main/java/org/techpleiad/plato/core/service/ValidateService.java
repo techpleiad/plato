@@ -272,7 +272,8 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
                 final ServiceBranchData data = ServiceBranchData.builder().repository(serviceSpec.getGitRepository().getUrl()).branch(branchName).build();
                 final CompletableFuture<List<Pair<String, File>>> mapProfileToFileContent = fileService.getYamlFiles(
                         mapServiceBranchToRepository.get(data).getDirectory(),
-                        serviceSpec.getService()
+                        serviceSpec.getService(),
+                        serviceSpec.getProfiles().stream().map(Profile::getName).collect(Collectors.toCollection(TreeSet::new))
                 );
 
                 final Map<String, List<String>> suppressedPropertiesMap = isSuppressed ?

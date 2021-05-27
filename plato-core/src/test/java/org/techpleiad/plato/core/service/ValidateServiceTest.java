@@ -498,7 +498,7 @@ class ValidateServiceTest {
         Mockito.when(gitService.cloneGitRepositoryByBranchInBatchAsync(Mockito.anyList(), Mockito.anyList()))
                 .thenReturn(mapServiceBranchToRepository);
 
-        Mockito.when(fileService.getYamlFiles(Mockito.any(), Mockito.any())).thenReturn(mapProfileToFileContent);
+        Mockito.when(fileService.getYamlFiles(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(mapProfileToFileContent);
 
         Mockito.when(getSuppressPropertyUseCase.getSuppressedProperties(Mockito.anyString())).thenReturn(suppressedPropertiesMap);
 
