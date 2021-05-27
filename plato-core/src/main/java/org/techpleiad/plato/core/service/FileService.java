@@ -32,16 +32,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -101,12 +92,16 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
     }
 
     @Override
-    public CompletableFuture<List<Pair<String, File>>> getYamlFiles(final File directory, final String serviceName) {
+    public CompletableFuture<List<Pair<String, File>>> getYamlFiles(final File directory, final String serviceName, final Set<String> profiles) {
 
         final List<Pair<String, File>> profileToFileList = new LinkedList<>();
         log.info("directory : " + directory.getPath());
         Arrays.stream(Objects.requireNonNull(directory.listFiles())).forEach(file ->
-                validateFileAndGetProfile(file, serviceName).ifPresent(profile -> profileToFileList.add(Pair.of(profile, file)))
+                validateFileAndGetProfile(file, serviceName).ifPresent(profile -> {
+                    if (profile.contains(profile)) {
+                        profileToFileList.add(Pair.of(profile, file));
+                    }
+                })
         );
         log.info("directory copied : " + directory.getPath());
         return CompletableFuture.completedFuture(profileToFileList);
