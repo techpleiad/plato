@@ -54,7 +54,7 @@ public class ResolveInconsistencyService implements IResolveInconsistencyUseCase
 
         gitService.gitAddCommit(serviceBranchData);
 
-        List<String> pushResult = gitService.pushCode(serviceBranchData, serviceSpec);
+        List<String> pushResult = gitService.pushUpdates(serviceBranchData, serviceSpec);
 
         return pushResult;
     }
