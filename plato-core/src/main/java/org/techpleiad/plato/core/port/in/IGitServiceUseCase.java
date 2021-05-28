@@ -30,7 +30,5 @@ public interface IGitServiceUseCase {
 
     void gitAddCommit(ServiceBranchData serviceBranchData) throws IOException, GitAPIException;
 
-    List<String> pushCode(ServiceBranchData serviceBranchData, ServiceSpec serviceSpec) throws IOException, GitAPIException;
-
-
+    List<String> pushUpdates(ServiceBranchData serviceBranchData, ServiceSpec serviceSpec) throws IOException, GitAPIException;
 }

@@ -202,10 +202,9 @@ public class GitService implements IGitServiceUseCase {
     }
 
     @Override
-    public List<String> pushCode(ServiceBranchData serviceBranchData, ServiceSpec serviceSpec) throws IOException, GitAPIException {
+    public List<String> pushUpdates(ServiceBranchData serviceBranchData, ServiceSpec serviceSpec) throws IOException, GitAPIException {
         Git git = Git.open(serviceBranchData.getDirectory());
-        PushCommand pushCommand = git.push();
-        pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(serviceSpec.getGitRepository().getUsername(), serviceSpec.getGitRepository().getPassword()));
+        PushCommand pushCommand = createPushCommand(git, serviceBranchData, serviceSpec);
         Iterable<PushResult> pushCommandResult = pushCommand.call();
         List<String> output = new ArrayList<>();
         pushCommandResult.forEach(pushResult -> output.add(pushResult.getMessages()));
@@ -270,6 +269,15 @@ public class GitService implements IGitServiceUseCase {
             cloneCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitRepository.getUsername(), gitRepository.getPassword()));
         }
         return cloneCommand;
+    }
+
+    private PushCommand createPushCommand(Git git, ServiceBranchData serviceBranchData, ServiceSpec serviceSpec) {
+        PushCommand pushCommand = git.push();
+        GitRepository gitRepository = populateGitCredentials(serviceSpec.getGitRepository());
+        if (!StringUtils.isEmptyOrNull(gitRepository.getPassword()) && !StringUtils.isEmptyOrNull(gitRepository.getUsername())) {
+            pushCommand.setCredentialsProvider(new UsernamePasswordCredentialsProvider(gitRepository.getUsername(), gitRepository.getPassword()));
+        }
+        return pushCommand;
     }
 
     private LsRemoteCommand createLsRemoteCommand(GitRepository gitRepository) {
