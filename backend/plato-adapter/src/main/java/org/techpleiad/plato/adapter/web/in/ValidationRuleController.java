@@ -3,6 +3,7 @@ package org.techpleiad.plato.adapter.web.in;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.techpleiad.plato.adapter.mapper.ValidationRuleMapper;
 import org.techpleiad.plato.api.request.ValidationRuleRequestTO;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@CrossOrigin
 public class ValidationRuleController implements IValidationRulesManagerController {
     @Autowired
     private IAddValidationRuleUseCase addValidationRuleUseCase;

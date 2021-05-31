@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.techpleiad.plato.api.web.IYamlFileManagerController;
 import org.techpleiad.plato.core.domain.ServiceSpec;
@@ -14,6 +15,7 @@ import org.techpleiad.plato.core.port.out.IServicePersistencePort;
 import java.util.concurrent.ExecutionException;
 
 @RestController
+@CrossOrigin
 public class FileManagerController implements IYamlFileManagerController {
 
     @Autowired
