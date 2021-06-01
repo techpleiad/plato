@@ -18,7 +18,7 @@ import { FormsModule } from '@angular/forms';
 import { DisplayServicesComponent } from './display-services/display-services.component';
 import { WorkspaceDialogueComponent } from './workspace-dialogue/workspace-dialogue.component';
 import { ContentDisplayComponent } from './content-display/content-display.component';
-import { SpinnerComponent } from './spinner/spinner.component';
+
 import { FunctionInputComponent } from './function-input/function-input.component';
 import { BranchInputComponent } from './branch-input/branch-input.component';
 import { ProfileInputComponent } from './profile-input/profile-input.component';
@@ -29,7 +29,6 @@ import { ProfileInputComponent } from './profile-input/profile-input.component';
     DisplayServicesComponent,
     WorkspaceDialogueComponent,
     ContentDisplayComponent,
-    SpinnerComponent,
     FunctionInputComponent,
     BranchInputComponent,
     ProfileInputComponent

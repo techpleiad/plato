@@ -7,7 +7,9 @@
       <app-branch-input [mservice]="mservice" (branch_sent)="setBranch($event)" *ngIf="isBranchReq"></app-branch-input>
       <app-profile-input [mservice]="mservice" [canProfileDefault]="canProfileDefault" (profile_sent)="setProfile($event)" *ngIf="isProfileReq"></app-profile-input>
       <button type="submit" class="btn btn-light dialog-button" (click)="sendToContentDisplay()">Show</button>
-      <app-spinner *ngIf="visibleProgressSpinner"></app-spinner> 
+      <mat-progress-spinner mode="indeterminate" diameter="30" [hidden]="!visibleProgressSpinner"></mat-progress-spinner>
+      
+      
   </div>
   <!-- Showing the contents accordingly -->
   <app-content-display [displayData]="displayData"></app-content-display>
