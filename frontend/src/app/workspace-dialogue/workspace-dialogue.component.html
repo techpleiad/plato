@@ -2,10 +2,11 @@
 
 <mat-dialog-content class="mat-typography">
   <div fxLayout="row" fxLayoutAlign="start center">
-      <app-function-input (function_sent)="setFunction($event)"></app-function-input>
-      <!--<app-branch-profile-input [mservice]="mservice" (branch_profile_sent)="sendToContentDisplay($event)" *ngIf="isBranchProfileInputReq"></app-branch-profile-input>-->
-      <app-branch-input [mservice]="mservice" (branch_sent)="setBranch($event)" *ngIf="isBranchReq"></app-branch-input>
+     
+      <app-dropdown [dropdownList]="functionList" [label]=" 'FUNCTION' " (change)="setFunction($event)" ></app-dropdown>
+      <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH' " (change)="setBranch($event)" *ngIf="isBranchReq" ></app-dropdown>
       <app-profile-input [mservice]="mservice" [canProfileDefault]="canProfileDefault" (profile_sent)="setProfile($event)" *ngIf="isProfileReq"></app-profile-input>
+      
       <button type="submit" class="btn btn-light dialog-button" (click)="sendToContentDisplay()">Show</button>
       <mat-progress-spinner mode="indeterminate" diameter="30" [hidden]="!visibleProgressSpinner"></mat-progress-spinner>
       
@@ -17,10 +18,5 @@
 
 <mat-dialog-actions align="end">
   <button class="btn btn-light dialog-button" mat-button mat-dialog-close>Close</button>
-  <!--<button mat-button class="btn" [mat-dialog-close]="false" cdkFocusInitial>Install</button>-->
 </mat-dialog-actions>
 
-
-<!-- Copyright 2021 Google LLC. All Rights Reserved.
-    Use of this source code is governed by an MIT-style license that
-    can be found in the LICENSE file at http://angular.io/license -->

@@ -13,6 +13,10 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   mservice:microService;
   
+  profileList: string[] = [];
+  branchList: string[] = [];
+  functionList: string[] = [];
+  
   functionValue: any;
   branchValue: any;
   profileValue: any;
@@ -26,9 +30,14 @@ export class WorkspaceDialogueComponent implements OnInit {
   visibleProgressSpinner = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _getFiles: GetFilesService) {
+    this.functionList = ["merged","individual"];
     this.mservice = data;
     this.branchValue = "";
     this.profileValue = "";
+
+    this.profileList = this.mservice.profiles.map((x: any) => x.name);
+    this.branchList = this.mservice.branches.map((x:any) => x.name);
+    
 
    }
 

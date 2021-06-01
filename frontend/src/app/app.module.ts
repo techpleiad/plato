@@ -23,6 +23,8 @@ import { FunctionInputComponent } from './function-input/function-input.componen
 import { BranchInputComponent } from './branch-input/branch-input.component';
 import { ProfileInputComponent } from './profile-input/profile-input.component';
 
+import { SharedComponentsModule } from './shared-components/shared-components.module'
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,7 +47,8 @@ import { ProfileInputComponent } from './profile-input/profile-input.component';
     MatInputModule,
     FormsModule,
     MatProgressSpinnerModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    SharedComponentsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
