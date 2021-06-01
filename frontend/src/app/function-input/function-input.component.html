@@ -1,0 +1,7 @@
+<mat-form-field class="input-field" appearance="fill">
+    <mat-label>FUNCTION:</mat-label>
+    <mat-select name="typeValue" (selectionChange)="sendFunction($event)" required>
+      <mat-option value="merged">Merged</mat-option>
+      <mat-option value="individual">Individual</mat-option>
+    </mat-select>
+  </mat-form-field>

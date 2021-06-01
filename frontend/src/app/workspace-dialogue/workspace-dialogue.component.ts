@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+
 import { GetFilesService } from '../get-files.service';
-import { GetServicesService } from '../get-services.service';
 import { microService } from '../microService';
 
 @Component({
@@ -12,29 +12,67 @@ import { microService } from '../microService';
 export class WorkspaceDialogueComponent implements OnInit {
 
   mservice:microService;
-  typeValue: any;
+  
+  functionValue: any;
   branchValue: any;
   profileValue: any;
+
+  isBranchReq = false;
+  isProfileReq = false;
+  canProfileDefault = false;
+
   displayData: any;
+
+  visibleProgressSpinner = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _getFiles: GetFilesService) {
     this.mservice = data;
+    this.branchValue = "";
+    this.profileValue = "";
+
    }
 
   ngOnInit(): void {
   }
-  sendToContentDisplay(branch_profile: any){
-    this.typeValue = branch_profile.typeValue;
-    this.branchValue = branch_profile.branchValue;
-    this.profileValue = branch_profile.profileValue;
-    console.log(this.typeValue, this.branchValue,this.profileValue);
+  setFunction(functionValue: any){
+    this.functionValue = functionValue;
+    this.setBranchProfileReq();
+  }
+  setBranchProfileReq(){
+    if(this.functionValue==="merged" || this.functionValue==="individual"){
+      this.isBranchReq = true;
+      this.isProfileReq = true;
+    }
+    if(this.functionValue==="individual"){
+      this.canProfileDefault = true;
+    }
+    else{
+      this.canProfileDefault = false;
+    }
+    
+  }
+  setBranch(branchValue: any){
+    this.branchValue = branchValue;
+    console.log("Branch is set to ",this.branchValue);
+  }
+  setProfile(profileValue: any){
+    this.profileValue = profileValue;
+    console.log("Profile is set to ",this.profileValue);
+  }
+  
 
-    this._getFiles.getFile(this.mservice.service,this.typeValue, this.branchValue,this.profileValue)
+  sendToContentDisplay(){
+    // Progress Spinner 
+    this.visibleProgressSpinner = true;
+
+    this._getFiles.getFile(this.mservice.service,this.functionValue, this.branchValue,this.profileValue)
     .subscribe(data => {
-      console.log(data);
-      //this.displayData = this._yamlDataService.yamlToJson(data);
+      if(data){
+        this.visibleProgressSpinner = false;
+      }
+      
       this.displayData = data;
-      console.log(this.displayData);
+      //console.log(this.displayData);
     });
 
   }

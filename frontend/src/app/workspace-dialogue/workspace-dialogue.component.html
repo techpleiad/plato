@@ -1,9 +1,13 @@
 <h2 mat-dialog-title>{{mservice.service}}</h2>
 
 <mat-dialog-content class="mat-typography">
-    <!-- Getting the input -->
-  <div>
-      <app-branch-profile-input [mservice]="mservice" (branch_profile_sent)="sendToContentDisplay($event)"></app-branch-profile-input>
+  <div fxLayout="row" fxLayoutAlign="start center">
+      <app-function-input (function_sent)="setFunction($event)"></app-function-input>
+      <!--<app-branch-profile-input [mservice]="mservice" (branch_profile_sent)="sendToContentDisplay($event)" *ngIf="isBranchProfileInputReq"></app-branch-profile-input>-->
+      <app-branch-input [mservice]="mservice" (branch_sent)="setBranch($event)" *ngIf="isBranchReq"></app-branch-input>
+      <app-profile-input [mservice]="mservice" [canProfileDefault]="canProfileDefault" (profile_sent)="setProfile($event)" *ngIf="isProfileReq"></app-profile-input>
+      <button type="submit" class="btn btn-light dialog-button" (click)="sendToContentDisplay()">Show</button>
+      <app-spinner *ngIf="visibleProgressSpinner"></app-spinner> 
   </div>
   <!-- Showing the contents accordingly -->
   <app-content-display [displayData]="displayData"></app-content-display>

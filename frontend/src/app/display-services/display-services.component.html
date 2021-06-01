@@ -1,6 +1,6 @@
 <div class="container" *ngFor="let s of services">
     <button class="btn service-button service-text" (click)="openWorkspace(s)">
-        {{s.service}}
+        {{s.service | titlecase}}
         <span class="to-right">
             <span class="branch-profile-text">BRANCH</span>  
             {{s.branches.length}} &nbsp; &nbsp; 
