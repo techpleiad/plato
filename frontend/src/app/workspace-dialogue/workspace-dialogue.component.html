@@ -1,0 +1,20 @@
+<h2 mat-dialog-title>{{mservice.service}}</h2>
+
+<mat-dialog-content class="mat-typography">
+    <!-- Getting the input -->
+  <div>
+      <app-branch-profile-input [mservice]="mservice" (branch_profile_sent)="sendToContentDisplay($event)"></app-branch-profile-input>
+  </div>
+  <!-- Showing the contents accordingly -->
+  <app-content-display [displayData]="displayData"></app-content-display>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button class="btn btn-light dialog-button" mat-button mat-dialog-close>Close</button>
+  <!--<button mat-button class="btn" [mat-dialog-close]="false" cdkFocusInitial>Install</button>-->
+</mat-dialog-actions>
+
+
+<!-- Copyright 2021 Google LLC. All Rights Reserved.
+    Use of this source code is governed by an MIT-style license that
+    can be found in the LICENSE file at http://angular.io/license -->

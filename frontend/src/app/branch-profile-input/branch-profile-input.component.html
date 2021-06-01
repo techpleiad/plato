@@ -1,0 +1,26 @@
+
+  <mat-form-field class="input-field" appearance="fill">
+    <mat-label>BRANCH:</mat-label>
+    <mat-select name="branchValue" [(ngModel)]="branchValue" required>
+      <mat-option *ngFor="let branch of mservice.branches" [value]="branch.name">{{branch.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field class="input-field" appearance="fill">
+    <mat-label>PROFILE:</mat-label>
+    <mat-select name="selectorValue" [(ngModel)]="profileValue" required>
+        <mat-option *ngFor="let profile of mservice.profiles" [value]="profile.name">{{profile.name}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button type="submit" class="btn btn-light dialog-button" (click)="sendBranchProfile()">Show</button>
+  
+
+
+
+
+  
+
+
+
+  
+ 
