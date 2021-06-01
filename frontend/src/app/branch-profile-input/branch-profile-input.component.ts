@@ -10,15 +10,32 @@ export class BranchProfileInputComponent implements OnInit {
 
   @Input() mservice!: microService;
   @Output() branch_profile_sent = new EventEmitter();
-  
+
+  profile: any;
   branchValue: any;
   profileValue: any;
-  constructor() { }
+  typeValue: any;
+  constructor() { 
+    
+  }
 
   ngOnInit(): void {
   }
   sendBranchProfile(){
+    
+
+    if(this.profile==="default"){
+      this.profileValue="";
+    }
+    else{
+      this.profileValue=this.profile;
+    }
+    console.log(this.profile);
+    console.log(this.branchValue);
+    
     this.branch_profile_sent.emit({
+
+      "typeValue": this.typeValue,
       "branchValue": this.branchValue,
       "profileValue": this.profileValue
     });
