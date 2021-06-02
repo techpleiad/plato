@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { microService } from '../microService';
+import { DataManagerService } from '../shared/shared-services/data-manager.service';
 
 export interface Profile {
   name: string;
@@ -86,7 +87,7 @@ export class AddNewServiceComponent implements OnInit {
   }
   //branch module chip functions
   
-  constructor(private dialogRef: MatDialogRef<AddNewServiceComponent>,@Inject(MAT_DIALOG_DATA) private data: microService) {
+  constructor(private dialogRef: MatDialogRef<AddNewServiceComponent>,@Inject(MAT_DIALOG_DATA) private data: microService, private _dataManagerService: DataManagerService) {
     this.addService=new microService();
     console.log(data);
   }
@@ -104,14 +105,24 @@ export class AddNewServiceComponent implements OnInit {
     if(this.checked){
       this.addService.gitRepository={url: this.url};
       if(this.isServiceValid && this.isUrlValid){
-        this.dialogRef.close(this.addService);
+        this.executeAddService();
+        //this.dialogRef.close(this.addService);
       }
     }else{
       this.addService.gitRepository={url: this.url, username: this.username, password: this.password};
       if(this.isServiceValid && this.isUrlValid && this.isUsernameValid && this.isPasswordValid){
-        this.dialogRef.close(this.addService);
+        this.executeAddService();
+        //this.dialogRef.close(this.addService);
       }
     }
+    
+  }
+
+  executeAddService(){
+    this._dataManagerService.addService(this.addService).subscribe(data=>{
+      console.log(data);
+      this.dialogRef.close(this.addService);
+    });
   }
 
   ngOnInit(): void {

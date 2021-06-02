@@ -25,7 +25,8 @@ export class AppComponent {
     dialogRef.afterClosed().subscribe((result: microService) => {
       console.log(result);
       if(result){
-        this._dataManagerService.addService(result);
+        //this._dataManagerService.addService(result);
+        console.log(result);
       }
       else{
         console.log("null value");

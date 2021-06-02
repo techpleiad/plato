@@ -23,7 +23,7 @@ export class DataManagerService {
   addService(newService: microService): Observable<any>{
     let serviceItems = JSON.stringify(newService);
     //console.log(serviceItems);
-    return this.http.post(this._base_url, serviceItems);
+    return this.http.post(this._base_url, newService);
 
   }
 }
