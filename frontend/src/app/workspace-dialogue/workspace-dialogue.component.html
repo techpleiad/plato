@@ -1,4 +1,5 @@
 <h2 mat-dialog-title>{{mservice.service | headingPipe}}</h2>
+<hr>
 
 <mat-dialog-content class="mat-typography">
 
@@ -13,7 +14,8 @@
   <app-content-display [displayData]="displayData"></app-content-display>
 </mat-dialog-content>
 
+<hr>
 <mat-dialog-actions align="end">
-  <app-btn mat-dialog-close [label]=" 'Close' ">Close</app-btn>
+  <app-btn mat-dialog-close [label]=" 'Cancel' "></app-btn>
 </mat-dialog-actions>
 

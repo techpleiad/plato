@@ -24,7 +24,7 @@ export class DisplayServicesComponent implements OnInit {
   openWorkspace(mservice: microService){
     const dialogRef = this.dialog.open(WorkspaceDialogueComponent,{
       data: mservice,
-      height: '800px',
+      height: '700px',
       width: '1200px',
     });
 

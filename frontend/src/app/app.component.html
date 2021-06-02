@@ -1,4 +1,6 @@
 <app-navbar></app-navbar>
-<app-add-service-button></app-add-service-button>
+<div class="container">
+    <app-btn (clicked)="openAddServiceDialog()" [label]=" 'Add New Service' "></app-btn>
+</div>
 <app-display-services></app-display-services>
 <router-outlet></router-outlet>

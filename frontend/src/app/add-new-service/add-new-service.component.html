@@ -1,4 +1,5 @@
 <h2 mat-dialog-title>Add New Service</h2>
+<hr>
 <mat-dialog-content>
   <form>
     <div class="mb-3">
@@ -121,12 +122,9 @@
 
   </form>
 </mat-dialog-content>
+<hr>
 <mat-dialog-actions align="end">
-  <button class="btn btn-secondary" mat-button mat-dialog-close>Cancel</button> &nbsp;&nbsp;
-  <button class="btn btn-primary" mat-button (click)="addNewService()" cdkFocusInitial>Add</button>
+  <app-btn mat-dialog-close [label]=" 'Cancel' "></app-btn> 
+  <app-btn (clicked)="addNewService()" [label]=" 'Add' " cdkFocusInitial></app-btn>
 </mat-dialog-actions>
 
-
-<!-- Copyright 2021 Google LLC. All Rights Reserved.
-    Use of this source code is governed by an MIT-style license that
-    can be found in the LICENSE file at http://angular.io/license -->
