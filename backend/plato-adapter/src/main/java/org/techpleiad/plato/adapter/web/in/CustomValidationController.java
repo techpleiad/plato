@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.techpleiad.plato.adapter.config.ConfigToolConfig;
 import org.techpleiad.plato.adapter.mapper.CustomValidationMapper;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @RestController
+@CrossOrigin
 @Slf4j
 public class CustomValidationController implements ICustomValidationController {
 

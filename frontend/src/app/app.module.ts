@@ -7,38 +7,67 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { AddServiceButtonComponent } from './add-service-button/add-service-button.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddNewServiceComponent } from './add-new-service/add-new-service.component';
-import { MatDialogModule } from '@angular/material/dialog'
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatCardModule } from '@angular/material/card';
 import {MatChipsModule} from '@angular/material/chips';
-import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
-import { MatIconModule} from '@angular/material/icon';
+
+import { FlexLayoutModule } from '@angular/flex-layout';
+
+import { HttpClientModule } from '@angular/common/http';
+import {MatIconModule} from '@angular/material/icon';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FormsModule } from '@angular/forms';
+import { DisplayServicesComponent } from './display-services/display-services.component';
+import { WorkspaceDialogueComponent } from './workspace-dialogue/workspace-dialogue.component';
+import { ContentDisplayComponent } from './content-display/content-display.component';
+
+import { FunctionInputComponent } from './function-input/function-input.component';
+import { BranchInputComponent } from './branch-input/branch-input.component';
+import { ProfileInputComponent } from './profile-input/profile-input.component';
+
+import { SharedComponentsModule } from './shared-components/shared-components.module';
+import { HeadingPipePipe } from './heading-pipe.pipe';
+
 
 @NgModule({
   declarations: [
     AppComponent,
     NavbarComponent,
     AddServiceButtonComponent,
-    AddNewServiceComponent
+    AddNewServiceComponent,
+    DisplayServicesComponent,
+    WorkspaceDialogueComponent,
+    ContentDisplayComponent,
+    FunctionInputComponent,
+    BranchInputComponent,
+    ProfileInputComponent,
+    HeadingPipePipe
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatDialogModule,
-    FormsModule,
-    HttpClientModule,
     MatRadioModule,
     MatCheckboxModule,
     MatCardModule,
     MatChipsModule,
-    MatInputModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    HttpClientModule,
+    MatFormFieldModule,
+    MatDialogModule,
+    MatSelectModule,
+    MatInputModule,
+    FormsModule,
+    MatProgressSpinnerModule,
+    FlexLayoutModule,
+    SharedComponentsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

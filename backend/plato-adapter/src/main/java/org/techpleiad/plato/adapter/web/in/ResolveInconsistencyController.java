@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.techpleiad.plato.adapter.mapper.ValidationMapper;
 import org.techpleiad.plato.api.request.ResolveInconsistencyRequestTO;
@@ -20,6 +21,7 @@ import java.util.concurrent.ExecutionException;
 
 @RestController
 @Slf4j
+@CrossOrigin
 public class ResolveInconsistencyController implements IResolveInconsistencyController {
 
     @Autowired

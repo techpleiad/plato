@@ -8,8 +8,8 @@ export class microService{
 
     constructor(){
         this.service = "";
-        this.description="";
-        this.directory="";
+        this.description = "";
+        this.directory = "";
     }
 
 }
