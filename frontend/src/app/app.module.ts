@@ -32,7 +32,7 @@ import { FunctionInputComponent } from './function-input/function-input.componen
 import { BranchInputComponent } from './branch-input/branch-input.component';
 import { ProfileInputComponent } from './profile-input/profile-input.component';
 
-import { SharedComponentsModule } from './shared-components/shared-components.module';
+import { SharedComponentsModule } from './shared/shared-components/shared-components.module';
 import { HeadingPipePipe } from './heading-pipe.pipe';
 
 
