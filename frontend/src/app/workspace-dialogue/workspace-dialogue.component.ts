@@ -12,7 +12,7 @@ import { microService } from '../microService';
 export class WorkspaceDialogueComponent implements OnInit {
 
   mservice:microService;
-  
+
   profileList: string[] = [];
   branchList: string[] = [];
   functionList: string[] = [];
@@ -85,5 +85,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     });
 
   }
+
+  
 
 }

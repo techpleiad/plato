@@ -1,22 +1,19 @@
-<h2 mat-dialog-title>{{mservice.service}}</h2>
+<h2 mat-dialog-title>{{mservice.service | headingPipe}}</h2>
 
 <mat-dialog-content class="mat-typography">
+
   <div fxLayout="row" fxLayoutAlign="start center">
-     
       <app-dropdown [dropdownList]="functionList" [label]=" 'FUNCTION' " (change)="setFunction($event)" ></app-dropdown>
       <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH' " (change)="setBranch($event)" *ngIf="isBranchReq" ></app-dropdown>
       <app-profile-input [mservice]="mservice" [canProfileDefault]="canProfileDefault" (profile_sent)="setProfile($event)" *ngIf="isProfileReq"></app-profile-input>
-      
-      <button type="submit" class="btn btn-light dialog-button" (click)="sendToContentDisplay()">Show</button>
-      <mat-progress-spinner mode="indeterminate" diameter="30" [hidden]="!visibleProgressSpinner"></mat-progress-spinner>
-      
-      
+      <app-btn (clicked)="sendToContentDisplay()" [label]=" 'Show' "></app-btn>
+      <mat-progress-spinner mode="indeterminate" diameter="30" [hidden]="!visibleProgressSpinner"></mat-progress-spinner>    
   </div>
   <!-- Showing the contents accordingly -->
   <app-content-display [displayData]="displayData"></app-content-display>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button class="btn btn-light dialog-button" mat-button mat-dialog-close>Close</button>
+  <app-btn mat-dialog-close [label]=" 'Close' ">Close</app-btn>
 </mat-dialog-actions>
 

@@ -5,12 +5,15 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
+import { BtnComponent } from './btn/btn.component';
+
 
 
 
 @NgModule({
   declarations: [
-    DropdownComponent
+    DropdownComponent,
+    BtnComponent
   ],
   imports: [
     CommonModule,
@@ -20,7 +23,9 @@ import {MatInputModule} from '@angular/material/input';
     MatInputModule
   ],
   exports: [
-    DropdownComponent
+    DropdownComponent,
+    BtnComponent,
+    
   ]
   
 })
