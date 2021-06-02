@@ -2,6 +2,7 @@
     background-color: #DA0972;
     padding-left: 0px;  
     font-weight: normal;
+    margin-bottom: 15px;
 }
 .tool-title{
     background-color: #536162;
@@ -9,8 +10,10 @@
     height: 64px;
     padding-top: auto;
     padding-top: 15px;
-    width: 20%;
+    padding-left:10px;
+    padding-right:10px;
     text-align: center;
+
 }
 .team-title{
     color:white;
