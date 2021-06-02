@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NavbarComponent } from './navbar/navbar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AddNewServiceComponent } from './add-new-service/add-new-service.component';
 import {MatRadioModule} from '@angular/material/radio';
@@ -27,9 +26,6 @@ import { FormsModule } from '@angular/forms';
 import { DisplayServicesComponent } from './display-services/display-services.component';
 import { WorkspaceDialogueComponent } from './workspace-dialogue/workspace-dialogue.component';
 import { ContentDisplayComponent } from './content-display/content-display.component';
-
-import { FunctionInputComponent } from './function-input/function-input.component';
-import { BranchInputComponent } from './branch-input/branch-input.component';
 import { ProfileInputComponent } from './profile-input/profile-input.component';
 
 import { SharedComponentsModule } from './shared/shared-components/shared-components.module';
@@ -39,13 +35,10 @@ import { HeadingPipePipe } from './heading-pipe.pipe';
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarComponent,
     AddNewServiceComponent,
     DisplayServicesComponent,
     WorkspaceDialogueComponent,
     ContentDisplayComponent,
-    FunctionInputComponent,
-    BranchInputComponent,
     ProfileInputComponent,
     HeadingPipePipe
   ],

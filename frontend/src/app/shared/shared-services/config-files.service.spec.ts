@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { GetFilesService } from './get-files.service';
+import { ConfigFilesService } from './config-files.service';
 
-describe('GetFilesService', () => {
-  let service: GetFilesService;
+describe('ConfigFilesService', () => {
+  let service: ConfigFilesService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(GetFilesService);
+    service = TestBed.inject(ConfigFilesService);
   });
 
   it('should be created', () => {

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AddNewServiceComponent } from './add-new-service/add-new-service.component';
-import { AddServiceService } from './add-service.service';
 import { microService } from './microService';
+import { DataManagerService } from './shared/shared-services/data-manager.service';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +11,7 @@ import { microService } from './microService';
 })
 export class AppComponent {
   title = 'frontend';
-  constructor(private _addService: AddServiceService, public dialog: MatDialog){
+  constructor(private _dataManagerService: DataManagerService, public dialog: MatDialog){
 
   }
   openAddServiceDialog(){
@@ -25,15 +25,11 @@ export class AppComponent {
     dialogRef.afterClosed().subscribe((result: microService) => {
       console.log(result);
       if(result){
-        this.addNewService(result);
+        this._dataManagerService.addService(result);
       }
       else{
         console.log("null value");
       }
     });
-  }
-
-  addNewService(newService: microService){
-    this._addService.addNewService(newService);
   }
 }

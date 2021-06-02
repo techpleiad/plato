@@ -6,6 +6,8 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
 import { BtnComponent } from './btn/btn.component';
+import { HeaderComponent } from './header/header.component';
+import {MatToolbarModule} from '@angular/material/toolbar';
 
 
 
@@ -13,19 +15,21 @@ import { BtnComponent } from './btn/btn.component';
 @NgModule({
   declarations: [
     DropdownComponent,
-    BtnComponent
+    BtnComponent,
+    HeaderComponent
   ],
   imports: [
     CommonModule,
     MatFormFieldModule,
     MatDialogModule,
     MatSelectModule,
-    MatInputModule
+    MatInputModule,
+    MatToolbarModule
   ],
   exports: [
     DropdownComponent,
     BtnComponent,
-    
+    HeaderComponent
   ]
   
 })

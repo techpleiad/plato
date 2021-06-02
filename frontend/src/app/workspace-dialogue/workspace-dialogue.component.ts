@@ -1,8 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-
-import { GetFilesService } from '../get-files.service';
 import { microService } from '../microService';
+import { ConfigFilesService } from '../shared/shared-services/config-files.service';
 
 @Component({
   selector: 'app-workspace-dialogue',
@@ -29,7 +28,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   visibleProgressSpinner = false;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _getFiles: GetFilesService) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _configFiles: ConfigFilesService) {
     this.functionList = ["merged","individual"];
     this.mservice = data;
     this.branchValue = "";
@@ -74,7 +73,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     // Progress Spinner 
     this.visibleProgressSpinner = true;
 
-    this._getFiles.getFile(this.mservice.service,this.functionValue, this.branchValue,this.profileValue)
+    this._configFiles.getFile(this.mservice.service,this.functionValue, this.branchValue,this.profileValue)
     .subscribe(data => {
       if(data){
         this.visibleProgressSpinner = false;

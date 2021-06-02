@@ -1,6 +1,0 @@
-<mat-form-field class="input-field" appearance="fill">
-    <mat-label>BRANCH:</mat-label>
-    <mat-select (selectionChange)="sendBranch($event)" name="branchValue" required>
-      <mat-option *ngFor="let branch of mservice.branches" [value]="branch.name">{{branch.name}}</mat-option>
-    </mat-select>
-  </mat-form-field>

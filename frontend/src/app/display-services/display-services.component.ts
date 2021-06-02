@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {MatIconModule} from '@angular/material/icon';
-import { GetServicesService } from '../get-services.service';
 import { microService } from '../microService'
+import { DataManagerService } from '../shared/shared-services/data-manager.service';
 import { WorkspaceDialogueComponent } from '../workspace-dialogue/workspace-dialogue.component';
 
 
@@ -15,7 +15,7 @@ export class DisplayServicesComponent implements OnInit {
 
   services: microService[];
   
-  constructor(private _getServices: GetServicesService, public dialog: MatDialog) { 
+  constructor(private _dataManagerServices: DataManagerService, public dialog: MatDialog) { 
     this.services = [];
   }
   logServices(){
@@ -35,7 +35,7 @@ export class DisplayServicesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._getServices.getServicesList()
+    this._dataManagerServices.getServicesList()
         .subscribe(data => {
           this.services = JSON.parse(JSON.stringify(data));
           console.log(data);
