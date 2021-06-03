@@ -18,6 +18,7 @@ export class DisplayServicesComponent implements OnInit {
   @Input() services: microService[];
 
   //paginator variables and functions
+  /*
   paginatorServices: microService[]=[];
   pageIndex: number = 0;
   pageSize: number = 1;
@@ -34,11 +35,11 @@ export class DisplayServicesComponent implements OnInit {
     this.paginatorServices=this.services.slice(idx*sz, Math.min((idx+1)*sz,this.services.length));
   }
   //paginator variables and functions
+  */
 
   
   constructor(private _dataManagerServices: DataManagerService, public dialog: MatDialog) { 
     this.services = [];
-    
   }
   logServices(){
     console.log(this.services);
