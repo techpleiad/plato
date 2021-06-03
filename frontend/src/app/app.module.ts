@@ -32,6 +32,8 @@ import { SharedComponentsModule } from './shared/shared-components/shared-compon
 import { HeadingPipePipe } from './heading-pipe.pipe';
 import { AddSearchComponent } from './add-search/add-search.component';
 
+import { MatPaginatorModule } from '@angular/material/paginator';
+
 
 @NgModule({
   declarations: [
@@ -63,7 +65,8 @@ import { AddSearchComponent } from './add-search/add-search.component';
     MatProgressSpinnerModule,
     FlexLayoutModule,
     SharedComponentsModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatPaginatorModule
   ],
   providers: [],
   bootstrap: [AppComponent]
