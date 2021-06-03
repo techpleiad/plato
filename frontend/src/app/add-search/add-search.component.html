@@ -1,3 +1,4 @@
 <div class="container">
     <app-btn (clicked)="openAddServiceDialog()" [label]=" 'Add Service' "></app-btn>
+    <input type="text" (keyup)="filterServices($event)">
 </div>

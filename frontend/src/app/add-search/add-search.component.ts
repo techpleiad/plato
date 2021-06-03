@@ -10,6 +10,9 @@ import { microService } from '../microService';
 })
 export class AddSearchComponent implements OnInit {
   @Output() reload_display_services = new EventEmitter();
+  @Output() filter_display_services = new EventEmitter();
+  
+
   [x: string]: any;
 
   constructor(public dialog: MatDialog) { }
@@ -34,6 +37,17 @@ export class AddSearchComponent implements OnInit {
         console.log("null value");
       }
     });
+  }
+
+  filterServices(event: any){
+    let searchText = event.target.value;
+    //console.log(searchText)
+    if(searchText===""){
+      this.reload_display_services.emit();
+    }
+    else{
+      this.filter_display_services.emit(searchText);
+    }
   }
 
 }

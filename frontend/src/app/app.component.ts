@@ -12,6 +12,8 @@ import { DataManagerService } from './shared/shared-services/data-manager.servic
 export class AppComponent {
   title = 'frontend';
   services: microService[] = [];
+
+
   constructor(private _dataManagerService: DataManagerService){
 
   }
@@ -20,16 +22,27 @@ export class AppComponent {
     this._dataManagerService.getServicesList()
         .subscribe(data => {
           this.services = JSON.parse(JSON.stringify(data));
-          //console.log(data);
+          
         });
   }
-  
+
   reloadDisplayServices(){
     this._dataManagerService.getServicesList()
         .subscribe(data => {
           this.services = JSON.parse(JSON.stringify(data));
-          //console.log(data);
+          
         });
+  }
+
+  filterDisplayServices(searchText: string){
+    let searchLength = searchText.length;
+    let filteredServices: microService[] = [];
+    for(let i=0;i<this.services.length;i++){
+      if(this.services[i].service.slice(0,searchLength) === searchText){
+        filteredServices.push(this.services[i]);
+      }
+    }
+    this.services = filteredServices;
   }
   
 }
