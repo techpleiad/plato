@@ -33,6 +33,7 @@ import { HeadingPipePipe } from './heading-pipe.pipe';
 import { AddSearchComponent } from './add-search/add-search.component';
 
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { PROFILE_COLORS } from './shared/shared-constants';
 
 
 @NgModule({
@@ -68,7 +69,9 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatToolbarModule,
     MatPaginatorModule
   ],
-  providers: [],
+  providers: [
+    { provide: 'PROFILE_COLORS', useValue: PROFILE_COLORS}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
