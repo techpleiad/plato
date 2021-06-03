@@ -31,6 +31,8 @@ import { ProfileInputComponent } from './profile-input/profile-input.component';
 import { SharedComponentsModule } from './shared/shared-components/shared-components.module';
 import { HeadingPipePipe } from './heading-pipe.pipe';
 
+import { MatPaginatorModule } from '@angular/material/paginator';
+
 
 @NgModule({
   declarations: [
@@ -61,7 +63,8 @@ import { HeadingPipePipe } from './heading-pipe.pipe';
     MatProgressSpinnerModule,
     FlexLayoutModule,
     SharedComponentsModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatPaginatorModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -4,6 +4,7 @@ import {MatIconModule} from '@angular/material/icon';
 import { microService } from '../microService'
 import { DataManagerService } from '../shared/shared-services/data-manager.service';
 import { WorkspaceDialogueComponent } from '../workspace-dialogue/workspace-dialogue.component';
+import {PageEvent} from '@angular/material/paginator';
 
 
 @Component({
@@ -14,9 +15,28 @@ import { WorkspaceDialogueComponent } from '../workspace-dialogue/workspace-dial
 export class DisplayServicesComponent implements OnInit {
 
   services: microService[];
+
+  //paginator variables and functions
+  paginatorServices: microService[]=[];
+  pageIndex: number = 0;
+  pageSize: number = 1;
+  pageSizeOptions: number[] = [1, 10, 25, 100];
+
+  initializePaginator(){
+    this.paginatorServices=this.services.slice(0, Math.min((1)*this.pageSize,this.services.length));
+  }
+  addToPaginator(event: any){
+    console.log(event);
+    this.paginatorServices=[];
+    let idx: number = event.pageIndex;
+    let sz: number = event.pageSize;
+    this.paginatorServices=this.services.slice(idx*sz, Math.min((idx+1)*sz,this.services.length));
+  }
+  //paginator variables and functions
   
   constructor(private _dataManagerServices: DataManagerService, public dialog: MatDialog) { 
     this.services = [];
+    
   }
   logServices(){
     console.log(this.services);
@@ -35,11 +55,15 @@ export class DisplayServicesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    
     this._dataManagerServices.getServicesList()
         .subscribe(data => {
           this.services = JSON.parse(JSON.stringify(data));
           console.log(data);
         });
+    this.initializePaginator();
+        
   }
 
 }
