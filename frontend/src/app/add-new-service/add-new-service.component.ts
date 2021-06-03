@@ -120,7 +120,7 @@ export class AddNewServiceComponent implements OnInit {
 
   executeAddService(){
     this._dataManagerService.addService(this.addService).subscribe(data=>{
-      console.log(data);
+      //console.log(data);
       this.dialogRef.close(this.addService);
     });
   }

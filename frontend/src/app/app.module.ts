@@ -30,6 +30,7 @@ import { ProfileInputComponent } from './profile-input/profile-input.component';
 
 import { SharedComponentsModule } from './shared/shared-components/shared-components.module';
 import { HeadingPipePipe } from './heading-pipe.pipe';
+import { AddSearchComponent } from './add-search/add-search.component';
 
 
 @NgModule({
@@ -40,7 +41,8 @@ import { HeadingPipePipe } from './heading-pipe.pipe';
     WorkspaceDialogueComponent,
     ContentDisplayComponent,
     ProfileInputComponent,
-    HeadingPipePipe
+    HeadingPipePipe,
+    AddSearchComponent
   ],
   imports: [
     BrowserModule,

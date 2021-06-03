@@ -11,26 +11,25 @@ import { DataManagerService } from './shared/shared-services/data-manager.servic
 })
 export class AppComponent {
   title = 'frontend';
-  constructor(private _dataManagerService: DataManagerService, public dialog: MatDialog){
+  services: microService[] = [];
+  constructor(private _dataManagerService: DataManagerService){
 
   }
-  openAddServiceDialog(){
-    const dialogRef = this.dialog.open(AddNewServiceComponent,{
-      //disableClose:true,
-      width: "600px",
-      minHeight: "300px"
-    
-    });
 
-    dialogRef.afterClosed().subscribe((result: microService) => {
-      console.log(result);
-      if(result){
-        //this._dataManagerService.addService(result);
-        console.log(result);
-      }
-      else{
-        console.log("null value");
-      }
-    });
+  ngOnInit(): void {
+    this._dataManagerService.getServicesList()
+        .subscribe(data => {
+          this.services = JSON.parse(JSON.stringify(data));
+          //console.log(data);
+        });
   }
+  
+  reloadDisplayServices(){
+    this._dataManagerService.getServicesList()
+        .subscribe(data => {
+          this.services = JSON.parse(JSON.stringify(data));
+          //console.log(data);
+        });
+  }
+  
 }
