@@ -13,7 +13,7 @@ public class Constants {
     private static final String CONSISTENCY_LEVEL = "-consistency-level";
     private static final String CUSTOM = "/custom";
 
-
+    public static final String GET_FILES = "/getFiles";
     public static final String VERSION_SERVICES = VERSION + SERVICES;
     public static final String CUSTOM_VALIDATE = CUSTOM + VALIDATE;
     public static final String RESOLVE_INCONSISTENCY_ACROSS_PROFILES = RESOLVE_INCONSISTENCY + ACROSS_PROFILES;

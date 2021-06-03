@@ -15,6 +15,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.techpleiad.plato.core.advice.ThreadDirectory;
 import org.techpleiad.plato.core.convert.SortingNodeFactory;
+import org.techpleiad.plato.core.domain.FileDetail;
 import org.techpleiad.plato.core.domain.ServiceBranchData;
 import org.techpleiad.plato.core.domain.ServiceSpec;
 import org.techpleiad.plato.core.exceptions.FileConvertException;
@@ -183,6 +184,67 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
             jsonNode = convertFileToJsonNode(serviceYamlByProfile, false);
         }
         return jsonNode;
+    }
+
+    @ThreadDirectory
+    @Override
+    public List<FileDetail> getFileMapAsJson(ServiceSpec serviceSpec, String branch, String profile) throws ExecutionException, InterruptedException, JsonProcessingException {
+        final ServiceBranchData serviceBranchData = gitService.cloneGitRepositoryByBranchAsync(serviceSpec.getGitRepository(), branch);
+
+        final CompletableFuture<TreeMap<String, File>> serviceProfileToFileMap = getYamlFileTree(
+                serviceBranchData.getDirectory(),
+                serviceSpec.getService()
+        );
+
+        final CompletableFuture<TreeMap<String, File>> applicationProfileToFileMap = getYamlFileTree(
+                serviceBranchData.getDirectory(),
+                "application"
+        );
+
+        TreeMap<String, File> serviceNameFileMap = serviceProfileToFileMap.get();
+        TreeMap<String, File> applicationFileMap = applicationProfileToFileMap.get();
+
+        List<FileDetail> FileDetailList = new ArrayList<>();
+
+        final File serviceYamlByProfile = serviceNameFileMap.get(profile);
+        final File serviceYaml = serviceNameFileMap.get("");
+        final File applicationYamlByProfile = applicationFileMap.get(profile);
+        final File applicationYaml = applicationFileMap.get("");
+
+        if (applicationYaml != null) {
+            FileDetail fileDetail = createFileDetail("application", "default", applicationYaml);
+            FileDetailList.add(fileDetail);
+        }
+        if (serviceYaml != null) {
+            FileDetail fileDetail = createFileDetail(serviceSpec.getService(), "default", serviceYaml);
+            FileDetailList.add(fileDetail);
+        }
+        if (applicationYamlByProfile != null) {
+            FileDetail fileDetail = createFileDetail("application", profile, applicationYamlByProfile);
+            FileDetailList.add(fileDetail);
+        }
+        if (serviceYamlByProfile != null) {
+            FileDetail fileDetail = createFileDetail(serviceSpec.getService(), profile, serviceYamlByProfile);
+            FileDetailList.add(fileDetail);
+        }
+
+        if (FileDetailList.isEmpty()) {
+            log.info("Files linked to profile not found");
+            throw new ServiceNotFoundException("Service Configs not found", serviceSpec.getService());
+        }
+        return FileDetailList;
+    }
+
+    private FileDetail createFileDetail(String service, String profile, File file) throws JsonProcessingException {
+        JsonNode jsonNode = convertFileToJsonNode(file, false);
+        String jsonAsYaml = new YAMLMapper().writeValueAsString(jsonNode);
+        FileDetail fileDetail = FileDetail.builder()
+                .service(service)
+                .profile(profile)
+                .jsonNode(jsonNode)
+                .yaml(jsonAsYaml)
+                .build();
+        return fileDetail;
     }
 
 
