@@ -34,6 +34,7 @@ import { AddSearchComponent } from './add-search/add-search.component';
 
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { PROFILE_COLORS } from './shared/shared-constants';
+import { CustomCodemirrorComponent } from './custom-codemirror/custom-codemirror.component';
 
 
 @NgModule({
@@ -45,7 +46,8 @@ import { PROFILE_COLORS } from './shared/shared-constants';
     ContentDisplayComponent,
     ProfileInputComponent,
     HeadingPipePipe,
-    AddSearchComponent
+    AddSearchComponent,
+    CustomCodemirrorComponent
   ],
   imports: [
     BrowserModule,

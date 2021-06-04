@@ -33,6 +33,7 @@ export class ContentDisplayComponent implements OnInit {
       //console.log(this.profileSpecTOList);
       let aggregated = this._profileAggregatorService.aggregateProfiles(this.profileSpecTOList);
       console.log(aggregated);
+      this.displayData = JSON.stringify(aggregated.jsonContent,null,2);
     })
     
     

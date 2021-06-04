@@ -11,7 +11,7 @@
       <mat-progress-spinner mode="indeterminate" diameter="30" [hidden]="!visibleProgressSpinner"></mat-progress-spinner>    
   </div>
   <!-- Showing the contents accordingly -->
-  <app-content-display [displayData]="displayData"></app-content-display>
+  <app-custom-codemirror [content]="displayData" [id]=" 'custom' "></app-custom-codemirror>
 </mat-dialog-content>
 
 <hr>

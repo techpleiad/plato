@@ -96,8 +96,8 @@ export class CodemirrorService {
           break;
         }
       }
-      console.log(this.propertyTolineBreadcrumbMap);
-      console.log(profileMapper);
+      //console.log(this.propertyTolineBreadcrumbMap);
+      //console.log(profileMapper);
 
       const profileColorMap = new Map(profileData.map((prof, index) => [prof.file.profile, prof.color.color]));
       
