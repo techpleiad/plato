@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import * as CodeMirror from 'codemirror';
 import { CodemirrorService } from '../shared/shared-services/codemirror.service';
+import * as yaml from 'yaml';
 
 import 'codemirror/mode/yaml/yaml';
 import 'codemirror/lib/codemirror';
@@ -12,6 +13,7 @@ import 'codemirror/addon/fold/foldcode';
 
 import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/addon/edit/matchbrackets';
+import { CodeEditor } from '../shared/shared-services/codemirror.config';
 
 
 @Component({
@@ -52,6 +54,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
 
   constructor(private _codemirrorService: CodemirrorService) {
     this.SPACE_REPLACE = ' '.repeat(this.SPACES_TO_ONE_TAB);
+    this._codemirrorService.editor = CodeEditor.JSON;
   }
 
   ngOnInit(): void {
@@ -62,18 +65,36 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       this.CODEMIRROR_CONFIG
       );
       this.codemirror.setSize('100%', 350);
-      //console.log(this.content);
       
       this.codemirror.refresh();
-    
-      //console.log(codemirror);
   }
   ngOnChanges(changes: SimpleChanges): void {
-    //console.log(changes);
-    //console.log(this.content);
+
+    this.content = this.content || "";
     this.codemirror?.setValue(this.content || "");
     this.codemirror?.refresh();
+    if(this.codemirror)
+    this.update();
 
+  }
+
+  private update(): void{
+    //console.log("This is content")
+   // console.log(this.content);
+    
+    this._codemirrorService.mergeEditorConstruct(
+      this.codemirror,
+      JSON.parse(JSON.stringify(this.CODEMIRROR_CONFIG)),
+      yaml.parse(this.content)
+    );
+
+    setTimeout(() => {
+      this._codemirrorService.showEditor();
+      setTimeout(() => {
+        //this._codemirrorService.updateCodeMirrorVisual(this.getProfiles(), response.propertyList, jsonObject);
+        //this.SUGGESTED_LIST = this.codemirrorService.findSuggestedPropertyList('');
+      }, 200);
+    }, 500);
   }
   get prefix(): string {
     return CustomCodemirrorComponent.Prefix;

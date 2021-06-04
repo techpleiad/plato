@@ -34,7 +34,7 @@ export class CodemirrorService {
     configuration.readOnly = true;
 
     //// _mergeEditor => main editor
-    this._mergeEditor = CodeMirror.fromTextArea(codemirrorTextArea, configuration);
+    this._mergeEditor = codemirrorTextArea;
 
     //// On double click point the cursor to that area
     this._mergeEditor.on('dblclick', (instance: any, event: Event) => {

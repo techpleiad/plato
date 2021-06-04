@@ -7,7 +7,7 @@
       <app-dropdown [dropdownList]="functionList" [label]=" 'FUNCTION' " (change)="setFunction($event)" ></app-dropdown>
       <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH' " (change)="setBranch($event)" *ngIf="isBranchReq" ></app-dropdown>
       <app-profile-input [mservice]="mservice" [canProfileDefault]="canProfileDefault" (profile_sent)="setProfile($event)" *ngIf="isProfileReq"></app-profile-input>
-      <app-btn (clicked)="sendToContentDisplay()" [label]=" 'Show' "></app-btn>
+      <app-btn (clicked)="sendToCodeMirror()" [label]=" 'Show' "></app-btn>
       <mat-progress-spinner mode="indeterminate" diameter="30" [hidden]="!visibleProgressSpinner"></mat-progress-spinner>    
   </div>
   <!-- Showing the contents accordingly -->

@@ -36,8 +36,6 @@ export class ContentDisplayComponent implements OnInit {
       this.displayData = JSON.stringify(aggregated.jsonContent,null,2);
     })
     
-    
-
   }
 
 }
