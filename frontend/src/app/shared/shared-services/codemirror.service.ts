@@ -15,8 +15,8 @@ export class CodemirrorService {
   private currentLineInEditor = 0;
   private _mergeEditor: any;
 
-  private _content = '';
-  private _editor: CodeEditor = CodeEditor.JSON;
+  private _content = '';  //// _content => main content inside the editor
+  private _editor: CodeEditor = CodeEditor.JSON; //// setting default editor type to JSON.
 
   constructor() { }
 
@@ -27,13 +27,16 @@ export class CodemirrorService {
     this._editor = type;
   }
 
+  //// This func sets the content according to the Editor Type
   mergeEditorConstruct(codemirrorTextArea: any, configuration: any, data: any): void {
 
     configuration.foldGutter = false;
     configuration.readOnly = true;
 
+    //// _mergeEditor => main editor
     this._mergeEditor = CodeMirror.fromTextArea(codemirrorTextArea, configuration);
 
+    //// On double click point the cursor to that area
     this._mergeEditor.on('dblclick', (instance: any, event: Event) => {
       this.breadcrumbEditorLine = instance.getCursor().line + 1;
       //SpringProfileComponent.DisplayPropertyPathOrFind = true; // circular dependency
@@ -49,6 +52,8 @@ export class CodemirrorService {
       }
     }
   }
+
+  //// Showing the Editor
   showEditor(): void {
     this._mergeEditor.setValue(this._content);
     this._mergeEditor.setSize('100%', '100%');

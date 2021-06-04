@@ -30,7 +30,7 @@ export class ContentDisplayComponent implements OnInit {
           data[i].jsonNode,
         ))
       }
-      console.log(this.profileSpecTOList);
+      //console.log(this.profileSpecTOList);
       let aggregated = this._profileAggregatorService.aggregateProfiles(this.profileSpecTOList);
       console.log(aggregated);
     })

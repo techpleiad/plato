@@ -15,10 +15,12 @@ export class ColorProviderService {
     PROFILE_COLORS.forEach((hex: string) => this.colorList.appendLast(new Color(hex)));
   }
 
+  //Brings the color at the head of the list and  remove that color from the list.
   getColor(): Color {
     const node: any = this.colorList.head;
     this.colorList.delete(node);
     return node.data;
   }
+  // appends the color at the last.
   addColor = (color: Color) => this.colorList.appendLast(color);
 }
