@@ -2,11 +2,11 @@ import {Color} from './Color';
 import { ProfileSpecTO } from './ProfileSpecTO';
 
 export class ProfileDataTO {
-  file: ProfileSpecTO;
+  profile!: string;
   color: Color;
 
-  constructor(file: ProfileSpecTO, color: Color) {
-    this.file = file;
+  constructor(file: string, color: Color) {
+    this.profile = file;
     this.color = color;
   }
 

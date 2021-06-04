@@ -14,6 +14,10 @@ import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/addon/edit/matchbrackets';
 import { CodeEditor } from '../shared/shared-services/codemirror.config';
+import { ProfileSpecTO, PropertyDetail } from '../shared/models/ProfileSpecTO';
+import { ColorProviderService } from '../shared/shared-services/color-provider.service';
+import { ProfileDataTO } from '../shared/models/ProfileDataTO';
+
 
 
 @Component({
@@ -28,6 +32,10 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   }
   @Input() content: any;
   @Input() id!: string;
+  @Input() propertyList: PropertyDetail[] = [];
+  @Input() ownerList: string[] = [];
+
+  
 
   private codemirror: any;
 
@@ -38,7 +46,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     theme: 'idea',
     mode: 'yaml',
     lineNumbers: true,
-    foldGutter: true,
+    foldGutter: false,
     tabSize: this.SPACES_TO_ONE_TAB,
     indentUnit: this.SPACES_TO_ONE_TAB,
     indentWithTabs: true,
@@ -52,13 +60,12 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     autofocus: true
   };
 
-  constructor(private _codemirrorService: CodemirrorService) {
+  constructor(private _codemirrorService: CodemirrorService, private _colorService: ColorProviderService) {
     this.SPACE_REPLACE = ' '.repeat(this.SPACES_TO_ONE_TAB);
     this._codemirrorService.editor = CodeEditor.JSON;
   }
 
   ngOnInit(): void {
-      
   }
   ngAfterViewInit(): void {
     this.codemirror = CodeMirror.fromTextArea(document.getElementById(`${this.prefix}${this.id}`) as HTMLTextAreaElement,
@@ -70,28 +77,42 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   }
   ngOnChanges(changes: SimpleChanges): void {
 
+    console.log(this.ownerList);
     this.content = this.content || "";
-    this.codemirror?.setValue(this.content || "");
+    //this.codemirror?.setValue(this.content || "");
     this.codemirror?.refresh();
-    if(this.codemirror)
-    this.update();
+    if(this.codemirror){
+      this._colorService.reset();
+      this.update();
+    }
 
   }
 
   private update(): void{
+    const jsonObject = yaml.parse(this.content);
     //console.log("This is content")
    // console.log(this.content);
     
     this._codemirrorService.mergeEditorConstruct(
       this.codemirror,
       JSON.parse(JSON.stringify(this.CODEMIRROR_CONFIG)),
-      yaml.parse(this.content)
+      jsonObject
     );
+    const profileColorList = this.ownerList.map((val:string)=>{
+      return new ProfileDataTO(val,this._colorService.getColor());
+    })
+      /*
+      return new ProfileDataTO(
+        val,
+        this._colorService.getColor()
+      )
+    })*/
+    console.log(profileColorList);
 
     setTimeout(() => {
       this._codemirrorService.showEditor();
       setTimeout(() => {
-        //this._codemirrorService.updateCodeMirrorVisual(this.getProfiles(), response.propertyList, jsonObject);
+        this._codemirrorService.updateCodeMirrorVisual(profileColorList, this.propertyList, jsonObject,`${this.prefix}${this.id}-container`);
         //this.SUGGESTED_LIST = this.codemirrorService.findSuggestedPropertyList('');
       }, 200);
     }, 500);
@@ -101,3 +122,5 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   }
 
 }
+
+// constructor() -> ngOnInit() -> ngOnChanges() -> ngAfterViewInit() -> ngOnDestroy()

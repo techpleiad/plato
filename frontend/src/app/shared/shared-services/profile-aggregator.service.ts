@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { ProfileSpecTO } from '../models/ProfileSpecTO';
+import { ProfileSpecTO, PropertyDetail } from '../models/ProfileSpecTO';
 import * as yaml from 'yaml';
 
 @Injectable({
@@ -24,14 +24,11 @@ export class ProfileAggregatorService {
       this.getLineOfEachPropertyValue('', result, profilePropertyMapper, false, profile.profile);
     }
 
-    const propertyList: any[] = [];
+    const propertyList: PropertyDetail[] = [];
     profilePropertyMapper.forEach((value, key) => {
-      propertyList.push({
-        property: key,
-        owner: value
-      });
+      propertyList.push(new PropertyDetail(key,value));
     });
-    console.log(propertyList);
+    //console.log(propertyList);
     return new ProfileSpecTO('', '', result, propertyList);
 
   }

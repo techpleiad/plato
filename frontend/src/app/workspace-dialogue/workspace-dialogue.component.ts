@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { microService } from '../microService';
-import { ProfileSpecTO } from '../shared/models/ProfileSpecTO';
+import { ProfileSpecTO, PropertyDetail } from '../shared/models/ProfileSpecTO';
 import { ConfigFilesService } from '../shared/shared-services/config-files.service';
 import { ProfileAggregatorService } from '../shared/shared-services/profile-aggregator.service';
 import { SprimeraFilesService } from '../shared/shared-services/sprimera-files.service';
@@ -27,9 +27,13 @@ export class WorkspaceDialogueComponent implements OnInit {
   isProfileReq = false;
   canProfileDefault = false;
 
-  displayData: any;
+  displayData!: string;
 
-  profileSpecTOList: ProfileSpecTO[] = []; /// (contains all the profile as list for sprimera).
+  propertyList: PropertyDetail[]=[];
+  ownerList: string[] = [];
+
+  
+  
 
   visibleProgressSpinner = false;
 
@@ -92,21 +96,33 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
     //////////////   SHOW SPRIMERA  //////////////
     else if(this.functionValue==="sprimera"){
+      //////////  Bringing All The Files /////
+      let profileSpecTOList: ProfileSpecTO[] = [];
       this._sprimeraFilesService.getFiles("custom-manager",this.branchValue,this.profileValue).subscribe((data: any[]) =>{
         console.log(data);
         for(let i=0;i<data.length;i++){
         
-          this.profileSpecTOList.push(new ProfileSpecTO(
+          profileSpecTOList.push(new ProfileSpecTO(
             data[i].profile,
             data[i].yaml,
             data[i].jsonNode,
           ))
         }
-        //console.log(this.profileSpecTOList);
-        let aggregated = this._profileAggregatorService.aggregateProfiles(this.profileSpecTOList);
-        console.log(aggregated);
+        ///////////   Merging All The Files  //////////
+        const aggregated = this._profileAggregatorService.aggregateProfiles(profileSpecTOList);
+        if(aggregated){
+          this.visibleProgressSpinner = false;
+        }
+        //console.log(aggregated);
+        
         //setting displayData to the json content of aggregated File.
         this.displayData = JSON.stringify(aggregated.jsonContent,null,2);
+        //console.log(aggregated.propertyList);
+        this.propertyList = aggregated.propertyList;
+        
+        this.ownerList = profileSpecTOList.map(function(val){
+          return val.profile;
+        })
       })
     }
 

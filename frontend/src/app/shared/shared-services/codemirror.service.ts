@@ -3,6 +3,7 @@ import * as CodeMirror from 'codemirror';
 import { CodeEditor, CodemirrorReader, JSON_PARSER, YAML_PARSER } from './codemirror.config';
 import * as YAML_PRETTIER from 'yaml';
 import { ProfileDataTO } from '../models/ProfileDataTO';
+import { PropertyDetail } from '../models/ProfileSpecTO';
 
 @Injectable({
   providedIn: 'root'
@@ -71,11 +72,13 @@ export class CodemirrorService {
     this._breadcrumbEditorLine = line;
   }
 
-  updateCodeMirrorVisual(profileData: ProfileDataTO[], propertyList: any, jsonObject: any): void {
+  updateCodeMirrorVisual(profileData: ProfileDataTO[], propertyList: PropertyDetail[], jsonObject: any, codemirrorId: string): void {
 
-    //const parent = document.getElementById('display-aggregate');
-    //const lineElements = parent?.getElementsByClassName('CodeMirror-linenumber CodeMirror-gutter-elt');
-    if (true) {
+    const parent = document.getElementById(codemirrorId);
+    console.log(parent);
+    const lineElements = parent?.getElementsByClassName('CodeMirror-linenumber CodeMirror-gutter-elt');
+    console.log(lineElements);
+    if (lineElements) {
 
       const profileMapper = new Map();
 
@@ -96,22 +99,23 @@ export class CodemirrorService {
           break;
         }
       }
-      //console.log(this.propertyTolineBreadcrumbMap);
-      //console.log(profileMapper);
+      console.log(this.propertyTolineBreadcrumbMap);
+      console.log(profileMapper);
 
-      const profileColorMap = new Map(profileData.map((prof, index) => [prof.file.profile, prof.color.color]));
       
-      // tslint:disable-next-line:prefer-for-of
-      /*
+      const profileColorMap = new Map(profileData.map((prof, index) => [prof.profile, prof.color.color]));
+      
+      //tslint:disable-next-line:prefer-for-of
+      
       for (let i = 0; i < propertyList.length; ++i) {
         const prop = propertyList[i];
         const lineNumber = profileMapper.get(prop.property);
         this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
-      }*/
-      /*
+      }
+      
       profileData.forEach((profile, index) => {
         this.updateColor(document.getElementById(`side-bar-${index}`), profile.color.color);
-      });*/
+      });
     }
   }
 

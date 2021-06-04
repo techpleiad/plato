@@ -11,8 +11,7 @@ export class ColorProviderService {
   private colorList: DoublyLinkedList<Color> = new DoublyLinkedList<Color>();
 
   constructor(@Inject('PROFILE_COLORS') private PROFILE_COLORS: any) {
-    
-    PROFILE_COLORS.forEach((hex: string) => this.colorList.appendLast(new Color(hex)));
+    this.reset();
   }
 
   //Brings the color at the head of the list and  remove that color from the list.
@@ -23,4 +22,8 @@ export class ColorProviderService {
   }
   // appends the color at the last.
   addColor = (color: Color) => this.colorList.appendLast(color);
+
+  reset(){
+    this.PROFILE_COLORS.forEach((hex: string) => this.colorList.appendLast(new Color(hex)));
+  }
 }
