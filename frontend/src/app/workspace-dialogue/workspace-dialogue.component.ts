@@ -80,6 +80,8 @@ export class WorkspaceDialogueComponent implements OnInit {
 
     ////////////////   SHOW MERGED AND INDIVIDUAL CONFIGURATION FILES /////
     if(this.functionValue==="merged" || this.functionValue==="individual"){
+      this.propertyList = [];
+      this.ownerList = [];
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.branchValue,this.profileValue)
       .subscribe(data => {
         if(data){

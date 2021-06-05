@@ -30,7 +30,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   static get Prefix(): string {
     return "codemirror-";
   }
-  @Input() content: any;
+  @Input() content: string="";
   @Input() id!: string;
   @Input() propertyList: PropertyDetail[] = [];
   @Input() ownerList: string[] = [];
@@ -41,6 +41,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
 
   SPACES_TO_ONE_TAB = 2;
   SPACE_REPLACE = '';
+  profileColorList: ProfileDataTO[]=[];
 
   CODEMIRROR_CONFIG: any = {
     theme: 'idea',
@@ -79,6 +80,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
 
     console.log(this.ownerList);
     this.content = this.content || "";
+    this.profileColorList = [];
     //this.codemirror?.setValue(this.content || "");
     this.codemirror?.refresh();
     if(this.codemirror){
@@ -98,7 +100,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       JSON.parse(JSON.stringify(this.CODEMIRROR_CONFIG)),
       jsonObject
     );
-    const profileColorList = this.ownerList.map((val:string)=>{
+    this.profileColorList = this.ownerList.map((val:string)=>{
       return new ProfileDataTO(val,this._colorService.getColor());
     })
       /*
@@ -107,12 +109,12 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
         this._colorService.getColor()
       )
     })*/
-    console.log(profileColorList);
+    console.log(this.profileColorList);
 
     setTimeout(() => {
       this._codemirrorService.showEditor();
       setTimeout(() => {
-        this._codemirrorService.updateCodeMirrorVisual(profileColorList, this.propertyList, jsonObject,`${this.prefix}${this.id}-container`);
+        this._codemirrorService.updateCodeMirrorVisual(this.profileColorList, this.propertyList, jsonObject,`${this.prefix}${this.id}-container`);
         //this.SUGGESTED_LIST = this.codemirrorService.findSuggestedPropertyList('');
       }, 200);
     }, 500);

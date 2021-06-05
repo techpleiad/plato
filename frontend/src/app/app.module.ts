@@ -21,6 +21,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 import { FormsModule } from '@angular/forms';
 import { DisplayServicesComponent } from './display-services/display-services.component';
@@ -69,7 +70,8 @@ import { CustomCodemirrorComponent } from './custom-codemirror/custom-codemirror
     FlexLayoutModule,
     SharedComponentsModule,
     MatToolbarModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatSidenavModule
   ],
   providers: [
     { provide: 'PROFILE_COLORS', useValue: PROFILE_COLORS}
