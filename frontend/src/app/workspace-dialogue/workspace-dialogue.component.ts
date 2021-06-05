@@ -32,9 +32,6 @@ export class WorkspaceDialogueComponent implements OnInit {
   propertyList: PropertyDetail[]=[];
   ownerList: string[] = [];
 
-  
-  
-
   visibleProgressSpinner = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _configFiles: ConfigFilesService, 
@@ -46,8 +43,6 @@ export class WorkspaceDialogueComponent implements OnInit {
 
     this.profileList = this.mservice.profiles.map((x: any) => x.name);
     this.branchList = this.mservice.branches.map((x:any) => x.name);
-    
-
    }
 
   ngOnInit(): void {
@@ -71,11 +66,11 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
   setBranch(branchValue: any){
     this.branchValue = branchValue;
-    console.log("Branch is set to ",this.branchValue);
+    //console.log("Branch is set to ",this.branchValue);
   }
   setProfile(profileValue: any){
     this.profileValue = profileValue;
-    console.log("Profile is set to ",this.profileValue);
+    //console.log("Profile is set to ",this.profileValue);
   }
   
 
@@ -98,10 +93,9 @@ export class WorkspaceDialogueComponent implements OnInit {
     else if(this.functionValue==="sprimera"){
       //////////  Bringing All The Files /////
       let profileSpecTOList: ProfileSpecTO[] = [];
-      this._sprimeraFilesService.getFiles("custom-manager",this.branchValue,this.profileValue).subscribe((data: any[]) =>{
-        console.log(data);
+      this._sprimeraFilesService.getFiles(this.mservice.service,this.branchValue,this.profileValue).subscribe((data: any[]) =>{
+        //Converting the fetched files into the format required by profile_aggregator service.
         for(let i=0;i<data.length;i++){
-        
           profileSpecTOList.push(new ProfileSpecTO(
             data[i].profile,
             data[i].yaml,
