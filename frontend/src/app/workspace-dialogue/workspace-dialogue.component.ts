@@ -80,16 +80,18 @@ export class WorkspaceDialogueComponent implements OnInit {
 
     ////////////////   SHOW MERGED AND INDIVIDUAL CONFIGURATION FILES /////
     if(this.functionValue==="merged" || this.functionValue==="individual"){
-      this.propertyList = [];
-      this.ownerList = [];
+      
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.branchValue,this.profileValue)
       .subscribe(data => {
         if(data){
           this.visibleProgressSpinner = false;
         }
         this.displayData = data;
+        this.propertyList = [];
+        this.ownerList = [];
         //console.log(this.displayData);
       });
+      
     }
     //////////////   SHOW SPRIMERA  //////////////
     else if(this.functionValue==="sprimera"){

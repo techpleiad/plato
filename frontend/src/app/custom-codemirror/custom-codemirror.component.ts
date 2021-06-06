@@ -100,6 +100,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       JSON.parse(JSON.stringify(this.CODEMIRROR_CONFIG)),
       jsonObject
     );
+    
     this.profileColorList = this.ownerList.map((val:string)=>{
       return new ProfileDataTO(val,this._colorService.getColor());
     })
