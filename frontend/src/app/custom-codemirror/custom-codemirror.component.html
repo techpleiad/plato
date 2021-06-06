@@ -1,0 +1,13 @@
+<div class="border bg-dark" id="{{prefix}}{{id}}-container"> 
+    <textarea id="{{prefix}}{{id}}"></textarea>
+</div>
+<div class="sticky" *ngIf="content !== ''">
+    <div *ngFor="let profileData of profileColorList; index as ind" id="side-bar-{{ind}}"
+         style="width: 150px; word-break: break-all"
+         [style.background]="profileData.color.color"
+         class="p-2 mb-2 font-weight-bold rounded-left text-white">
+      {{profileData.profile}}
+    </div>
+</div>
+
+

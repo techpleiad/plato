@@ -21,6 +21,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatInputModule} from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 import { FormsModule } from '@angular/forms';
 import { DisplayServicesComponent } from './display-services/display-services.component';
@@ -33,6 +34,8 @@ import { HeadingPipePipe } from './heading-pipe.pipe';
 import { AddSearchComponent } from './add-search/add-search.component';
 
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { PROFILE_COLORS } from './shared/shared-constants';
+import { CustomCodemirrorComponent } from './custom-codemirror/custom-codemirror.component';
 
 
 @NgModule({
@@ -44,7 +47,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     ContentDisplayComponent,
     ProfileInputComponent,
     HeadingPipePipe,
-    AddSearchComponent
+    AddSearchComponent,
+    CustomCodemirrorComponent
   ],
   imports: [
     BrowserModule,
@@ -66,9 +70,12 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     FlexLayoutModule,
     SharedComponentsModule,
     MatToolbarModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatSidenavModule
   ],
-  providers: [],
+  providers: [
+    { provide: 'PROFILE_COLORS', useValue: PROFILE_COLORS}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
