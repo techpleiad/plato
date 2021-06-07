@@ -22,12 +22,23 @@ export class WorkspaceDialogueComponent implements OnInit {
   functionValue: any;
   branchValue: any;
   profileValue: any;
+  //branch consistency
+  branch1Value: any;
+  branch2Value: any;
+  //branch consistency
 
   isBranchReq = false;
   isProfileReq = false;
   canProfileDefault = false;
+  //branch consistency
+  isBranch1Req = false;
+  isBranch2Req = false;
+  //branch consistency
 
   displayData!: string;
+  //branch consistency
+  displayData2!: string;
+  //branch consistency
 
   propertyList: PropertyDetail[]=[];
   ownerList: string[] = [];
@@ -36,10 +47,14 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _configFiles: ConfigFilesService, 
   private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService) {
-    this.functionList = ["merged","individual","sprimera"];
+    this.functionList = ["merged","individual","sprimera","consistency across branch"];
     this.mservice = data;
     this.branchValue = "";
     this.profileValue = "";
+    //branch consistency
+    this.branch1Value = "";
+    this.branch2Value = "";
+    //branch consistency
 
     this.profileList = this.mservice.profiles.map((x: any) => x.name);
     this.branchList = this.mservice.branches.map((x:any) => x.name);
@@ -49,6 +64,12 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
   setFunction(functionValue: any){
     this.functionValue = functionValue;
+    this.isBranchReq = false;
+    this.isProfileReq = false;
+    this.canProfileDefault = false;
+    this.isBranch1Req = false;
+    this.isBranch2Req = false;
+
     this.setBranchProfileReq();
   }
   setBranchProfileReq(){
@@ -56,7 +77,14 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.isBranchReq = true;
       this.isProfileReq = true;
     }
-    if(this.functionValue==="individual"){
+    //branch consistency
+    if(this.functionValue==="consistency across branch"){
+      this.isBranch1Req = true;
+      //this.isBranch2Req = true;
+      this.isProfileReq = true;
+    }
+    //branch consistency
+    if(this.functionValue==="individual" || "consistency across branch"){
       this.canProfileDefault = true;
     }
     else{
@@ -68,6 +96,22 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.branchValue = branchValue;
     //console.log("Branch is set to ",this.branchValue);
   }
+  //branch consistency
+  setBranch1(branchValue: any){
+    this.branch1Value = branchValue;
+  }
+  setBranch2(branchValue: any){
+    this.branch2Value = branchValue;
+    this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch2Value,this.profileValue)
+      .subscribe(data => {
+        if(data){
+          this.visibleProgressSpinner = false;
+        }
+        this.displayData2 = data;
+        console.log(data);
+      });
+  }
+  //branch consistency
   setProfile(profileValue: any){
     this.profileValue = profileValue;
     //console.log("Profile is set to ",this.profileValue);
@@ -91,6 +135,21 @@ export class WorkspaceDialogueComponent implements OnInit {
         //console.log(this.displayData);
       });
     }
+    //branch consistency
+    else if(this.functionValue==="consistency across branch"){
+      //this.propertyList = [];
+      //this.ownerList = [];
+      this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch1Value,this.profileValue)
+      .subscribe(data => {
+        if(data){
+          this.isBranch2Req=true;
+        }
+        this.displayData = data;
+        console.log(data);
+      });
+      
+    }
+    //branch consistency
     //////////////   SHOW SPRIMERA  //////////////
     else if(this.functionValue==="sprimera"){
       //////////  Bringing All The Files /////
