@@ -5,6 +5,7 @@ import { ProfileSpecTO, PropertyDetail } from '../shared/models/ProfileSpecTO';
 import { ConfigFilesService } from '../shared/shared-services/config-files.service';
 import { ProfileAggregatorService } from '../shared/shared-services/profile-aggregator.service';
 import { SprimeraFilesService } from '../shared/shared-services/sprimera-files.service';
+import * as diff from 'deep-diff'
 
 @Component({
   selector: 'app-workspace-dialogue',
@@ -80,7 +81,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     //branch consistency
     if(this.functionValue==="consistency across branch"){
       this.isBranch1Req = true;
-      //this.isBranch2Req = true;
+      this.isBranch2Req = true;
       this.isProfileReq = true;
     }
     //branch consistency
@@ -102,14 +103,6 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
   setBranch2(branchValue: any){
     this.branch2Value = branchValue;
-    this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch2Value,this.profileValue)
-      .subscribe(data => {
-        if(data){
-          this.visibleProgressSpinner = false;
-        }
-        this.displayData2 = data;
-        console.log(data);
-      });
   }
   //branch consistency
   setProfile(profileValue: any){
@@ -142,7 +135,16 @@ export class WorkspaceDialogueComponent implements OnInit {
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch1Value,this.profileValue)
       .subscribe(data => {
         if(data){
-          this.isBranch2Req=true;
+          this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch2Value,this.profileValue)
+          .subscribe(data2 => {
+            if(data2){
+              this.visibleProgressSpinner = false;
+            }
+            this.displayData2 = data2;
+            console.log(data2);
+            let differences = diff.diff(data,data2);
+            console.log(differences);
+          });
         }
         this.displayData = data;
         console.log(data);
