@@ -47,7 +47,7 @@ export class DisplayServicesComponent implements OnInit, OnChanges {
     const dialogRef = this.dialog.open(WorkspaceDialogueComponent,{
       data: mservice,
       height: '700px',
-      width: '1200px',
+      width: '1400px',
     });
 
     dialogRef.afterClosed().subscribe(result => {

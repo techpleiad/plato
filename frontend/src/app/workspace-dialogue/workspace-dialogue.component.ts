@@ -6,6 +6,7 @@ import { ConfigFilesService } from '../shared/shared-services/config-files.servi
 import { ProfileAggregatorService } from '../shared/shared-services/profile-aggregator.service';
 import { SprimeraFilesService } from '../shared/shared-services/sprimera-files.service';
 import * as diff from 'deep-diff'
+import * as yaml from 'yaml';
 
 @Component({
   selector: 'app-workspace-dialogue',
@@ -117,13 +118,11 @@ export class WorkspaceDialogueComponent implements OnInit {
 
     ////////////////   SHOW MERGED AND INDIVIDUAL CONFIGURATION FILES /////
     if(this.functionValue==="merged" || this.functionValue==="individual"){
-      this.propertyList = [];
-      this.ownerList = [];
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.branchValue,this.profileValue)
       .subscribe(data => {
-        if(data){
-          this.visibleProgressSpinner = false;
-        }
+        this.propertyList = [];
+        this.ownerList = [];
+        this.visibleProgressSpinner = false;
         this.displayData = data;
         //console.log(this.displayData);
       });
@@ -134,18 +133,18 @@ export class WorkspaceDialogueComponent implements OnInit {
       //this.ownerList = [];
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch1Value,this.profileValue)
       .subscribe(data => {
-        if(data){
-          this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch2Value,this.profileValue)
-          .subscribe(data2 => {
-            if(data2){
-              this.visibleProgressSpinner = false;
-            }
-            this.displayData2 = data2;
-            console.log(data2);
-            let differences = diff.diff(data,data2);
-            console.log(differences);
-          });
-        }
+        
+        this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch2Value,this.profileValue)
+        .subscribe(data2 => {
+            
+          this.visibleProgressSpinner = false;
+            
+          this.displayData2 = data2;
+          console.log(data2);
+          let differences = diff.diff(yaml.parse(data),yaml.parse(data2));
+          console.log(differences);
+        });
+        
         this.displayData = data;
         console.log(data);
       });

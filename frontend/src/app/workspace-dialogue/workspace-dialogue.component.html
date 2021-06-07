@@ -13,8 +13,10 @@
       <mat-progress-spinner mode="indeterminate" diameter="30" [hidden]="!visibleProgressSpinner"></mat-progress-spinner>    
   </div>
   <!-- Showing the contents accordingly -->
-  <app-custom-codemirror [content]="displayData" [id]=" 'custom' " [propertyList]="propertyList" [ownerList]="ownerList"></app-custom-codemirror>
-  <app-custom-codemirror [content]="displayData2" [id]=" 'custom2' " [propertyList]="propertyList" [ownerList]="ownerList" *ngIf="isBranch2Req"></app-custom-codemirror>
+  <div fxLayout="row">
+    <app-custom-codemirror fxFlex [content]="displayData" [id]=" 'custom' " [propertyList]="propertyList" [ownerList]="ownerList"></app-custom-codemirror>
+    <app-custom-codemirror fxFlex [content]="displayData2" [id]=" 'custom2' " [propertyList]="propertyList" [ownerList]="ownerList" *ngIf="isBranch2Req"></app-custom-codemirror>
+  </div>
 </mat-dialog-content>
 
 
