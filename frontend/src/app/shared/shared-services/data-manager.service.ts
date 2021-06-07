@@ -16,9 +16,9 @@ export class DataManagerService {
     this.BASE = API_END_POINT.PLATO;
    }
   getServicesList(){
-    console.log(this.BASE.GET_SERVICES.URL);
-    console.log("http://localhost:8080/v1/services");
-    console.log(this.BASE.GET_SERVICES.URL === "http://localhost:8080/v1/services");
+    //console.log(this.BASE.GET_SERVICES.URL);
+    //console.log("http://localhost:8080/v1/services");
+    //console.log(this.BASE.GET_SERVICES.URL === "http://localhost:8080/v1/services");
     return this.http.get(this.BASE.GET_SERVICES.URL);
 
   }
