@@ -1,19 +1,25 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { microService } from 'src/app/microService';
 import * as yaml from 'yaml';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataManagerService {
 
-  private _base_url = "http://localhost:8080/v1/services/";
 
-  constructor(private http: HttpClient) { }
+  private BASE: any;
+  constructor(private http: HttpClient, @Inject('API_END_POINT') private API_END_POINT: any) {
+    this.BASE = API_END_POINT.PLATO;
+   }
   getServicesList(){
-    return this.http.get(this._base_url);
+    console.log(this.BASE.GET_SERVICES.URL);
+    console.log("http://localhost:8080/v1/services");
+    return this.http.get(this.BASE.GET_SERVICES.URL);
+
   }
   yamlToJson(temp: string){
     return yaml.parse(temp);
@@ -23,7 +29,7 @@ export class DataManagerService {
   addService(newService: microService): Observable<any>{
     let serviceItems = JSON.stringify(newService);
     //console.log(serviceItems);
-    return this.http.post(this._base_url, newService);
+    return this.http.post(this.BASE.ADD_SERVICES.URL, newService);
 
   }
 }

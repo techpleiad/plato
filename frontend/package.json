@@ -3,10 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "build": "npm run config -- --environment=prod && ng build --prod",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test --watch=false --browsers=ChromeHeadless",
+    "coverage": "ng test --code-coverage --watch=false --browsers=ChromeHeadless",
+    "config": "ts-node ./scripts/setenv.ts",
+    "start": "npm run config -- --environment=dev && ng serve"
   },
   "private": true,
   "dependencies": {
@@ -24,9 +26,11 @@
     "@ctrl/ngx-codemirror": "^5.0.0",
     "bootstrap": "^5.0.1",
     "codemirror": "^5.61.1",
+    "dotenv": "^10.0.0",
     "jquery": "^3.6.0",
     "json-to-pretty-yaml": "^1.2.2",
     "rxjs": "~6.6.0",
+    "ts-node": "^10.0.0",
     "tslib": "^2.1.0",
     "zone.js": "~0.11.4"
   },

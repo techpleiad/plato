@@ -34,7 +34,7 @@ import { HeadingPipePipe } from './heading-pipe.pipe';
 import { AddSearchComponent } from './add-search/add-search.component';
 
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { PROFILE_COLORS } from './shared/shared-constants';
+import { API_END_POINT, PROFILE_COLORS } from './shared/shared-constants';
 import { CustomCodemirrorComponent } from './custom-codemirror/custom-codemirror.component';
 
 
@@ -74,7 +74,8 @@ import { CustomCodemirrorComponent } from './custom-codemirror/custom-codemirror
     MatSidenavModule
   ],
   providers: [
-    { provide: 'PROFILE_COLORS', useValue: PROFILE_COLORS}
+    { provide: 'PROFILE_COLORS', useValue: PROFILE_COLORS},
+    {provide: 'API_END_POINT', useValue: API_END_POINT}
   ],
   bootstrap: [AppComponent]
 })
