@@ -1,4 +1,4 @@
-import { environment } from '../../environments/environment';
+import { environment } from "src/environments/environment";
 export const PROFILE_COLORS = [
     '#0068ff',
     '#ffa500',
@@ -8,7 +8,7 @@ export const PROFILE_COLORS = [
     '#654ef2',
     '#ff4040',
   ];
-  
+
 class EndPoints {
   static VERSION = '/v1';
   static SERVICES = '/services';
@@ -36,14 +36,13 @@ export const BASE_URL = environment.PLATO_API;
 
 export const API_END_POINT = {
     PLATO: {
-        GET_SERVICES: {
-            URL: "http://localhost:8080/v1/services",
-            METHOD: HTTP_METHOD.GET
-        },
-        ADD_SERVICES: {
-          URL: "http://localhost:8080/v1/services",
-          METHOD: HTTP_METHOD.POST
+      GET_SERVICES: {
+        URL: `${BASE_URL}${EndPoints.VERSION_SERVICES}`,
+        METHOD: HTTP_METHOD.GET
+      },
+      ADD_SERVICES: {
+        URL: `${BASE_URL}${EndPoints.VERSION_SERVICES}`,
+        METHOD: HTTP_METHOD.POST
       }
-        
-      }
+    }
 }
