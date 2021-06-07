@@ -78,6 +78,8 @@ export class CodemirrorService {
     console.log(parent);
     const lineElements = parent?.getElementsByClassName('CodeMirror-linenumber CodeMirror-gutter-elt');
     console.log(lineElements);
+    //const contentLineElements = parent?.getElementsByClassName('CodeMirror-line');
+    //console.log(contentLineElements);
     if (lineElements) {
 
       const profileMapper = new Map();
@@ -112,10 +114,14 @@ export class CodemirrorService {
         const lineNumber = profileMapper.get(prop.property);
         this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
       }
-      
+      ///// updating color of the sied-bar
       profileData.forEach((profile, index) => {
         this.updateColor(document.getElementById(`side-bar-${index}`), profile.color.color);
       });
+      /*    consistency coloring solved   . 
+      if(contentLineElements)
+      this.updateColor(contentLineElements[1],"#2f5d62")
+      */
     }
   }
 
