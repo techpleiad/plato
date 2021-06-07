@@ -32,16 +32,16 @@ export const ROUTER_DIRECT = {
 export const SUPPRESSED_EXCEPTIONS = [
 ];
 
-export const BASE_URL = "http://localhost:8080​​​​​​​​​​​​​​/v1/services";
+export const BASE_URL = environment.PLATO_API;
 
 export const API_END_POINT = {
     PLATO: {
         GET_SERVICES: {
-            URL: BASE_URL,
+            URL: "http://localhost:8080/v1/services",
             METHOD: HTTP_METHOD.GET
         },
         ADD_SERVICES: {
-          URL: `${BASE_URL}${EndPoints.VERSION_SERVICES}`,
+          URL: "http://localhost:8080/v1/services",
           METHOD: HTTP_METHOD.POST
       }
         
