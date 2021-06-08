@@ -37,11 +37,11 @@ export const BASE_URL = environment.PLATO_API;
 export const API_END_POINT = {
     PLATO: {
         GET_SERVICES: {
-            URL: "http://localhost:8080/v1/services",
+            URL: `${BASE_URL}${EndPoints.VERSION_SERVICES}`,
             METHOD: HTTP_METHOD.GET
         },
         ADD_SERVICES: {
-          URL: "http://localhost:8080/v1/services",
+          URL: `${BASE_URL}${EndPoints.VERSION_SERVICES}`,
           METHOD: HTTP_METHOD.POST
       }
         
