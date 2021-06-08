@@ -1,3 +1,4 @@
-<!-- Toolbar -->
-<p>index.html</p>
+<app-header></app-header>
+<app-add-search (reload_display_services)="reloadDisplayServices()" (filter_display_services)="filterDisplayServices($event)"></app-add-search>
+<app-display-services [services]="services"></app-display-services>
 <router-outlet></router-outlet>

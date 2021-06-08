@@ -1,0 +1,7 @@
+<mat-form-field class="input-field" appearance="fill">
+    <mat-label>{{label}}</mat-label>
+    <mat-select name="typeValue" (selectionChange)="sendValue($event)" required>
+      <mat-option *ngFor="let item of dropdownList" [value]="item">{{item}}</mat-option>
+     
+    </mat-select>
+  </mat-form-field>
