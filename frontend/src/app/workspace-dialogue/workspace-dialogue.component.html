@@ -14,8 +14,8 @@
   </div>
   <!-- Showing the contents accordingly -->
   <div fxLayout="row">
-    <app-custom-codemirror fxFlex [content]="displayData" [id]=" 'custom' " [propertyList]="propertyList" [ownerList]="ownerList"></app-custom-codemirror>
-    <app-custom-codemirror fxFlex [content]="displayData2" [id]=" 'custom2' " [propertyList]="propertyList" [ownerList]="ownerList" *ngIf="isBranch2Req"></app-custom-codemirror>
+    <app-custom-codemirror [fxFlex]="twoCodemirrors ? 50 : 100" [content]="displayData" [id]=" 'custom' " [propertyList]="propertyList" [ownerList]="ownerList"></app-custom-codemirror>
+    <app-custom-codemirror fxFlex="50" [content]="displayData2" [id]=" 'custom2' " [propertyList]="propertyList" [ownerList]="ownerList" *ngIf="isBranch2Req"></app-custom-codemirror>
   </div>
 </mat-dialog-content>
 

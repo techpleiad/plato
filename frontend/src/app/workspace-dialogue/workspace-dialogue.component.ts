@@ -45,6 +45,8 @@ export class WorkspaceDialogueComponent implements OnInit {
   propertyList: PropertyDetail[]=[];
   ownerList: string[] = [];
 
+  twoCodemirrors = false; //two codemirrors required while checking consistency.
+
   visibleProgressSpinner = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _configFiles: ConfigFilesService, 
@@ -71,6 +73,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.canProfileDefault = false;
     this.isBranch1Req = false;
     this.isBranch2Req = false;
+    this.twoCodemirrors = false;
 
     this.setBranchProfileReq();
   }
@@ -123,6 +126,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
     // CONSISTENCY ACROSS BRANCHES
     else if(this.functionValue==="consistency across branch"){
+      this.twoCodemirrors = true;
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch1Value,this.profileValue)
       .subscribe(data => {
         
