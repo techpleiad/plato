@@ -35,9 +35,12 @@ export class AddNewServiceComponent implements OnInit {
 
   addService!: microService;
   isServiceValid = true;
+  isDirValid = true;
   isUrlValid = true;
   isUsernameValid = true;
   isPasswordValid = true;
+  isProfileValid = true;
+  isBranchValid = true;
   checked = false;
   url: string="";
   username: string="";
@@ -99,9 +102,12 @@ export class AddNewServiceComponent implements OnInit {
     this.addService.branches=this.branches;
     this.addService.profiles=this.profiles;
     this.isServiceValid=this.addService.service.length>0;
+    this.isDirValid=this.addService.directory.length>0;
     this.isUrlValid=this.url.length>0;
     this.isUsernameValid=this.username.length>0;
     this.isPasswordValid=this.password.length>0;
+    this.isProfileValid=this.profiles.length>0;
+    this.isBranchValid=this.branches.length>0;
     if(this.checked){
       this.addService.gitRepository={url: this.url};
       if(this.isServiceValid && this.isUrlValid){

@@ -22,10 +22,13 @@
     </div>
 
     <div class="mb-3">
-      <label for="dir" class="col-form-label">DIRECTORY</label>
+      <label for="dir" class="col-form-label"><span class="text-danger mr-1">*</span>DIRECTORY</label>
       <input type="text" class="form-control" id="desc" name="directory" [(ngModel)]="addService.directory"
         placeholder="Enter directory">
       <div style="height:20px;">
+        <span *ngIf="!isDirValid" class="text-danger">
+          Please enter root directory
+        </span>
       </div>
     </div>
 
@@ -41,7 +44,7 @@
     <div class="mb-3">
       <div *ngIf="checked; else elseBlock">
         <label for="url" class="col-form-label"><span class="text-danger mr-1">*</span>URL</label>
-        <input type="text" class="form-control" id="url" name="url" [(ngModel)]="url"
+        <input type="url" class="form-control" id="url" name="url" [(ngModel)]="url"
           placeholder="Enter Git Repository URL">
         <div style="height:20px;">
           <span *ngIf="!isUrlValid" class="text-danger">
@@ -51,7 +54,7 @@
       </div>
       <ng-template #elseBlock>
         <label for="url" class="col-form-label"><span class="text-danger mr-1">*</span>URL</label>
-        <input type="text" class="form-control" id="url" name="url" [(ngModel)]="url"
+        <input type="url" class="form-control" id="url" name="url" [(ngModel)]="url"
           placeholder="Enter Git Repository URL">
         <div style="height:20px;">
           <span *ngIf="!isUrlValid" class="text-danger">
@@ -69,7 +72,7 @@
         </div>
 
         <label for="password" class="col-form-label"><span class="text-danger mr-1">*</span>PASSWORD</label>
-        <input type="text" class="form-control" id="password" name="password" [(ngModel)]="password"
+        <input type="password" class="form-control" id="password" name="password" [(ngModel)]="password"
           placeholder="Enter Git Repository Password">
         <div style="height:20px;">
           <span *ngIf="!isPasswordValid" class="text-danger">
@@ -98,6 +101,11 @@
                  (matChipInputTokenEnd)="add($event)">
         </mat-chip-list>
       </mat-form-field>
+      <div style="height:20px;">
+        <span *ngIf="!isProfileValid" class="text-danger">
+          Please enter profile names
+        </span>
+      </div>
     </div>
 
     <div>
@@ -118,6 +126,11 @@
                  (matChipInputTokenEnd)="addBranch($event)">
         </mat-chip-list>
       </mat-form-field>
+      <div style="height:20px;">
+        <span *ngIf="!isBranchValid" class="text-danger">
+          Please enter branch names
+        </span>
+      </div>
     </div>
 
   </form>

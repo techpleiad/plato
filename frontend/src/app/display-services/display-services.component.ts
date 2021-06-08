@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import {MatIconModule} from '@angular/material/icon';
 import { microService } from '../microService'
@@ -12,18 +12,17 @@ import {PageEvent} from '@angular/material/paginator';
   templateUrl: './display-services.component.html',
   styleUrls: ['./display-services.component.css']
 })
-export class DisplayServicesComponent implements OnInit {
+export class DisplayServicesComponent implements OnInit, OnChanges {
 
 
   @Input() services: microService[];
 
   //paginator variables and functions
-  /*
+  
   paginatorServices: microService[]=[];
   pageIndex: number = 0;
-  pageSize: number = 1;
-  pageSizeOptions: number[] = [1, 10, 25, 100];
-
+  pageSize: number = 5;
+  pageSizeOptions: number[] = [5, 10, 25, 100];
   initializePaginator(){
     this.paginatorServices=this.services.slice(0, Math.min((1)*this.pageSize,this.services.length));
   }
@@ -35,7 +34,7 @@ export class DisplayServicesComponent implements OnInit {
     this.paginatorServices=this.services.slice(idx*sz, Math.min((idx+1)*sz,this.services.length));
   }
   //paginator variables and functions
-  */
+  
 
   
   constructor(private _dataManagerServices: DataManagerService, public dialog: MatDialog) { 
@@ -48,7 +47,7 @@ export class DisplayServicesComponent implements OnInit {
     const dialogRef = this.dialog.open(WorkspaceDialogueComponent,{
       data: mservice,
       height: '700px',
-      width: '1200px',
+      width: '1400px',
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -60,6 +59,9 @@ export class DisplayServicesComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  ngOnChanges(): void {
+    this.initializePaginator();
+  }
 
 
 }
