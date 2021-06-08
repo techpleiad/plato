@@ -20,9 +20,10 @@ const targetPath = isProduction
 // in the process.env object thanks to dotenv
 const environmentFileContent = `export const environment = {​​​​​​​​​​​​​​
   production: ${​​​​​​​​​​​​​​isProduction}​​​​​​​​​​​​​​,
-  ${​​​​​​​​​​​​​​process.env.PLATO_API}
+  PLATO_API: '${​​​​​​​​​​​​​​process.env.PLATO_API}'
 }​​​​​​​​​​​​​​;
 `;
+
 
 
 

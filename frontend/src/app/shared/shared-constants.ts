@@ -1,4 +1,4 @@
-import { environment } from '../../environments/environment';
+import { environment } from 'src/environments/environment';
 export const PROFILE_COLORS = [
     '#0068ff',
     '#ffa500',
