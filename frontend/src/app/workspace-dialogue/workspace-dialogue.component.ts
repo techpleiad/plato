@@ -96,7 +96,6 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
   setBranch(branchValue: any){
     this.branchValue = branchValue;
-    //console.log("Branch is set to ",this.branchValue);
   }
 
   setBranch1(branchValue: any){
@@ -107,7 +106,6 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
   setProfile(profileValue: any){
     this.profileValue = profileValue;
-    //console.log("Profile is set to ",this.profileValue);
   }
   
 
@@ -115,7 +113,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     // Progress Spinner 
     this.visibleProgressSpinner = true;
 
-    ////////////////   SHOW MERGED AND INDIVIDUAL CONFIGURATION FILES /////
+    // SHOW MERGED AND INDIVIDUAL FILES
     if(this.functionValue==="merged" || this.functionValue==="individual"){
 
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.branchValue,this.profileValue)
@@ -124,14 +122,11 @@ export class WorkspaceDialogueComponent implements OnInit {
         this.ownerList = [];
         this.visibleProgressSpinner = false;
         this.displayData = data;
-        //console.log(this.displayData);
       });
       
     }
-    //branch consistency
+    // CONSISTENCY ACROSS BRANCHES
     else if(this.functionValue==="consistency across branch"){
-      //this.propertyList = [];
-      //this.ownerList = [];
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch1Value,this.profileValue)
       .subscribe(data => {
         
@@ -139,20 +134,20 @@ export class WorkspaceDialogueComponent implements OnInit {
         .subscribe(data2 => {
             
           this.visibleProgressSpinner = false;
-            
+          this.propertyList = [];
+          this.ownerList = [];
           this.displayData2 = data2;
-          console.log(data2);
+
           let differences = diff.diff(yaml.parse(data),yaml.parse(data2));
           console.log(differences);
         });
         
         this.displayData = data;
-        console.log(data);
       });
       
     }
-    //branch consistency
-    //////////////   SHOW SPRIMERA  //////////////
+ 
+    // SPIMERA
     else if(this.functionValue==="sprimera"){
       //////////  Bringing All The Files /////
       let profileSpecTOList: ProfileSpecTO[] = [];
@@ -165,18 +160,13 @@ export class WorkspaceDialogueComponent implements OnInit {
             data[i].jsonNode,
           ))
         }
-        ///////////   Merging All The Files  //////////
+        // Mering Files 
         const aggregated = this._profileAggregatorService.aggregateProfiles(profileSpecTOList);
         if(aggregated){
           this.visibleProgressSpinner = false;
         }
-        //console.log(aggregated);
-        
-        //setting displayData to the json content of aggregated File.
         this.displayData = JSON.stringify(aggregated.jsonContent,null,2);
-        //console.log(aggregated.propertyList);
         this.propertyList = aggregated.propertyList;
-        
         this.ownerList = profileSpecTOList.map(function(val){
           return val.profile;
         })
