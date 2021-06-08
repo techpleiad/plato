@@ -49,7 +49,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _configFiles: ConfigFilesService, 
   private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService) {
-    this.functionList = ["merged","individual","sprimera","consistency across branch"];
+    this.functionList = ["show merged file","show individual file","sprimera","consistency across branch"];
     this.mservice = data;
     this.branchValue = "";
     this.profileValue = "";
@@ -75,7 +75,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.setBranchProfileReq();
   }
   setBranchProfileReq(){
-    if(this.functionValue==="merged" || this.functionValue==="individual" || this.functionValue=="sprimera"){
+    if(this.functionValue==="show merged file" || this.functionValue==="show individual file" || this.functionValue=="sprimera"){
       this.isBranchReq = true;
       this.isProfileReq = true;
     }
@@ -86,7 +86,7 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.isProfileReq = true;
     }
   
-    if(this.functionValue==="individual" || "consistency across branch"){
+    if(this.functionValue==="show individual file" || "consistency across branch"){
       this.canProfileDefault = true;
     }
     else{
@@ -114,7 +114,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.visibleProgressSpinner = true;
 
     // SHOW MERGED AND INDIVIDUAL FILES
-    if(this.functionValue==="merged" || this.functionValue==="individual"){
+    if(this.functionValue==="show merged file" || this.functionValue==="show individual file"){
 
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.branchValue,this.profileValue)
       .subscribe(data => {

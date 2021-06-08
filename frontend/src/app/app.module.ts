@@ -46,7 +46,6 @@ import { CustomCodemirrorComponent } from './custom-codemirror/custom-codemirror
     WorkspaceDialogueComponent,
     ContentDisplayComponent,
     ProfileInputComponent,
-    HeadingPipePipe,
     AddSearchComponent,
     CustomCodemirrorComponent
   ],
