@@ -72,12 +72,13 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     this.codemirror = CodeMirror.fromTextArea(document.getElementById(`${this.prefix}${this.id}`) as HTMLTextAreaElement,
       this.CODEMIRROR_CONFIG
       );
-      this.codemirror.setSize('100%', 350);
+      this.codemirror.setSize('100%', '430px');
       
       this.codemirror.refresh();
   }
   ngOnChanges(changes: SimpleChanges): void {
 
+    
     console.log(this.ownerList);
     this.content = this.content || "";
     this.profileColorList = [];
@@ -87,6 +88,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       this._colorService.reset();
       this.update();
     }
+    
 
   }
 

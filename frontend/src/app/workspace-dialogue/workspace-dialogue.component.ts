@@ -86,13 +86,9 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.isProfileReq = true;
     }
   
-    if(this.functionValue==="show individual file" || "consistency across branch"){
+    if(this.functionValue==="show individual file" || this.functionValue==="consistency across branch"){
       this.canProfileDefault = true;
     }
-    else{
-      this.canProfileDefault = false;
-    }
-    
   }
   setBranch(branchValue: any){
     this.branchValue = branchValue;
