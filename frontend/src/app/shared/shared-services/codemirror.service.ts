@@ -72,11 +72,12 @@ export class CodemirrorService {
     this._breadcrumbEditorLine = line;
   }
 
-  updateCodeMirrorVisual(profileData: ProfileDataTO[], propertyList: PropertyDetail[], jsonObject: any, codemirrorId: string): void {
+  updateCodeMirrorVisual(profileData: ProfileDataTO[], propertyList: PropertyDetail[], jsonObject: any, codemirrorId: string, differenceProperties: string[]): void {
 
     const parent = document.getElementById(codemirrorId);
     console.log(parent);
     const lineElements = parent?.getElementsByClassName('CodeMirror-linenumber CodeMirror-gutter-elt');
+    const contentLineElements = parent?.getElementsByClassName('CodeMirror-line');
     console.log(lineElements);
     //const contentLineElements = parent?.getElementsByClassName('CodeMirror-line');
     //console.log(contentLineElements);
@@ -114,14 +115,18 @@ export class CodemirrorService {
         const lineNumber = profileMapper.get(prop.property);
         this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
       }
-      ///// updating color of the sied-bar
+      ///// Branch Consistency Coloring
+      if(contentLineElements){
+        for(let i=0;i<differenceProperties.length;i++){
+          const lineNumber = this.propertyTolineBreadcrumbMap.get(differenceProperties[i]);
+          this.updateColor(contentLineElements[lineNumber-1],"#cee5d0");
+        }
+      }
+      ///// Giving backgorund color to the profile
       profileData.forEach((profile, index) => {
         this.updateColor(document.getElementById(`side-bar-${index}`), profile.color.color);
       });
-      /*    consistency coloring solved   . 
-      if(contentLineElements)
-      this.updateColor(contentLineElements[1],"#2f5d62")
-      */
+      
     }
   }
 
