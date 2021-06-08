@@ -2,7 +2,7 @@
     <textarea id="{{prefix}}{{id}}"></textarea>
 </div>
 
-<div class="sticky" *ngIf="content !== ''">
+<div  fxLayout="row" fxLayoutAlign="space-around center" class="sticky" *ngIf="content !== ''">
     <div *ngFor="let profileData of profileColorList; index as ind" id="side-bar-{{ind}}"
          style="width: 150px; word-break: break-all"
          [style.background]="profileData.color.color"
@@ -10,6 +10,5 @@
       {{profileData.profile}}
     </div>
 </div>
-
 
 

@@ -294,12 +294,12 @@ export class CodemirrorService {
 
   yamlLineReaderInArray(path: string, root: any,  profileMapper: any, config: CodemirrorReader): void {
 
-    const parentIndex = this.currentLineInEditor;
+    //const parentIndex = this.currentLineInEditor;
     for (const pro of Object.keys(root)) {
       const val = root[pro];
       const newPath = this.generatePropertyPath(path, pro);
 
-      profileMapper.set(path, parentIndex);
+      //profileMapper.set(path, parentIndex);
       switch (this.propertyType(val)) {
         case 'primitive': {
           this.lineToPropertyBreadcrumbMap.set(this.currentLineInEditor, `${newPath}.${val}`);

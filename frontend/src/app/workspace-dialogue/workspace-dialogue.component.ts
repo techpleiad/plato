@@ -151,10 +151,11 @@ export class WorkspaceDialogueComponent implements OnInit {
     else if(this.functionValue==="sprimera"){
       let profileSpecTOList: ProfileSpecTO[] = [];
       this._sprimeraFilesService.getFiles(this.mservice.service,this.branchValue,this.profileValue).subscribe((data: any[]) =>{
+        console.log(data);
         //Converting the fetched files into the format required by profile_aggregator service.
         for(let i=0;i<data.length;i++){
           profileSpecTOList.push(new ProfileSpecTO(
-            data[i].profile,
+            `${data[i].service}-${data[i].profile}`,
             data[i].yaml,
             data[i].jsonNode,
           ))
