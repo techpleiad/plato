@@ -149,7 +149,6 @@ export class WorkspaceDialogueComponent implements OnInit {
  
     // SPIMERA
     else if(this.functionValue==="sprimera"){
-      //////////  Bringing All The Files /////
       let profileSpecTOList: ProfileSpecTO[] = [];
       this._sprimeraFilesService.getFiles(this.mservice.service,this.branchValue,this.profileValue).subscribe((data: any[]) =>{
         //Converting the fetched files into the format required by profile_aggregator service.
