@@ -1,6 +1,6 @@
 
-const {​​​​​​​ writeFile }​​​​​​​​​​​​​​ = require('fs');
-const {​​​​​​​​​​​​​​ argv }​​​​​​​​​​​​​​ = require('yargs');
+const { writeFile } = require('fs');
+const { argv } = require('yargs');
 
 
 // read environment variables from .env file
@@ -18,10 +18,10 @@ const targetPath = isProduction
 
 // we have access to our environment variables
 // in the process.env object thanks to dotenv
-const environmentFileContent = `export const environment = {​​​​​​​​​​​​​​
-  production: ${​​​​​​​​​​​​​​isProduction}​​​​​​​​​​​​​​,
-  PLATO_API: '${​​​​​​​​​​​​​​process.env.PLATO_API}'
-}​​​​​​​​​​​​​​;
+const environmentFileContent = `export const environment = {
+  production: ${isProduction},
+  PLATO_API: '${process.env.PLATO_API}'
+};
 `;
 
 
@@ -41,5 +41,5 @@ writeFile(targetPath, environmentFileContent, function (err: any) {​​​​�
 
 
 
- 
+
 
