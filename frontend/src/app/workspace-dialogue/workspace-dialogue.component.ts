@@ -45,6 +45,8 @@ export class WorkspaceDialogueComponent implements OnInit {
   propertyList: PropertyDetail[]=[];
   ownerList: string[] = [];
 
+  differenceProperties: string[] = [];
+
   visibleProgressSpinner = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _configFiles: ConfigFilesService, 
