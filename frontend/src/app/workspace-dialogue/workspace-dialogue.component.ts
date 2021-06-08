@@ -142,6 +142,17 @@ export class WorkspaceDialogueComponent implements OnInit {
 
           let differences = diff.diff(yaml.parse(data),yaml.parse(data2));
           console.log(differences);
+          if(differences){
+            for(let i=0;i<differences.length;i++){
+              let temp = differences[i].path||[];
+              let difference_property = temp[0];
+              for(let j=1;j<temp?.length;j++){
+                difference_property = difference_property.concat('.',temp[j]);
+              }
+              this.differenceProperties.push(difference_property);
+              console.log(this.differenceProperties);
+            }
+          }
         });
         
         this.displayData = data;
