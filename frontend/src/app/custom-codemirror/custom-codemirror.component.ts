@@ -122,6 +122,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
         //this.SUGGESTED_LIST = this.codemirrorService.findSuggestedPropertyList('');
       }, 200);
     }, 500);
+    
   }
   get prefix(): string {
     return CustomCodemirrorComponent.Prefix;

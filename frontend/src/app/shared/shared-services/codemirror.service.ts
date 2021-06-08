@@ -42,6 +42,7 @@ export class CodemirrorService {
       this.breadcrumbEditorLine = instance.getCursor().line + 1;
       //SpringProfileComponent.DisplayPropertyPathOrFind = true; // circular dependency
     });
+    
 
     switch (this._editor) {
       case CodeEditor.JSON: {
@@ -115,6 +116,14 @@ export class CodemirrorService {
         this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
       }
       ///// updating color of the sied-bar
+      this._mergeEditor.on('scroll',(event: any)=>{
+        //console.log(profileData);
+        for (let i = 0; i < propertyList.length; ++i) {
+          const prop = propertyList[i];
+          const lineNumber = profileMapper.get(prop.property);
+          this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
+        }
+      })
       profileData.forEach((profile, index) => {
         this.updateColor(document.getElementById(`side-bar-${index}`), profile.color.color);
       });
