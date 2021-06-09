@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  PLATO_API: 'http://localhost:8080'
 };
