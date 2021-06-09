@@ -47,7 +47,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
 
   differenceProperties: string[] = [];
-  twoCodemirrors = false; //two codemirrors required while checking consistency.
+  //twoCodemirrors = false; //two codemirrors required while checking consistency.
 
 
   visibleProgressSpinner = false;
@@ -81,7 +81,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
     this.isConsistency = false;
 
-    this.twoCodemirrors = false;
+    //this.twoCodemirrors = false;
 
 
     this.setBranchProfileReq();
@@ -137,11 +137,6 @@ export class WorkspaceDialogueComponent implements OnInit {
     else if(this.functionValue==="consistency across branch"){
 
       this.isConsistency = true;
-
-      this.propertyList = [];
-      this.ownerList = [];
-      this.twoCodemirrors = true;
-
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch1Value,this.profileValue)
       .subscribe(data => {
         
@@ -149,25 +144,6 @@ export class WorkspaceDialogueComponent implements OnInit {
         .subscribe(data2 => {  
           this.visibleProgressSpinner = false;
           this.displayData2 = data2;
-          console.log(this.displayData2);
-
-          let differences = diff.diff(yaml.parse(data),yaml.parse(data2));
-
-          console.log(differences);
-          if(differences){
-            for(let i=0;i<differences.length;i++){
-              let temp = differences[i].path||[];
-              let difference_property = temp[0];
-              for(let j=1;j<temp?.length;j++){
-                difference_property = difference_property.concat('.',temp[j]);
-              }
-              this.differenceProperties.push(difference_property);
-              console.log(this.differenceProperties);
-            }
-          }
-
-          //console.log(differences);
-
         });
         this.displayData = data;
       });

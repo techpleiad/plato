@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import { DiffEditorModel } from 'ngx-monaco-editor';
 
 @Component({
@@ -7,12 +7,12 @@ import { DiffEditorModel } from 'ngx-monaco-editor';
   styleUrls: ['./monaco-editor.component.css']
 })
 export class MonacoEditorComponent implements OnInit {
-
-  constructor() { }
-
-  text1 = "";
-  text2 = "";
-  isCompared = false;
+  @Input() data1: string="";
+  @Input() data2: string="";
+  
+ // text1 = "";
+  //text2 = "";
+  //isCompared = false;
 
   inputOptions = { theme: "vs", language: 'yaml' };
 
@@ -27,13 +27,24 @@ export class MonacoEditorComponent implements OnInit {
     language: 'plaintext'
   };
 
+  constructor() { }
+
+
+  
+
   ngOnInit(): void {
   }
+  ngOnChanges(): void{
+    this.originalModel = Object.assign({}, this.originalModel, { code: this.data1 });
+    this.modifiedModel = Object.assign({}, this.originalModel, { code: this.data2 });
+  }
+  
+  /*
   onCompare() {
     this.originalModel = Object.assign({}, this.originalModel, { code: this.text1 });
     this.modifiedModel = Object.assign({}, this.originalModel, { code: this.text2 });
     this.isCompared = true;
     window.scrollTo(0, 0); // scroll the window to top
-  }
+  }*/
 
 }

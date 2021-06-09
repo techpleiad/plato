@@ -17,7 +17,7 @@
 
     <app-custom-codemirror fxFlex [content]="displayData" [id]=" 'custom' " [propertyList]="propertyList" [ownerList]="ownerList" *ngIf="!isConsistency"></app-custom-codemirror>
     <!--<app-custom-codemirror fxFlex [content]="displayData2" [id]=" 'custom2' " [propertyList]="propertyList" [ownerList]="ownerList" [differenceProperties]="differenceProperties" *ngIf="isBranch2Req"></app-custom-codemirror>-->
-    <app-monaco-editor *ngIf="isConsistency"></app-monaco-editor>
+    <app-monaco-editor fxFlex [data1]="displayData" [data2]="displayData2"  *ngIf="isConsistency"></app-monaco-editor>
   </div>
 
 </mat-dialog-content>

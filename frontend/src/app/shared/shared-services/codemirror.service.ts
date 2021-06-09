@@ -36,9 +36,6 @@ export class CodemirrorService {
 
     //// _mergeEditor => main editor
     this._mergeEditor = codemirrorTextArea;
-
-    this._mergeEditor.MergeView("Hello","World");
-
     //// On double click point the cursor to that area
     this._mergeEditor.on('dblclick', (instance: any, event: Event) => {
       this.breadcrumbEditorLine = instance.getCursor().line + 1;
@@ -119,7 +116,7 @@ export class CodemirrorService {
         const lineNumber = profileMapper.get(prop.property);
         this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
       }
-
+      /*
       ///// Branch Consistency Coloring
       if(contentLineElements){
         for(let i=0;i<differenceProperties.length;i++){
@@ -127,8 +124,7 @@ export class CodemirrorService {
           this.updateColor(contentLineElements[lineNumber-1],"#cee5d0");
         }
       }
-      ///// Giving backgorund color to the profile
-
+      */
       /// Updating color on scroll event
       this._mergeEditor.on('scroll',(event: any)=>{
         console.log(profileColorMap);
