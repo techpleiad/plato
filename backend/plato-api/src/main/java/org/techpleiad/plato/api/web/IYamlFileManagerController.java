@@ -15,4 +15,9 @@ public interface IYamlFileManagerController {
     @ApiOperation("Get configuration file by name")
     @GetMapping(value = Constants.VERSION_SERVICES + "/{serviceName}" + Constants.BRANCHES + "/{branchName}")
     ResponseEntity getFileByName(@PathVariable String serviceName, @PathVariable String branchName, @RequestParam(defaultValue = "yaml") String format, @RequestParam(defaultValue = "individual") String type, @RequestParam(defaultValue = "") String profile) throws InterruptedException, ExecutionException, JsonProcessingException;
+
+
+    @ApiOperation("Get all configuration files of service of a branch and profile")
+    @GetMapping(value = Constants.VERSION_SERVICES + Constants.GET_FILES + "/{serviceName}" + Constants.BRANCHES + "/{branchName}")
+    ResponseEntity getFilesByProfile(@PathVariable String serviceName, @PathVariable String branchName, @RequestParam(defaultValue = "") String profile) throws InterruptedException, ExecutionException, JsonProcessingException;
 }

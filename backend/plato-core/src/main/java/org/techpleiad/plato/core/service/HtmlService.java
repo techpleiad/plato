@@ -193,6 +193,11 @@ public class HtmlService implements IHtmlServiceUseCase {
         if (profileReport.containsKey(profile)) {
             boolean fileEqual = profileReport.get(profile).isFileEqual();
             Boolean propertyValueEqual = profileReport.get(profile).getPropertyValueEqual();
+            if(propertyValueEqual == null){
+                if(fileEqual){
+                    return "<td style=\"background-color: green; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td>";
+                }
+            }
             if (fileEqual && Boolean.TRUE.equals(propertyValueEqual)) {
                 return "<td style=\"background-color: green; border: 1px solid black; border-collapse: collapse; padding: 15px; text-align: left;\"></td>";
             } else if (!fileEqual && Boolean.TRUE.equals(propertyValueEqual)) {

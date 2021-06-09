@@ -32,5 +32,4 @@ public interface IFileServiceUserCase {
     void overWriteFiles(Map<String, String> fileNameToUpdatedFileContentMap, File directory) throws IOException;
 
     JsonNode getMergedYamlFiles(TreeMap<String, File> serviceProfileToFileMap, ServiceBranchData serviceBranchData, String profile, String service) throws ExecutionException, InterruptedException;
-
 }
