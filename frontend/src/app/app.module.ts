@@ -36,8 +36,9 @@ import { AddSearchComponent } from './add-search/add-search.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { API_END_POINT, PROFILE_COLORS } from './shared/shared-constants';
 import { CustomCodemirrorComponent } from './custom-codemirror/custom-codemirror.component';
+import { MonacoEditorComponent } from './monaco-editor/monaco-editor.component';
 
-
+import {  MonacoEditorModule } from 'ngx-monaco-editor';
 @NgModule({
   declarations: [
     AppComponent,
@@ -48,7 +49,8 @@ import { CustomCodemirrorComponent } from './custom-codemirror/custom-codemirror
     ProfileInputComponent,
     HeadingPipePipe,
     AddSearchComponent,
-    CustomCodemirrorComponent
+    CustomCodemirrorComponent,
+    MonacoEditorComponent
   ],
   imports: [
     BrowserModule,
@@ -71,7 +73,8 @@ import { CustomCodemirrorComponent } from './custom-codemirror/custom-codemirror
     SharedComponentsModule,
     MatToolbarModule,
     MatPaginatorModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MonacoEditorModule.forRoot()
   ],
   providers: [
     { provide: 'PROFILE_COLORS', useValue: PROFILE_COLORS},

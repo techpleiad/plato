@@ -49,6 +49,8 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   visibleProgressSpinner = false;
 
+  isConsistency = false;
+
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _configFiles: ConfigFilesService, 
   private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService) {
     this.functionList = ["merged","individual","sprimera","consistency across branch"];
@@ -73,6 +75,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.canProfileDefault = false;
     this.isBranch1Req = false;
     this.isBranch2Req = false;
+    this.isConsistency = false;
 
     this.setBranchProfileReq();
   }
@@ -129,6 +132,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
     // CONSISTENCY ACROSS BRANCHES
     else if(this.functionValue==="consistency across branch"){
+      this.isConsistency = true;
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch1Value,this.profileValue)
       .subscribe(data => {
         

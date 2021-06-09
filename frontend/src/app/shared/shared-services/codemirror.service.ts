@@ -37,6 +37,8 @@ export class CodemirrorService {
     //// _mergeEditor => main editor
     this._mergeEditor = codemirrorTextArea;
 
+    this._mergeEditor.MergeView("Hello","World");
+
     //// On double click point the cursor to that area
     this._mergeEditor.on('dblclick', (instance: any, event: Event) => {
       this.breadcrumbEditorLine = instance.getCursor().line + 1;

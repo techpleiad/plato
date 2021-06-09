@@ -1,0 +1,26 @@
+<div class="row">
+    <div class="col-md-12 editor">
+      <ngx-monaco-diff-editor id="diffeditor" [options]="diffOptions" [originalModel]="originalModel" [modifiedModel]="modifiedModel"></ngx-monaco-diff-editor>
+    </div>
+</div>
+<!--
+<div class="row">
+    <div class="col-md-6">
+      <div class="input-title">
+        <label>Original Text</label>
+      </div>
+      <ngx-monaco-editor id="editor1" [options]="inputOptions" [(ngModel)]="text1"></ngx-monaco-editor>
+    </div>
+    <div class="col-md-6">
+      <div class="input-title">
+        <label>Changed Text</label>
+      </div>
+      <ngx-monaco-editor id="editor2" [options]="inputOptions" [(ngModel)]="text2"></ngx-monaco-editor>
+    </div>
+</div>
+-->
+  <div class="row">
+    <div class="col-md-12" style="text-align:center">
+      <button type="button" class="btn btn-primary" (click)="onCompare()">Find Difference</button>
+    </div>
+  </div>
