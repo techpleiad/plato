@@ -47,7 +47,6 @@ import {  MonacoEditorModule } from 'ngx-monaco-editor';
     WorkspaceDialogueComponent,
     ContentDisplayComponent,
     ProfileInputComponent,
-    HeadingPipePipe,
     AddSearchComponent,
     CustomCodemirrorComponent,
     MonacoEditorComponent

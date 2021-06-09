@@ -1,20 +1,3 @@
-<!--<div class="container" *ngFor="let s of services">
-    <button class="service-button service-text" (click)="openWorkspace(s)">
-        {{s.service | headingPipe}}
-        <span class="to-right">
-            <span class="branch-profile-text">BRANCHES</span>  
-            {{s.branches.length}} &nbsp; &nbsp; 
-            <span class="branch-profile-text">PROFILES</span> 
-                {{s.profiles.length}}
-        </span>
-    </button>
-
-</div>
--->
-
-
-
-
 <div class="container" *ngFor="let s of paginatorServices">
     <button class="service-button service-text" (click)="openWorkspace(s)">
         {{s.service | headingPipe}}

@@ -44,6 +44,7 @@ export class CodemirrorService {
       this.breadcrumbEditorLine = instance.getCursor().line + 1;
       //SpringProfileComponent.DisplayPropertyPathOrFind = true; // circular dependency
     });
+    
 
     switch (this._editor) {
       case CodeEditor.JSON: {
@@ -59,7 +60,7 @@ export class CodemirrorService {
   //// Showing the Editor
   showEditor(): void {
     this._mergeEditor.setValue(this._content);
-    this._mergeEditor.setSize('100%', '100%');
+    this._mergeEditor.setSize('100%', '430px');
     this._mergeEditor.refresh();
   }
 
@@ -108,8 +109,9 @@ export class CodemirrorService {
       console.log(profileMapper);
 
       
-      const profileColorMap = new Map(profileData.map((prof, index) => [prof.profile, prof.color.color]));
-      
+      let profileColorMap = new Map(profileData.map((prof, index) => [prof.profile, prof.color.color]));
+      //console.log(profileData);
+      console.log(profileColorMap);
       //tslint:disable-next-line:prefer-for-of
       
       for (let i = 0; i < propertyList.length; ++i) {
@@ -117,6 +119,7 @@ export class CodemirrorService {
         const lineNumber = profileMapper.get(prop.property);
         this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
       }
+
       ///// Branch Consistency Coloring
       if(contentLineElements){
         for(let i=0;i<differenceProperties.length;i++){
@@ -125,6 +128,19 @@ export class CodemirrorService {
         }
       }
       ///// Giving backgorund color to the profile
+
+      /// Updating color on scroll event
+      this._mergeEditor.on('scroll',(event: any)=>{
+        console.log(profileColorMap);
+        for (let i = 0; i < propertyList.length; ++i) {
+          const prop = propertyList[i];
+          const lineNumber = profileMapper.get(prop.property);
+          this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
+        }
+        
+      })
+      ///// updating color of the sied-bar
+
       profileData.forEach((profile, index) => {
         this.updateColor(document.getElementById(`side-bar-${index}`), profile.color.color);
       });
@@ -301,12 +317,12 @@ export class CodemirrorService {
 
   yamlLineReaderInArray(path: string, root: any,  profileMapper: any, config: CodemirrorReader): void {
 
-    const parentIndex = this.currentLineInEditor;
+    //const parentIndex = this.currentLineInEditor;
     for (const pro of Object.keys(root)) {
       const val = root[pro];
       const newPath = this.generatePropertyPath(path, pro);
 
-      profileMapper.set(path, parentIndex);
+      //profileMapper.set(path, parentIndex);
       switch (this.propertyType(val)) {
         case 'primitive': {
           this.lineToPropertyBreadcrumbMap.set(this.currentLineInEditor, `${newPath}.${val}`);
