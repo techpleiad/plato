@@ -10,13 +10,13 @@ export class MonacoEditorComponent implements OnInit {
   @Input() data1: string="";
   @Input() data2: string="";
   
- // text1 = "";
-  //text2 = "";
+  text1 = "";
+  text2 = "";
   //isCompared = false;
 
   inputOptions = { theme: "vs", language: 'yaml' };
 
-  diffOptions = { theme: "vs", language: "yaml", readOnly: false, renderSideBySide: true, originalEditable: true };
+  diffOptions = { theme: "vs", language: "yaml", readOnly: false, renderSideBySide: false, originalEditable: true };
   originalModel: DiffEditorModel = {
     code: '',
     language: 'yaml'
@@ -37,6 +37,21 @@ export class MonacoEditorComponent implements OnInit {
   ngOnChanges(): void{
     this.originalModel = Object.assign({}, this.originalModel, { code: this.data1 });
     this.modifiedModel = Object.assign({}, this.originalModel, { code: this.data2 });
+  }
+  onInitDiffEditor(diffEditor: any) {
+    if (!diffEditor) {
+      return;
+    }
+  
+    diffEditor.getModifiedEditor().onDidChangeModelContent(() => {
+      const content = diffEditor.getModel().modified.getValue();
+      console.log(content);
+    });
+    diffEditor.getOriginalEditor().onDidChangeModelContent(() => {
+      const content = diffEditor.getModel().original.getValue();
+      console.log(content);
+    });
+    //console.log(diffEditor.getOriginalEditor.getValue())
   }
   
   /*
