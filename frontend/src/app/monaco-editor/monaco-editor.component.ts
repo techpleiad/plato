@@ -19,12 +19,12 @@ export class MonacoEditorComponent implements OnInit {
   diffOptions = { theme: "vs", language: "yaml", readOnly: false, renderSideBySide: true, originalEditable: true };
   originalModel: DiffEditorModel = {
     code: '',
-    language: 'plaintext'
+    language: 'yaml'
   };
  
   modifiedModel: DiffEditorModel = {
     code: '',
-    language: 'plaintext'
+    language: 'yaml'
   };
 
   constructor() { }
