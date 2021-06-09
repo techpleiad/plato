@@ -126,22 +126,21 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
     // CONSISTENCY ACROSS BRANCHES
     else if(this.functionValue==="consistency across branch"){
+      this.propertyList = [];
+      this.ownerList = [];
       this.twoCodemirrors = true;
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch1Value,this.profileValue)
       .subscribe(data => {
         
         this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch2Value,this.profileValue)
-        .subscribe(data2 => {
-            
+        .subscribe(data2 => {  
           this.visibleProgressSpinner = false;
-          this.propertyList = [];
-          this.ownerList = [];
           this.displayData2 = data2;
+          console.log(this.displayData2);
 
           let differences = diff.diff(yaml.parse(data),yaml.parse(data2));
-          console.log(differences);
+          //console.log(differences);
         });
-        
         this.displayData = data;
       });
       

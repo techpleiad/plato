@@ -106,8 +106,9 @@ export class CodemirrorService {
       console.log(profileMapper);
 
       
-      const profileColorMap = new Map(profileData.map((prof, index) => [prof.profile, prof.color.color]));
-      
+      let profileColorMap = new Map(profileData.map((prof, index) => [prof.profile, prof.color.color]));
+      //console.log(profileData);
+      console.log(profileColorMap);
       //tslint:disable-next-line:prefer-for-of
       
       for (let i = 0; i < propertyList.length; ++i) {
@@ -115,15 +116,17 @@ export class CodemirrorService {
         const lineNumber = profileMapper.get(prop.property);
         this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
       }
-      ///// updating color of the sied-bar
+      /// Updating color on scroll event
       this._mergeEditor.on('scroll',(event: any)=>{
-        //console.log(profileData);
+        console.log(profileColorMap);
         for (let i = 0; i < propertyList.length; ++i) {
           const prop = propertyList[i];
           const lineNumber = profileMapper.get(prop.property);
           this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
         }
+        
       })
+      ///// updating color of the sied-bar
       profileData.forEach((profile, index) => {
         this.updateColor(document.getElementById(`side-bar-${index}`), profile.color.color);
       });

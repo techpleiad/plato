@@ -79,11 +79,11 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   }
   ngOnChanges(changes: SimpleChanges): void {
 
-    
-    console.log(this.ownerList);
+    console.log("something changed");
+    console.log(changes);
+    //console.log(this.ownerList);
     this.content = this.content || "";
     this.profileColorList = [];
-    //this.codemirror?.setValue(this.content || "");
     this.codemirror?.refresh();
     if(this.codemirror){
       this._colorService.reset();
@@ -103,17 +103,12 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       JSON.parse(JSON.stringify(this.CODEMIRROR_CONFIG)),
       jsonObject
     );
-    
+    this.profileColorList = [];
     this.profileColorList = this.ownerList.map((val:string)=>{
       return new ProfileDataTO(val,this._colorService.getColor());
     })
-      /*
-      return new ProfileDataTO(
-        val,
-        this._colorService.getColor()
-      )
-    })*/
     console.log(this.profileColorList);
+    //console.log(this.propertyList);
 
     setTimeout(() => {
       this._codemirrorService.showEditor();
