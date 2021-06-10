@@ -72,7 +72,7 @@ export class CodemirrorService {
     this._breadcrumbEditorLine = line;
   }
 
-  updateCodeMirrorVisual(profileData: ProfileDataTO[], propertyList: PropertyDetail[], jsonObject: any, codemirrorId: string, differenceProperties: string[]): void {
+  updateCodeMirrorVisual(profileData: ProfileDataTO[], propertyList: PropertyDetail[], jsonObject: any, codemirrorId: string): void {
 
     const parent = document.getElementById(codemirrorId);
     console.log(parent);
@@ -116,6 +116,15 @@ export class CodemirrorService {
         const lineNumber = profileMapper.get(prop.property);
         this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
       }
+      this._mergeEditor.on('scroll',(event: any)=>{
+        console.log(event);
+        console.log(profileColorMap);
+        for (let i = 0; i < propertyList.length; ++i) {
+          const prop = propertyList[i];
+          const lineNumber = profileMapper.get(prop.property);
+          this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
+        }
+      })
       /*
       ///// Branch Consistency Coloring
       if(contentLineElements){
@@ -126,15 +135,9 @@ export class CodemirrorService {
       }
       */
       /// Updating color on scroll event
-      this._mergeEditor.on('scroll',(event: any)=>{
-        console.log(profileColorMap);
-        for (let i = 0; i < propertyList.length; ++i) {
-          const prop = propertyList[i];
-          const lineNumber = profileMapper.get(prop.property);
-          this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
-        }
+      
         
-      })
+      
       ///// updating color of the sied-bar
 
       profileData.forEach((profile, index) => {

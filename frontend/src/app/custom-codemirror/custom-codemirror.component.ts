@@ -34,7 +34,6 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() id!: string;
   @Input() propertyList: PropertyDetail[] = [];
   @Input() ownerList: string[] = [];
-  @Input() differenceProperties: string[] = [];
   
 
   private codemirror: any;
@@ -113,7 +112,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     setTimeout(() => {
       this._codemirrorService.showEditor();
       setTimeout(() => {
-        this._codemirrorService.updateCodeMirrorVisual(this.profileColorList, this.propertyList, jsonObject,`${this.prefix}${this.id}-container`,this.differenceProperties);
+        this._codemirrorService.updateCodeMirrorVisual(this.profileColorList, this.propertyList, jsonObject,`${this.prefix}${this.id}-container`);
         //this.SUGGESTED_LIST = this.codemirrorService.findSuggestedPropertyList('');
       }, 200);
     }, 500);
