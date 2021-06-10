@@ -11,7 +11,7 @@ export class CapService {
     this.BASE = API_END_POINT.PLATO;
   }
   getReport(branch: any, tempObject: any){
-    return this.http.post(`${this.BASE.GET_SERVICES.URL}/branches/${branch}/across-profiles-validate`,tempObject);
+    return this.http.post<any[]>(`${this.BASE.GET_SERVICES.URL}/branches/${branch}/across-profiles-validate`,tempObject);
   }
    
 }
