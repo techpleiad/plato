@@ -57,7 +57,7 @@ export class CodemirrorService {
   //// Showing the Editor
   showEditor(): void {
     this._mergeEditor.setValue(this._content);
-    this._mergeEditor.setSize('100%', '430px');
+    this._mergeEditor.setSize('100%', '100%');
     this._mergeEditor.refresh();
   }
 
@@ -116,6 +116,7 @@ export class CodemirrorService {
         const lineNumber = profileMapper.get(prop.property);
         this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
       }
+      /*
       this._mergeEditor.on('scroll',(event: any)=>{
         console.log(event);
         console.log(profileColorMap);
@@ -124,7 +125,7 @@ export class CodemirrorService {
           const lineNumber = profileMapper.get(prop.property);
           this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
         }
-      })
+      })*/
       /*
       ///// Branch Consistency Coloring
       if(contentLineElements){

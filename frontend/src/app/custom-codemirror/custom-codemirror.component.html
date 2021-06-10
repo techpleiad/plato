@@ -1,7 +1,3 @@
-<div class="border bg-success" id="{{prefix}}{{id}}-container"> 
-    <textarea id="{{prefix}}{{id}}"></textarea>
-</div>
-
 <div  fxLayout="row" fxLayoutAlign="space-around center" class="sticky" *ngIf="content !== ''">
     <div *ngFor="let profileData of profileColorList; index as ind" id="side-bar-{{ind}}"
          style="width: 150px; word-break: break-all"
@@ -10,5 +6,11 @@
       {{profileData.profile}}
     </div>
 </div>
+
+
+<div class="border bg-success" id="{{prefix}}{{id}}-container"> 
+    <textarea id="{{prefix}}{{id}}"></textarea>
+</div>
+
 
 
