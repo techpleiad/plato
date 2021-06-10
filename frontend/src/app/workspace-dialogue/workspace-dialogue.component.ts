@@ -7,6 +7,7 @@ import { ProfileAggregatorService } from '../shared/shared-services/profile-aggr
 import { SprimeraFilesService } from '../shared/shared-services/sprimera-files.service';
 import * as diff from 'deep-diff'
 import * as yaml from 'yaml';
+import { CapService } from '../shared/shared-services/cap.service';
 
 @Component({
   selector: 'app-workspace-dialogue',
@@ -55,8 +56,10 @@ export class WorkspaceDialogueComponent implements OnInit {
   isConsistency = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _configFiles: ConfigFilesService, 
-  private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService) {
-    this.functionList = ["show merged file","show individual file","sprimera","consistency across branch"];
+  private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService,
+  private _capService: CapService) {
+    this.functionList = ["show merged file","show individual file","sprimera",
+    "consistency across branch","consistency across profile"];
     this.mservice = data;
     this.branchValue = "";
     this.profileValue = "";
@@ -100,6 +103,9 @@ export class WorkspaceDialogueComponent implements OnInit {
   
     if(this.functionValue==="show individual file" || this.functionValue==="consistency across branch"){
       this.canProfileDefault = true;
+    }
+    if(this.functionValue==="consistency across profile"){
+      this.isBranchReq = true;
     }
   }
   setBranch(branchValue: any){
@@ -175,6 +181,30 @@ export class WorkspaceDialogueComponent implements OnInit {
         })
       })
     }
+
+    else if(this.functionValue==="consistency across profile"){
+      let tempObject = {
+        "services": [
+            this.mservice.service
+        ],
+        "includeSuppressed": true,
+         "email": {
+            "sendEmail": true,
+            "recipients": [
+                "abhishekgarg.14august@gmail.com"
+            ]
+        }
+      }
+      this._capService.getReport(this.branchValue,tempObject).subscribe(data=>{
+        console.log(data);
+        this.visibleProgressSpinner = false;
+        // Making the list of inconsistent profiles
+      });
+
+
+
+    }
+
 
   }
 

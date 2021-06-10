@@ -46,7 +46,7 @@ export const API_END_POINT = {
         ADD_SERVICES: {
           URL: `${BASE_URL}${EndPoints.VERSION_SERVICES}`,
           METHOD: HTTP_METHOD.POST
-      }
+        },
         
       }
 }
