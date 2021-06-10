@@ -8,6 +8,8 @@ import {MatInputModule} from '@angular/material/input';
 import { BtnComponent } from './btn/btn.component';
 import { HeaderComponent } from './header/header.component';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import { HeadingPipePipe } from '../../heading-pipe.pipe';
+import { APPLICATION } from '../shared-constants';
 
 
 
@@ -16,7 +18,8 @@ import {MatToolbarModule} from '@angular/material/toolbar';
   declarations: [
     DropdownComponent,
     BtnComponent,
-    HeaderComponent
+    HeaderComponent,
+    HeadingPipePipe
   ],
   imports: [
     CommonModule,
@@ -29,7 +32,11 @@ import {MatToolbarModule} from '@angular/material/toolbar';
   exports: [
     DropdownComponent,
     BtnComponent,
-    HeaderComponent
+    HeaderComponent,
+    HeadingPipePipe
+  ],
+  providers: [
+    { provide: 'APPLICATION', useValue: APPLICATION},
   ]
   
 })

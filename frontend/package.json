@@ -30,6 +30,7 @@
     "dotenv": "^10.0.0",
     "jquery": "^3.6.0",
     "json-to-pretty-yaml": "^1.2.2",
+    "ngx-monaco-editor": "^12.0.0",
     "rxjs": "~6.6.0",
     "ts-node": "^10.0.0",
     "tslib": "^2.1.0",

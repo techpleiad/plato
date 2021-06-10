@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-header',
@@ -7,7 +7,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor() { }
+  app_name: string;
+
+  constructor(@Inject('APPLICATION') private APPLICATION: any) { 
+    this.app_name = APPLICATION.APP_NAME;
+  }
 
   ngOnInit(): void {
   }

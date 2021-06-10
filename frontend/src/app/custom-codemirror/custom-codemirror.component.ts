@@ -34,7 +34,6 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() id!: string;
   @Input() propertyList: PropertyDetail[] = [];
   @Input() ownerList: string[] = [];
-
   
 
   private codemirror: any;
@@ -44,6 +43,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   profileColorList: ProfileDataTO[]=[];
 
   CODEMIRROR_CONFIG: any = {
+    readonly: false,
     theme: 'idea',
     mode: 'yaml',
     lineNumbers: true,
@@ -63,7 +63,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
 
   constructor(private _codemirrorService: CodemirrorService, private _colorService: ColorProviderService) {
     this.SPACE_REPLACE = ' '.repeat(this.SPACES_TO_ONE_TAB);
-    this._codemirrorService.editor = CodeEditor.JSON;
+    this._codemirrorService.editor = CodeEditor.YAML;
   }
 
   ngOnInit(): void {
@@ -72,21 +72,23 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     this.codemirror = CodeMirror.fromTextArea(document.getElementById(`${this.prefix}${this.id}`) as HTMLTextAreaElement,
       this.CODEMIRROR_CONFIG
       );
-      this.codemirror.setSize('100%', 350);
+      this.codemirror.setSize('100%', '430px');
       
       this.codemirror.refresh();
   }
   ngOnChanges(changes: SimpleChanges): void {
 
-    console.log(this.ownerList);
+    console.log("something changed");
+    console.log(changes);
+    //console.log(this.ownerList);
     this.content = this.content || "";
     this.profileColorList = [];
-    //this.codemirror?.setValue(this.content || "");
     this.codemirror?.refresh();
     if(this.codemirror){
       this._colorService.reset();
       this.update();
     }
+    
 
   }
 
@@ -100,17 +102,12 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       JSON.parse(JSON.stringify(this.CODEMIRROR_CONFIG)),
       jsonObject
     );
-    
+    this.profileColorList = [];
     this.profileColorList = this.ownerList.map((val:string)=>{
       return new ProfileDataTO(val,this._colorService.getColor());
     })
-      /*
-      return new ProfileDataTO(
-        val,
-        this._colorService.getColor()
-      )
-    })*/
     console.log(this.profileColorList);
+    //console.log(this.propertyList);
 
     setTimeout(() => {
       this._codemirrorService.showEditor();
@@ -119,6 +116,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
         //this.SUGGESTED_LIST = this.codemirrorService.findSuggestedPropertyList('');
       }, 200);
     }, 500);
+    
   }
   get prefix(): string {
     return CustomCodemirrorComponent.Prefix;

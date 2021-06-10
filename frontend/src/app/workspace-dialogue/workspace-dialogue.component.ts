@@ -45,11 +45,18 @@ export class WorkspaceDialogueComponent implements OnInit {
   propertyList: PropertyDetail[]=[];
   ownerList: string[] = [];
 
+
+  differenceProperties: string[] = [];
+  //twoCodemirrors = false; //two codemirrors required while checking consistency.
+
+
   visibleProgressSpinner = false;
+
+  isConsistency = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _configFiles: ConfigFilesService, 
   private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService) {
-    this.functionList = ["merged","individual","sprimera","consistency across branch"];
+    this.functionList = ["show merged file","show individual file","sprimera","consistency across branch"];
     this.mservice = data;
     this.branchValue = "";
     this.profileValue = "";
@@ -72,10 +79,15 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.isBranch1Req = false;
     this.isBranch2Req = false;
 
+    this.isConsistency = false;
+
+    //this.twoCodemirrors = false;
+
+
     this.setBranchProfileReq();
   }
   setBranchProfileReq(){
-    if(this.functionValue==="merged" || this.functionValue==="individual" || this.functionValue=="sprimera"){
+    if(this.functionValue==="show merged file" || this.functionValue==="show individual file" || this.functionValue=="sprimera"){
       this.isBranchReq = true;
       this.isProfileReq = true;
     }
@@ -86,13 +98,9 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.isProfileReq = true;
     }
   
-    if(this.functionValue==="individual" || "consistency across branch"){
+    if(this.functionValue==="show individual file" || this.functionValue==="consistency across branch"){
       this.canProfileDefault = true;
     }
-    else{
-      this.canProfileDefault = false;
-    }
-    
   }
   setBranch(branchValue: any){
     this.branchValue = branchValue;
@@ -114,7 +122,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.visibleProgressSpinner = true;
 
     // SHOW MERGED AND INDIVIDUAL FILES
-    if(this.functionValue==="merged" || this.functionValue==="individual"){
+    if(this.functionValue==="show merged file" || this.functionValue==="show individual file"){
 
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.branchValue,this.profileValue)
       .subscribe(data => {
@@ -127,21 +135,16 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
     // CONSISTENCY ACROSS BRANCHES
     else if(this.functionValue==="consistency across branch"){
+
+      this.isConsistency = true;
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch1Value,this.profileValue)
       .subscribe(data => {
         
         this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch2Value,this.profileValue)
-        .subscribe(data2 => {
-            
+        .subscribe(data2 => {  
           this.visibleProgressSpinner = false;
-          this.propertyList = [];
-          this.ownerList = [];
           this.displayData2 = data2;
-
-          let differences = diff.diff(yaml.parse(data),yaml.parse(data2));
-          console.log(differences);
         });
-        
         this.displayData = data;
       });
       
@@ -151,10 +154,11 @@ export class WorkspaceDialogueComponent implements OnInit {
     else if(this.functionValue==="sprimera"){
       let profileSpecTOList: ProfileSpecTO[] = [];
       this._sprimeraFilesService.getFiles(this.mservice.service,this.branchValue,this.profileValue).subscribe((data: any[]) =>{
+        console.log(data);
         //Converting the fetched files into the format required by profile_aggregator service.
         for(let i=0;i<data.length;i++){
           profileSpecTOList.push(new ProfileSpecTO(
-            data[i].profile,
+            `${data[i].service}-${data[i].profile}`,
             data[i].yaml,
             data[i].jsonNode,
           ))
