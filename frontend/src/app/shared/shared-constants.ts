@@ -1,4 +1,7 @@
 import { environment } from 'src/environments/environment';
+export const APPLICATION = {
+  APP_NAME: 'PLATO'
+}
 export const PROFILE_COLORS = [
     '#0068ff',
     '#ffa500',
