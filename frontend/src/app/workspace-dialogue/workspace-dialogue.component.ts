@@ -42,7 +42,9 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   // Variables for consistency across profile
   inconsistentProfileProperties = new Map();
+  missingProperties: any[] = [];
   isProfileConsistency = false;
+
   inconsistentProfiles: string[] = [];
   ICP: string = "";
 
@@ -82,15 +84,19 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.isBranchReq = false;
     this.isProfileReq = false;
     this.canProfileDefault = false;
+
+    this.branch1Value = "";
+    this.branch2Value = "";
+    this.displayData2 = "";
     this.isBranch1Req = false;
     this.isBranch2Req = false;
 
     this.isBranchConsistency = false;
     this.isProfileConsistency = false;
+    
 
-    //this.twoCodemirrors = false;
-
-
+    this.missingProperties = [];
+    
     this.setBranchProfileReq();
   }
   setBranchProfileReq(){
@@ -232,15 +238,15 @@ export class WorkspaceDialogueComponent implements OnInit {
         })
       })
     }
-    //// CONSISTENCY ACROSS BRANCHES
+    //// CONSISTENCY ACROSS PROFILES
     else if(this.functionValue==="consistency across profile"){
       this._configFiles.getFile(this.mservice.service,"individual",this.branchValue,this.profileValue)
       .subscribe(data => {
         this.visibleProgressSpinner = false;
         this.propertyList = [];
         this.ownerList = [];
-        this.visibleProgressSpinner = false;
         this.displayData = data;
+        this.missingProperties = this.inconsistentProfileProperties.get(this.ICP);
       });
       
     }
