@@ -168,7 +168,15 @@ export class WorkspaceDialogueComponent implements OnInit {
       console.log(this.inconsistentProfiles);
       this.visibleProgressSpinner = false;
 
-      this.isProfileConsistency = true;
+      if(this.inconsistentProfiles.length>0){
+        this.isProfileConsistency = true;
+      }
+      else{
+        this.propertyList = [];
+        this.ownerList = [];
+        this.displayData = "All profiles are consistent."
+      }
+
       this.visibleProgressSpinner = false;
     });
   }
