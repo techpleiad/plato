@@ -47,6 +47,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   inconsistentProfiles: string[] = [];
   ICP: string = "";
+  chosenMissingProperty: string = "";
 
   // Sprimera Variables
   propertyList: PropertyDetail[]=[];
@@ -258,5 +259,9 @@ export class WorkspaceDialogueComponent implements OnInit {
       });
       
     }
+  }
+  populateMissingProperty(event: any){
+    console.log(event);
+    this.chosenMissingProperty = event;
   }
 }

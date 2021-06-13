@@ -34,6 +34,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() id!: string;
   @Input() propertyList: PropertyDetail[] = [];
   @Input() ownerList: string[] = [];
+  @Input() cmp: string = "";
 
   
 
