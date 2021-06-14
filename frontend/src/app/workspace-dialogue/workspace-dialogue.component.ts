@@ -33,12 +33,16 @@ export class WorkspaceDialogueComponent implements OnInit {
   displayData!: string;
 
   // Variables for consistency across branches
-  branch1Value: any;
-  branch2Value: any;
+  destinationBranchValue: any;
+  sourceBranchValue: any;
   isBranch1Req = false;
   isBranch2Req = false;
-  displayData2!: string;
+  tempSourceData!: string;
+  sourceData!: string;
+  MRDocuments: any[] = [];
   isBranchConsistency = false;
+  keepChanges = false;
+  sendMR = false;
 
   // Variables for consistency across profile
   inconsistentProfileProperties = new Map();
@@ -60,6 +64,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   visibleProgressSpinner = false;
   
+  
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _configFiles: ConfigFilesService, 
   private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService,
@@ -70,8 +75,8 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.branchValue = "";
     this.profileValue = "";
 
-    this.branch1Value = "";
-    this.branch2Value = "";
+    this.destinationBranchValue = "";
+    this.sourceBranchValue = "";
  
 
     this.profileList = this.mservice.profiles.map((x: any) => x.name);
@@ -86,9 +91,9 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.isProfileReq = false;
     this.canProfileDefault = false;
 
-    this.branch1Value = "";
-    this.branch2Value = "";
-    this.displayData2 = "";
+    this.destinationBranchValue = "";
+    this.sourceBranchValue = "";
+    this.sourceData = "";
     this.isBranch1Req = false;
     this.isBranch2Req = false;
 
@@ -127,11 +132,11 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
   }
 
-  setBranch1(branchValue: any){
-    this.branch1Value = branchValue;
+  setDestinationBranch(branchValue: any){
+    this.destinationBranchValue = branchValue;
   }
-  setBranch2(branchValue: any){
-    this.branch2Value = branchValue;
+  setSourceBranch(branchValue: any){
+    this.sourceBranchValue = branchValue;
   }
   setProfile(profileValue: any){
     this.profileValue = profileValue;
@@ -181,8 +186,29 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.visibleProgressSpinner = false;
     });
   }
-  
+   /// Resolving Inconsistency Across Branch
+  modifySourceData(event: any){
+    this.tempSourceData = event;
+    this.keepChanges = true;
+  }
+  maintainConsistency(){
+    this.sourceData = this.tempSourceData;
+    console.log(this.sourceData);
+    this.keepChanges = false;
+    //switch off the keep changes button.
 
+    this.MRDocuments.push({
+      "branch": this.sourceBranchValue,
+      "profile": this.profileValue,
+      "document": this.sourceData
+    })
+    this.sendMR = true;
+
+  }
+  sendMergeRequest(){
+    console.log(this.MRDocuments);
+    this.sendMR = false;
+  }
   sendToCodeMirror(){
     // Progress Spinner 
     this.visibleProgressSpinner = true;
@@ -209,13 +235,13 @@ export class WorkspaceDialogueComponent implements OnInit {
     else if(this.functionValue==="consistency across branch"){
 
       this.isBranchConsistency = true;
-      this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch1Value,this.profileValue)
+      this._configFiles.getFile(this.mservice.service,this.functionValue, this.destinationBranchValue,this.profileValue)
       .subscribe(data => {
         
-        this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch2Value,this.profileValue)
+        this._configFiles.getFile(this.mservice.service,this.functionValue, this.sourceBranchValue,this.profileValue)
         .subscribe(data2 => {  
           this.visibleProgressSpinner = false;
-          this.displayData2 = data2;
+          this.sourceData = data2;
         });
         this.displayData = data;
       });

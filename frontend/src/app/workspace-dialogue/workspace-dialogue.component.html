@@ -6,8 +6,8 @@
   <div fxLayout="row" fxLayoutAlign="start center">
       <app-dropdown [dropdownList]="functionList" [label]=" 'FUNCTION' " (change)="setFunction($event)" ></app-dropdown>
       <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH' " (change)="setBranch($event)" *ngIf="isBranchReq" ></app-dropdown>
-      <app-dropdown [dropdownList]="branchList" [label]=" 'DESTINATION' " (change)="setBranch1($event)" *ngIf="isBranch1Req" ></app-dropdown>
-      <app-dropdown [dropdownList]="branchList" [label]=" 'SOURCE' " (change)="setBranch2($event)" *ngIf="isBranch2Req" ></app-dropdown>
+      <app-dropdown [dropdownList]="branchList" [label]=" 'SOURCE' " (change)="setSourceBranch($event)" *ngIf="isBranch2Req" ></app-dropdown>
+      <app-dropdown [dropdownList]="branchList" [label]=" 'DESTINATION' " (change)="setDestinationBranch($event)" *ngIf="isBranch1Req" ></app-dropdown>
       <app-profile-input [mservice]="mservice" [canProfileDefault]="canProfileDefault" (profile_sent)="setProfile($event)" *ngIf="isProfileReq"></app-profile-input>
       <app-dropdown [dropdownList]="inconsistentProfiles" [label]=" 'PROFILE' " (change)="setICP($event)" *ngIf="isProfileConsistency"></app-dropdown>
       <app-btn (clicked)="sendToCodeMirror()" [label]=" 'Show' "></app-btn>
@@ -24,13 +24,15 @@
 
     <app-dropdown [dropdownList]="missingProperties" [label]=" 'Missing Properties' " (change)="populateMissingProperty($event)"   *ngIf="missingProperties.length>0"></app-dropdown>
     <!--<app-custom-codemirror fxFlex [content]="displayData2" [id]=" 'custom2' " [propertyList]="propertyList" [ownerList]="ownerList" [differenceProperties]="differenceProperties" *ngIf="isBranch2Req"></app-custom-codemirror>-->
-    <app-monaco-editor fxFlex [data1]="displayData" [data2]="displayData2"  *ngIf="isBranchConsistency"></app-monaco-editor>
+    <app-monaco-editor fxFlex [data1]="displayData" [data2]="sourceData" (modifySourceData)="modifySourceData($event)" *ngIf="isBranchConsistency"></app-monaco-editor>
   </div>
 
 </mat-dialog-content>
 
 
 <mat-dialog-actions align="end">
+  <app-btn [label]=" 'Keep Changes' " (clicked)="maintainConsistency()" *ngIf="keepChanges"></app-btn>
+  <app-btn [label]=" 'Merge Changes' " (clicked)="sendMergeRequest()" *ngIf="sendMR"></app-btn>
   <app-btn mat-dialog-close [label]=" 'Cancel' "></app-btn>
 </mat-dialog-actions>
 
