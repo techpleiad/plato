@@ -11,7 +11,7 @@ export class ResolveBranchInconsistencyService {
     this.BASE = API_END_POINT.PLATO;
   }
   sendMergeRequest(body: any){
-    return this.http.post(`${this.BASE.ADD_SERVICES.URL}/resolve-inconsistency`, body);
+    return this.http.post(`${this.BASE.ADD_SERVICES.URL}/resolve-inconsistency/across-profiles`, body);
   }
 
 }
