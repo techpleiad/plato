@@ -6,11 +6,10 @@
   <div fxLayout="row" fxLayoutAlign="start center">
       <app-dropdown [dropdownList]="functionList" [label]=" 'FUNCTION' " (change)="setFunction($event)" ></app-dropdown>
       <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH' " (change)="setBranch($event)" *ngIf="isBranchReq" ></app-dropdown>
-      <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH 1' " (change)="setBranch1($event)" *ngIf="isBranch1Req" ></app-dropdown>
-      <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH 2' " (change)="setBranch2($event)" *ngIf="isBranch2Req" ></app-dropdown>
+      <app-dropdown [dropdownList]="branchList" [label]=" 'DESTINATION' " (change)="setBranch1($event)" *ngIf="isBranch1Req" ></app-dropdown>
+      <app-dropdown [dropdownList]="branchList" [label]=" 'SOURCE' " (change)="setBranch2($event)" *ngIf="isBranch2Req" ></app-dropdown>
       <app-profile-input [mservice]="mservice" [canProfileDefault]="canProfileDefault" (profile_sent)="setProfile($event)" *ngIf="isProfileReq"></app-profile-input>
       <app-dropdown [dropdownList]="inconsistentProfiles" [label]=" 'PROFILE' " (change)="setICP($event)" *ngIf="isProfileConsistency"></app-dropdown>
-      <app-dropdown [dropdownList]="missingProperties" [label]=" 'Missing Properties' " (change)="populateMissingProperty($event)"   *ngIf="missingProperties.length>0"></app-dropdown>
       <app-btn (clicked)="sendToCodeMirror()" [label]=" 'Show' "></app-btn>
       <mat-progress-spinner mode="indeterminate" diameter="30" [hidden]="!visibleProgressSpinner"></mat-progress-spinner>    
   </div>
@@ -23,7 +22,7 @@
      *ngIf="!isBranchConsistency">
     </app-custom-codemirror>
 
-    
+    <app-dropdown [dropdownList]="missingProperties" [label]=" 'Missing Properties' " (change)="populateMissingProperty($event)"   *ngIf="missingProperties.length>0"></app-dropdown>
     <!--<app-custom-codemirror fxFlex [content]="displayData2" [id]=" 'custom2' " [propertyList]="propertyList" [ownerList]="ownerList" [differenceProperties]="differenceProperties" *ngIf="isBranch2Req"></app-custom-codemirror>-->
     <app-monaco-editor fxFlex [data1]="displayData" [data2]="displayData2"  *ngIf="isBranchConsistency"></app-monaco-editor>
   </div>
