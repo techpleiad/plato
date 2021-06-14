@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { microService } from '../microService';
 import { ProfileSpecTO, PropertyDetail } from '../shared/models/ProfileSpecTO';
 import { ConfigFilesService } from '../shared/shared-services/config-files.service';
@@ -9,6 +9,7 @@ import * as diff from 'deep-diff'
 import * as yaml from 'yaml';
 import { CapService } from '../shared/shared-services/cap.service';
 import { ResolveBranchInconsistencyService } from '../shared/shared-services/resolve-branch-inconsistency.service';
+import { WarningDialogComponent } from '../shared/shared-components/warning-dialog/warning-dialog.component';
 
 @Component({
   selector: 'app-workspace-dialogue',
@@ -69,7 +70,8 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _configFiles: ConfigFilesService, 
   private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService,
-  private _capService: CapService, private _resolveBranchInconsistency: ResolveBranchInconsistencyService) {
+  private _capService: CapService, private _resolveBranchInconsistency: ResolveBranchInconsistencyService,
+  public dialog: MatDialog) {
     this.functionList = ["show merged file","show individual file","sprimera",
     "consistency across branch","consistency across profile"];
     this.mservice = data;
@@ -141,7 +143,16 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
   setProfile(profileValue: any){
     this.profileValue = profileValue;
+    if(this.functionValue==="consistency across branch" && this.keepChanges===true){
+      this.openWarningDialog();
+      //alert("Your changes will be lost");
+      //if discard changes then make keepChanges = false;
+      //else do not change the profile
+    }
   }
+  
+
+
   setICP(ICP: any){
     this.ICP = ICP;
   }
@@ -217,6 +228,25 @@ export class WorkspaceDialogueComponent implements OnInit {
       console.log(data);
     })
     this.sendMR = false;
+  }
+  openWarningDialog(){
+    const dialogRef = this.dialog.open(WarningDialogComponent,{
+      data: "",
+      height: '250px',
+      width: '400px',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      //console.log(`Dialog result: ${result}`);
+      if(result=== "yes"){
+        // call discard changes --> Reset Everything.
+        console.log("Discard Changes");
+      }
+      else{
+        // Return to the previous value.
+        console.log("Go Back");
+      }
+    });
   }
   /////////////////// SENDING DATA TO CODEMIRROR ////////////////
   sendToCodeMirror(){
