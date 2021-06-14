@@ -8,6 +8,7 @@ import { SprimeraFilesService } from '../shared/shared-services/sprimera-files.s
 import * as diff from 'deep-diff'
 import * as yaml from 'yaml';
 import { CapService } from '../shared/shared-services/cap.service';
+import { ResolveBranchInconsistencyService } from '../shared/shared-services/resolve-branch-inconsistency.service';
 
 @Component({
   selector: 'app-workspace-dialogue',
@@ -68,7 +69,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _configFiles: ConfigFilesService, 
   private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService,
-  private _capService: CapService) {
+  private _capService: CapService, private _resolveBranchInconsistency: ResolveBranchInconsistencyService) {
     this.functionList = ["show merged file","show individual file","sprimera",
     "consistency across branch","consistency across profile"];
     this.mservice = data;
@@ -144,7 +145,7 @@ export class WorkspaceDialogueComponent implements OnInit {
   setICP(ICP: any){
     this.ICP = ICP;
   }
-
+  //////// SHOWING INCONSISTENT PROFILES ////////////////////
   showInconsistentProfiles(){
     let tempObject = {
       "services": [
@@ -186,7 +187,7 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.visibleProgressSpinner = false;
     });
   }
-   /// Resolving Inconsistency Across Branch
+   ////////////// RESOLVING BRANCH INCONSISTENCY ////////////////
   modifySourceData(event: any){
     this.tempSourceData = event;
     this.keepChanges = true;
@@ -206,9 +207,18 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   }
   sendMergeRequest(){
-    console.log(this.MRDocuments);
+    let body = {
+      "service": this.mservice.service,
+      "branch": this.sourceBranchValue,
+      "documents": this.MRDocuments
+    }
+    console.log(body);
+    this._resolveBranchInconsistency.sendMergeRequest(body).subscribe(data=>{
+      console.log(data);
+    })
     this.sendMR = false;
   }
+  /////////////////// SENDING DATA TO CODEMIRROR ////////////////
   sendToCodeMirror(){
     // Progress Spinner 
     this.visibleProgressSpinner = true;
