@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { branchConsistency } from 'src/app/branchConsistency';
 import { microService } from 'src/app/microService';
 import * as yaml from 'yaml';
 
@@ -30,6 +31,11 @@ export class DataManagerService {
   addService(newService: microService): Observable<any>{
     console.log(newService);
     return this.http.post(this.BASE.ADD_SERVICES.URL, newService);
+  }
+
+  sendBranchConsistencyEmail(branchCons: branchConsistency): Observable<any>{
+    console.log(branchCons);
+    return this.http.post(`${this.BASE.ADD_SERVICES.URL}/branches/across-branches-validate`, branchCons);
   }
 }
 

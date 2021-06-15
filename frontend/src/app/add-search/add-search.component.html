@@ -1,4 +1,5 @@
 <div class="container">
     <app-btn (clicked)="openAddServiceDialog()" [label]=" 'Add Service' "></app-btn>
     <input class="search-field" type="text" (keyup)="filterServices($event)" placeholder="Search">
+    <app-btn (clicked)="consistencyAcrossBranch()" [label]=" 'Check Consistency Across Branch' "></app-btn>
 </div>

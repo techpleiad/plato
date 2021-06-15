@@ -39,6 +39,8 @@ import { CustomCodemirrorComponent } from './custom-codemirror/custom-codemirror
 import { MonacoEditorComponent } from './monaco-editor/monaco-editor.component';
 
 import {  MonacoEditorModule } from 'ngx-monaco-editor';
+import { ConsistencyAcrossBranchDialogueComponent } from './consistency-across-branch-dialogue/consistency-across-branch-dialogue.component';
+import { DatePipe } from '@angular/common';
 @NgModule({
   declarations: [
     AppComponent,
@@ -49,7 +51,8 @@ import {  MonacoEditorModule } from 'ngx-monaco-editor';
     ProfileInputComponent,
     AddSearchComponent,
     CustomCodemirrorComponent,
-    MonacoEditorComponent
+    MonacoEditorComponent,
+    ConsistencyAcrossBranchDialogueComponent
   ],
   imports: [
     BrowserModule,
