@@ -10,6 +10,7 @@ import * as yaml from 'yaml';
 import { CapService } from '../shared/shared-services/cap.service';
 import { ResolveBranchInconsistencyService } from '../shared/shared-services/resolve-branch-inconsistency.service';
 import { WarningDialogComponent } from '../shared/shared-components/warning-dialog/warning-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-workspace-dialogue',
@@ -69,10 +70,11 @@ export class WorkspaceDialogueComponent implements OnInit {
   
   
 ///////////////////////////////////  FUNCTIONS   //////////////////////////////////////
-  constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _configFiles: ConfigFilesService, 
+  constructor(@Inject(MAT_DIALOG_DATA) public data: microService,@Inject('WARNING_DIALOG_PARAM') private WARNING_DIALOG_PARAM: any, private _configFiles: ConfigFilesService, 
   private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService,
   private _capService: CapService, private _resolveBranchInconsistency: ResolveBranchInconsistencyService,
-  public dialog: MatDialog) {
+  public dialog: MatDialog, private _snackBar: MatSnackBar) {
+
     this.functionList = ["show merged file","show individual file","sprimera",
     "consistency across branch","consistency across profile"];
     this.mservice = data;
@@ -137,19 +139,59 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
 
   setDestinationBranch(branchValue: any){
-    this.destinationBranchValue = branchValue;
-  }
-  setSourceBranch(branchValue: any){
-    this.sourceBranchValue = branchValue;
-  }
-  setProfile(profileValue: any){
-    
-    if(this.functionValue==="consistency across branch" && this.keepChanges===true){
+    if(this.keepChanges===true || this.MRDocuments.length>0){
       const dialogRef = this.dialog.open(WarningDialogComponent,{
         data: "",
         height: '250px',
         width: '400px',
+        disableClose:true
       });
+      
+      dialogRef.afterClosed().subscribe(result=>{
+        if(result==="yes"){
+          this.destinationBranchValue = branchValue;
+          this.MRDocuments = [];
+          this.discardChangesClicked();
+        }
+        else{
+          console.log("destinationBranch should not be changed");
+        }
+      });
+    }
+    else{
+      this.destinationBranchValue = branchValue;
+    }
+    
+  }
+  setSourceBranch(branchValue: any){
+    if(this.keepChanges===true || this.MRDocuments.length>0){
+      const dialogRef = this.dialog.open(WarningDialogComponent,{
+        data: "",
+        height: '250px',
+        width: '400px',
+        disableClose:true
+      });
+      
+      dialogRef.afterClosed().subscribe(result=>{
+        if(result==="yes"){
+          this.sourceBranchValue = branchValue;
+          this.MRDocuments = [];
+          this.discardChangesClicked();
+        }
+        else{
+          console.log("sourceBranch should not be changed");
+        }
+      });
+    }
+    else{
+      this.sourceBranchValue = branchValue;
+    }
+    
+  }
+  setProfile(profileValue: any){
+    
+    if(this.functionValue==="consistency across branch" && this.keepChanges===true){
+      const dialogRef = this.dialog.open(WarningDialogComponent,this.WARNING_DIALOG_PARAM);
       
       dialogRef.afterClosed().subscribe(result=>{
         if(result==="yes"){
@@ -247,6 +289,8 @@ export class WorkspaceDialogueComponent implements OnInit {
       })
     }
     console.log(this.MRDocuments);
+    let simpleSnackBarRef = this._snackBar.open("changes saved locally");
+    setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 3000);
     this.sendMR = true;
   }
   discardChangesClicked(){
@@ -268,7 +312,10 @@ export class WorkspaceDialogueComponent implements OnInit {
     console.log(body);
     this._resolveBranchInconsistency.sendMergeRequest(body).subscribe(data=>{
       console.log(data);
+      let simpleSnackBarRef = this._snackBar.open("Merge Request is sent");
+      setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 3000);
     })
+    
     this.sendMR = false;
   }
   /////////////////// SENDING DATA TO CODEMIRROR ////////////////

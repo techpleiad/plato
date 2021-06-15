@@ -2,6 +2,12 @@ import { environment } from 'src/environments/environment';
 export const APPLICATION = {
   APP_NAME: 'PLATO'
 }
+export const WARNING_DIALOG_PARAM = {
+  data: "",
+  height: '250px',
+  width: '400px',
+  disableClose:true
+}
 export const PROFILE_COLORS = [
     '#0068ff',
     '#ffa500',

@@ -22,6 +22,7 @@ import {MatInputModule} from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 import { FormsModule } from '@angular/forms';
 import { DisplayServicesComponent } from './display-services/display-services.component';
@@ -34,7 +35,7 @@ import { HeadingPipePipe } from './heading-pipe.pipe';
 import { AddSearchComponent } from './add-search/add-search.component';
 
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { API_END_POINT, PROFILE_COLORS } from './shared/shared-constants';
+import { API_END_POINT, PROFILE_COLORS, WARNING_DIALOG_PARAM } from './shared/shared-constants';
 import { CustomCodemirrorComponent } from './custom-codemirror/custom-codemirror.component';
 import { MonacoEditorComponent } from './monaco-editor/monaco-editor.component';
 
@@ -73,11 +74,13 @@ import {  MonacoEditorModule } from 'ngx-monaco-editor';
     MatToolbarModule,
     MatPaginatorModule,
     MatSidenavModule,
+    MatSnackBarModule,
     MonacoEditorModule.forRoot()
   ],
   providers: [
     { provide: 'PROFILE_COLORS', useValue: PROFILE_COLORS},
-    {provide: 'API_END_POINT', useValue: API_END_POINT}
+    {provide: 'API_END_POINT', useValue: API_END_POINT},
+    {provide: 'WARNING_DIALOG_PARAM', useValue: WARNING_DIALOG_PARAM},
   ],
   bootstrap: [AppComponent]
 })
