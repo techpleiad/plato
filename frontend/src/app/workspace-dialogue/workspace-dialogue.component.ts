@@ -44,6 +44,7 @@ export class WorkspaceDialogueComponent implements OnInit {
   MRDocuments: any[] = [];
   isBranchConsistency = false;
   keepChanges = false;
+  discardChanges = false;
   sendMR = false;
 
   // Variables for consistency across profile
@@ -67,7 +68,7 @@ export class WorkspaceDialogueComponent implements OnInit {
   visibleProgressSpinner = false;
   
   
-
+///////////////////////////////////  FUNCTIONS   //////////////////////////////////////
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _configFiles: ConfigFilesService, 
   private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService,
   private _capService: CapService, private _resolveBranchInconsistency: ResolveBranchInconsistencyService,
@@ -142,12 +143,30 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.sourceBranchValue = branchValue;
   }
   setProfile(profileValue: any){
-    this.profileValue = profileValue;
+    
     if(this.functionValue==="consistency across branch" && this.keepChanges===true){
-      this.openWarningDialog();
+      const dialogRef = this.dialog.open(WarningDialogComponent,{
+        data: "",
+        height: '250px',
+        width: '400px',
+      });
+      
+      dialogRef.afterClosed().subscribe(result=>{
+        if(result==="yes"){
+          this.profileValue = profileValue;
+          this.discardChangesClicked();
+        }
+        else{
+          console.log("profile should not be changed");
+          console.log(this.profileValue);
+        }
+      });
       //alert("Your changes will be lost");
       //if discard changes then make keepChanges = false;
       //else do not change the profile
+    }
+    else{
+      this.profileValue = profileValue;
     }
   }
   
@@ -166,7 +185,7 @@ export class WorkspaceDialogueComponent implements OnInit {
        "email": {
           "sendEmail": true,
           "recipients": [
-              "abhishekgarg.14august@gmail.com"
+              "temp@gmail.com"
           ]
       }
     }
@@ -202,20 +221,43 @@ export class WorkspaceDialogueComponent implements OnInit {
   modifySourceData(event: any){
     this.tempSourceData = event;
     this.keepChanges = true;
+    this.discardChanges = true;
+    this.sendMR = false;
   }
-  maintainConsistency(){
+  keepChangesClicked(){
     this.sourceData = this.tempSourceData;
-    console.log(this.sourceData);
+    this.tempSourceData = "";
+    //console.log(this.sourceData);
     this.keepChanges = false;
+    this.discardChanges = false;
     //switch off the keep changes button.
 
-    this.MRDocuments.push({
-      "branch": this.sourceBranchValue,
-      "profile": this.profileValue,
-      "document": this.sourceData
-    })
+    let found = false;
+    for(let i=0;i<this.MRDocuments.length;i++){
+      if(this.MRDocuments[i].profile===this.profileValue){
+        this.MRDocuments[i].document = this.sourceData;
+        found = true;
+      }
+    }
+    if(found===false){
+      this.MRDocuments.push({
+        "branch": this.sourceBranchValue,
+        "profile": this.profileValue,
+        "document": this.sourceData
+      })
+    }
+    console.log(this.MRDocuments);
     this.sendMR = true;
-
+  }
+  discardChangesClicked(){
+    this.tempSourceData = "";
+    this.discardChanges = false;
+    this.keepChanges = false;
+    this.sourceData = "";
+    if(this.MRDocuments.length>0){
+      this.sendMR = true;
+    }
+    this.sendToCodeMirror();
   }
   sendMergeRequest(){
     let body = {
@@ -228,25 +270,6 @@ export class WorkspaceDialogueComponent implements OnInit {
       console.log(data);
     })
     this.sendMR = false;
-  }
-  openWarningDialog(){
-    const dialogRef = this.dialog.open(WarningDialogComponent,{
-      data: "",
-      height: '250px',
-      width: '400px',
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      //console.log(`Dialog result: ${result}`);
-      if(result=== "yes"){
-        // call discard changes --> Reset Everything.
-        console.log("Discard Changes");
-      }
-      else{
-        // Return to the previous value.
-        console.log("Go Back");
-      }
-    });
   }
   /////////////////// SENDING DATA TO CODEMIRROR ////////////////
   sendToCodeMirror(){
@@ -267,22 +290,6 @@ export class WorkspaceDialogueComponent implements OnInit {
         this.propertyList = [];
         this.ownerList = [];
         this.visibleProgressSpinner = false;
-        this.displayData = data;
-      });
-      
-    }
-    // CONSISTENCY ACROSS BRANCHES
-    else if(this.functionValue==="consistency across branch"){
-
-      this.isBranchConsistency = true;
-      this._configFiles.getFile(this.mservice.service,this.functionValue, this.destinationBranchValue,this.profileValue)
-      .subscribe(data => {
-        
-        this._configFiles.getFile(this.mservice.service,this.functionValue, this.sourceBranchValue,this.profileValue)
-        .subscribe(data2 => {  
-          this.visibleProgressSpinner = false;
-          this.sourceData = data2;
-        });
         this.displayData = data;
       });
       
@@ -312,6 +319,39 @@ export class WorkspaceDialogueComponent implements OnInit {
           return val.profile;
         })
       })
+    }
+
+    // CONSISTENCY ACROSS BRANCHES
+    else if(this.functionValue==="consistency across branch"){
+
+      this.isBranchConsistency = true;
+      this._configFiles.getFile(this.mservice.service,this.functionValue, this.destinationBranchValue,this.profileValue)
+      .subscribe(data => {
+        console.log("getting destination data");
+        // checkiong if the source data for this profile has some local changes.
+        let found = false;
+        for(let i=0;i<this.MRDocuments.length;i++){
+          
+          if(this.MRDocuments[i].profile===this.profileValue){
+            this.sourceData = this.MRDocuments[i].document;
+            found = true;
+            this.visibleProgressSpinner = false;
+          }
+        }
+        if(found===false){
+          console.log("getting source data");
+          this._configFiles.getFile(this.mservice.service,this.functionValue, this.sourceBranchValue,this.profileValue)
+          .subscribe(data2 => {  
+            this.visibleProgressSpinner = false;
+            this.sourceData = data2;
+            console.log(data2);
+          });
+        }
+
+
+        this.displayData = data;
+      });
+      
     }
     //// CONSISTENCY ACROSS PROFILES
     else if(this.functionValue==="consistency across profile"){
