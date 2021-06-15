@@ -102,6 +102,12 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.sourceData = "";
     this.isBranch1Req = false;
     this.isBranch2Req = false;
+    this.tempSourceData = "";
+    this.sourceData = "" ;
+    this.MRDocuments = [];
+    this.keepChanges = false;
+    this.discardChanges = false;
+    this.sendMR = false;
 
     this.isBranchConsistency = false;
     this.isProfileConsistency = false;
@@ -140,12 +146,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   setDestinationBranch(branchValue: any){
     if(this.keepChanges===true || this.MRDocuments.length>0){
-      const dialogRef = this.dialog.open(WarningDialogComponent,{
-        data: "",
-        height: '250px',
-        width: '400px',
-        disableClose:true
-      });
+      const dialogRef = this.dialog.open(WarningDialogComponent,this.WARNING_DIALOG_PARAM);
       
       dialogRef.afterClosed().subscribe(result=>{
         if(result==="yes"){
@@ -165,12 +166,7 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
   setSourceBranch(branchValue: any){
     if(this.keepChanges===true || this.MRDocuments.length>0){
-      const dialogRef = this.dialog.open(WarningDialogComponent,{
-        data: "",
-        height: '250px',
-        width: '400px',
-        disableClose:true
-      });
+      const dialogRef = this.dialog.open(WarningDialogComponent,this.WARNING_DIALOG_PARAM);
       
       dialogRef.afterClosed().subscribe(result=>{
         if(result==="yes"){
