@@ -152,6 +152,7 @@ export class WorkspaceDialogueComponent implements OnInit {
         if(result==="yes"){
           this.destinationBranchValue = branchValue;
           this.MRDocuments = [];
+          this.sendMR = false;
           this.discardChangesClicked();
         }
         else{
@@ -172,6 +173,7 @@ export class WorkspaceDialogueComponent implements OnInit {
         if(result==="yes"){
           this.sourceBranchValue = branchValue;
           this.MRDocuments = [];
+          this.sendMR = false;
           this.discardChangesClicked();
         }
         else{
@@ -192,6 +194,7 @@ export class WorkspaceDialogueComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result=>{
         if(result==="yes"){
           this.profileValue = profileValue;
+          this.sendMR = false;
           this.discardChangesClicked();
         }
         else{
