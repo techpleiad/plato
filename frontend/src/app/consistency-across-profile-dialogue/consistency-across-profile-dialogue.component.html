@@ -45,6 +45,6 @@
 </mat-dialog-content>
 <hr>
 <mat-dialog-actions align="end">
-  <app-btn mat-dialog-close [label]=" 'Cancel' "></app-btn> 
+  <app-btn mat-dialog-close [label]=" 'Cancel' " [isCancel]="true"></app-btn> 
   <app-btn (clicked)="checkConsistency()" [label]=" 'Send Mail' " cdkFocusInitial></app-btn>
 </mat-dialog-actions>

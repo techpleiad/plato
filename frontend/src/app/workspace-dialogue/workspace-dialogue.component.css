@@ -6,5 +6,9 @@
     overflow: scroll;
 }
 .workspace-title{
-    margin-top: 15px;
+    color:#E20074;;
+    font-size: x-large;
+}
+.merge-btn{
+    margin-top: 0px;
 }
