@@ -303,16 +303,23 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.sendToCodeMirror();
   }
   sendMergeRequest(){
+    this.visibleProgressSpinner = true;
     let body = {
       "service": this.mservice.service,
       "branch": this.sourceBranchValue,
       "documents": this.MRDocuments
     }
     console.log(body);
-    this._resolveBranchInconsistency.sendMergeRequest(body).subscribe(data=>{
-      console.log(data);
-      let simpleSnackBarRef = this._snackBar.open("Merge Request is sent");
-      setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 3000);
+    this._resolveBranchInconsistency.sendMergeRequest(body).subscribe((data:any)=>{
+      let responseList = data[0].split("\n");
+      let mergeRequestMail = (responseList[2].trim()); // corresponds to email of the merge request.
+      this.visibleProgressSpinner = false;
+      let simpleSnackBarRef = this._snackBar.open("Sent Merge Request","View");
+      setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 100000);
+      simpleSnackBarRef.onAction().subscribe(()=> {
+        window.open(mergeRequestMail, "_blank");
+      });
+      
     })
     
     this.sendMR = false;
