@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { branchConsistency } from 'src/app/branchConsistency';
 import { microService } from 'src/app/microService';
+import { profileConsistency } from 'src/app/profileConsistency';
 import * as yaml from 'yaml';
 
 
@@ -36,6 +37,11 @@ export class DataManagerService {
   sendBranchConsistencyEmail(branchCons: branchConsistency): Observable<any>{
     console.log(branchCons);
     return this.http.post(`${this.BASE.ADD_SERVICES.URL}/branches/across-branches-validate`, branchCons);
+  }
+
+  sendProfileConsistencyEmail(profileCons: profileConsistency, branchValue: string): Observable<any>{
+    console.log(profileCons);
+    return this.http.post(`${this.BASE.ADD_SERVICES.URL}/branches/${branchValue}/across-profiles-validate`, profileCons);
   }
 }
 

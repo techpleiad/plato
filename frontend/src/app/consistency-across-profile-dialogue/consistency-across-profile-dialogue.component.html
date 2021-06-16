@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Check Consistency Across Branches</h2>
+<h2 mat-dialog-title>Check Consistency Across Profile</h2>
 <hr>
 <mat-dialog-content>
   <form>
@@ -6,16 +6,13 @@
         <app-dropdown [dropdownList]="services" [label]=" 'SELECT SERVICE NAME' " (change)="setFunction($event)" ></app-dropdown>
     </div>
     <div class="mb-3">
-        <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH 1' " (change)="setBranch1($event)" ></app-dropdown>
-    </div>
-    <div class="mb-3">
-        <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH 2' " (change)="setBranch2($event)" ></app-dropdown>
+        <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH' " (change)="setBranch($event)" ></app-dropdown>
     </div>
     <div class="mb-3">
         <mat-card>
             <mat-card-content>
             <section class="example-section">
-                <mat-checkbox class="example-margin" [(ngModel)]="checked" name="checkbox">Property Value Equal</mat-checkbox>
+                <mat-checkbox class="example-margin" [(ngModel)]="checked" name="checkbox">Include Suppressed</mat-checkbox>
             </section>
             </mat-card-content>
         </mat-card>

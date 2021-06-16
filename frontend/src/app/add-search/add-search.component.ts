@@ -3,7 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddNewServiceComponent } from '../add-new-service/add-new-service.component';
 import { branchConsistency } from '../branchConsistency';
 import { ConsistencyAcrossBranchDialogueComponent } from '../consistency-across-branch-dialogue/consistency-across-branch-dialogue.component';
+import { ConsistencyAcrossProfileDialogueComponent } from '../consistency-across-profile-dialogue/consistency-across-profile-dialogue.component';
 import { microService } from '../microService';
+import { profileConsistency } from '../profileConsistency';
 
 @Component({
   selector: 'app-add-search',
@@ -59,6 +61,22 @@ export class AddSearchComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result: branchConsistency)=>{
+      if(result){
+        console.log(result);
+      }
+      else{
+        console.log("null value");
+      }
+    });
+  }
+
+  consistencyAcrossProfile(){
+    const dialogRef = this.dialog.open(ConsistencyAcrossProfileDialogueComponent,{
+      width: "600px",
+      minHeight: "300px"
+    });
+
+    dialogRef.afterClosed().subscribe((result: profileConsistency)=>{
       if(result){
         console.log(result);
       }
