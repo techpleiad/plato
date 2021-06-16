@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import * as CodeMirror from 'codemirror';
 import { CodemirrorService } from '../shared/shared-services/codemirror.service';
 import * as yaml from 'yaml';
@@ -26,6 +26,7 @@ import { ProfileDataTO } from '../shared/models/ProfileDataTO';
   styleUrls: ['./custom-codemirror.component.css']
 })
 export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChanges {
+  @Output() modifyProfileData = new EventEmitter()
 
   static get Prefix(): string {
     return "codemirror-";
@@ -105,6 +106,12 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       jsonObject,
       `${this.prefix}${this.id}-container`
     );
+
+    this.codemirror.on('change',(editor: any)=>{
+      console.log(editor.getValue());
+      this.modifyProfileData.emit(editor.getValue());  
+    })
+
     this.profileColorList = [];
     this.profileColorList = this.ownerList.map((val:string)=>{
       return new ProfileDataTO(val,this._colorService.getColor());
