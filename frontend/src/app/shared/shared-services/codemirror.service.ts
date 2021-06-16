@@ -11,7 +11,7 @@ import { PropertyDetail } from '../models/ProfileSpecTO';
 export class CodemirrorService {
 
   private lineToPropertyBreadcrumbMap: any;
-  private propertyTolineBreadcrumbMap: any;
+  private propertyTolineBreadcrumbMap = new Map();
   private _breadcrumbEditorLine = -1;
   private currentLineInEditor = 0;
   private _mergeEditor: any;
@@ -135,9 +135,14 @@ export class CodemirrorService {
     //missing property -> actual line number -> 
     let missingProp = "rest.client";
     let missingLineNumber = this.propertyTolineBreadcrumbMap.get(missingProp);
-    this.updateColor(this._lineToDivMapper.get(`${missingLineNumber}`), 'red');
-    //this._mergeEditor.focus();
-    //this._mergeEditor.setCursor({line: 180, ch: 5});
+    if(missingLineNumber){
+      console.log(`${missingLineNumber}`);
+      let y = Number(`${missingLineNumber}`);
+      console.log(y);
+      this.updateColor(this._lineToDivMapper.get(`${missingLineNumber}`), 'red');
+      this._mergeEditor.focus();
+      this._mergeEditor.setCursor({line: y-1, ch: 0});
+    }
   }
 
   updateColor(element: any, color: any): void {
