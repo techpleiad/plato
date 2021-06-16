@@ -9,13 +9,13 @@ export const WARNING_DIALOG_PARAM = {
   disableClose:true
 }
 export const PROFILE_COLORS = [
-    '#0068ff',
-    '#ffa500',
-    '#349721',
-    '#f81aa1',
-    '#cbbeb5',
-    '#654ef2',
-    '#ff4040',
+    '#E99497',
+    '#F3C583',
+    '#B3E283',
+    '#B6C9F0',
+    '#A58FAA',
+    '#CAF7E3',
+    '#FDBAF8',
   ];
   
 class EndPoints {
