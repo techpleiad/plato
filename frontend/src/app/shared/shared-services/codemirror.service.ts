@@ -132,6 +132,12 @@ export class CodemirrorService {
         this.updateColor(document.getElementById(`side-bar-${index}`), profile.color.color);
       });
     }
+    //missing property -> actual line number -> 
+    let missingProp = "rest.client";
+    let missingLineNumber = this.propertyTolineBreadcrumbMap.get(missingProp);
+    this.updateColor(this._lineToDivMapper.get(`${missingLineNumber}`), 'red');
+    //this._mergeEditor.focus();
+    //this._mergeEditor.setCursor({line: 180, ch: 5});
   }
 
   updateColor(element: any, color: any): void {
