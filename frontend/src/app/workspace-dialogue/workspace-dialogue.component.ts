@@ -423,4 +423,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     console.log(event);
     this.chosenMissingProperty = event;
   }
+  modifyProfileData(event: any){
+    console.log(event);
+  }
 }
