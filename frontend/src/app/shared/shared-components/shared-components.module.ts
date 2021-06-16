@@ -10,6 +10,7 @@ import { HeaderComponent } from './header/header.component';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import { HeadingPipePipe } from '../../heading-pipe.pipe';
 import { APPLICATION } from '../shared-constants';
+import { WarningDialogComponent } from './warning-dialog/warning-dialog.component';
 
 
 
@@ -19,7 +20,8 @@ import { APPLICATION } from '../shared-constants';
     DropdownComponent,
     BtnComponent,
     HeaderComponent,
-    HeadingPipePipe
+    HeadingPipePipe,
+    WarningDialogComponent
   ],
   imports: [
     CommonModule,
@@ -33,6 +35,7 @@ import { APPLICATION } from '../shared-constants';
     DropdownComponent,
     BtnComponent,
     HeaderComponent,
+    WarningDialogComponent,
     HeadingPipePipe
   ],
   providers: [

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import { DiffEditorModel } from 'ngx-monaco-editor';
 
 @Component({
@@ -7,8 +7,9 @@ import { DiffEditorModel } from 'ngx-monaco-editor';
   styleUrls: ['./monaco-editor.component.css']
 })
 export class MonacoEditorComponent implements OnInit {
-  @Input() data1: string="";
-  @Input() data2: string="";
+  @Input() data1: string="";  //original -> destination
+  @Input() data2: string=""; // modified -> source
+  @Output() modifySourceData  = new EventEmitter();
   
   text1 = "";
   text2 = "";
@@ -36,6 +37,7 @@ export class MonacoEditorComponent implements OnInit {
   }
   ngOnChanges(): void{
     this.originalModel = Object.assign({}, this.originalModel, { code: this.data1 });
+    console.log(this.originalModel);
     this.modifiedModel = Object.assign({}, this.originalModel, { code: this.data2 });
   }
   onInitDiffEditor(diffEditor: any) {
@@ -46,7 +48,9 @@ export class MonacoEditorComponent implements OnInit {
     diffEditor.getModifiedEditor().onDidChangeModelContent(() => {
       const content = diffEditor.getModel().modified.getValue();
       console.log(content);
+      this.modifySourceData.emit(content);
     });
+    /* We never change the content of original model as it is the destination  */
     diffEditor.getOriginalEditor().onDidChangeModelContent(() => {
       const content = diffEditor.getModel().original.getValue();
       console.log(content);

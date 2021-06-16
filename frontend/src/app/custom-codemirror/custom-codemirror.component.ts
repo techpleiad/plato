@@ -34,6 +34,8 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() id!: string;
   @Input() propertyList: PropertyDetail[] = [];
   @Input() ownerList: string[] = [];
+  @Input() cmp: string = "";
+
   
 
   private codemirror: any;
@@ -100,7 +102,8 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     this._codemirrorService.mergeEditorConstruct(
       this.codemirror,
       JSON.parse(JSON.stringify(this.CODEMIRROR_CONFIG)),
-      jsonObject
+      jsonObject,
+      `${this.prefix}${this.id}-container`
     );
     this.profileColorList = [];
     this.profileColorList = this.ownerList.map((val:string)=>{

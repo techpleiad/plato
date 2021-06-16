@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { microService } from '../microService';
 import { ProfileSpecTO, PropertyDetail } from '../shared/models/ProfileSpecTO';
 import { ConfigFilesService } from '../shared/shared-services/config-files.service';
@@ -8,6 +8,9 @@ import { SprimeraFilesService } from '../shared/shared-services/sprimera-files.s
 import * as diff from 'deep-diff'
 import * as yaml from 'yaml';
 import { CapService } from '../shared/shared-services/cap.service';
+import { ResolveBranchInconsistencyService } from '../shared/shared-services/resolve-branch-inconsistency.service';
+import { WarningDialogComponent } from '../shared/shared-components/warning-dialog/warning-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-workspace-dialogue',
@@ -33,18 +36,26 @@ export class WorkspaceDialogueComponent implements OnInit {
   displayData!: string;
 
   // Variables for consistency across branches
-  branch1Value: any;
-  branch2Value: any;
+  destinationBranchValue: any;
+  sourceBranchValue: any;
   isBranch1Req = false;
   isBranch2Req = false;
-  displayData2!: string;
+  tempSourceData!: string;
+  sourceData!: string;
+  MRDocuments: any[] = [];
   isBranchConsistency = false;
+  keepChanges = false;
+  discardChanges = false;
+  sendMR = false;
 
   // Variables for consistency across profile
   inconsistentProfileProperties = new Map();
+  missingProperties: any[] = [];
   isProfileConsistency = false;
+
   inconsistentProfiles: string[] = [];
   ICP: string = "";
+  chosenMissingProperty: string = "";
 
   // Sprimera Variables
   propertyList: PropertyDetail[]=[];
@@ -57,18 +68,21 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   visibleProgressSpinner = false;
   
-
-  constructor(@Inject(MAT_DIALOG_DATA) public data: microService, private _configFiles: ConfigFilesService, 
+  
+///////////////////////////////////  FUNCTIONS   //////////////////////////////////////
+  constructor(@Inject(MAT_DIALOG_DATA) public data: microService,@Inject('WARNING_DIALOG_PARAM') private WARNING_DIALOG_PARAM: any, private _configFiles: ConfigFilesService, 
   private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService,
-  private _capService: CapService) {
+  private _capService: CapService, private _resolveBranchInconsistency: ResolveBranchInconsistencyService,
+  public dialog: MatDialog, private _snackBar: MatSnackBar) {
+
     this.functionList = ["show merged file","show individual file","sprimera",
     "consistency across branch","consistency across profile"];
     this.mservice = data;
     this.branchValue = "";
     this.profileValue = "";
 
-    this.branch1Value = "";
-    this.branch2Value = "";
+    this.destinationBranchValue = "";
+    this.sourceBranchValue = "";
  
 
     this.profileList = this.mservice.profiles.map((x: any) => x.name);
@@ -82,15 +96,25 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.isBranchReq = false;
     this.isProfileReq = false;
     this.canProfileDefault = false;
+
+    this.destinationBranchValue = "";
+    this.sourceBranchValue = "";
+    this.sourceData = "";
     this.isBranch1Req = false;
     this.isBranch2Req = false;
+    this.tempSourceData = "";
+    this.sourceData = "" ;
+    this.MRDocuments = [];
+    this.keepChanges = false;
+    this.discardChanges = false;
+    this.sendMR = false;
 
     this.isBranchConsistency = false;
     this.isProfileConsistency = false;
+    
 
-    //this.twoCodemirrors = false;
-
-
+    this.missingProperties = [];
+    
     this.setBranchProfileReq();
   }
   setBranchProfileReq(){
@@ -120,19 +144,79 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
   }
 
-  setBranch1(branchValue: any){
-    this.branch1Value = branchValue;
+  setDestinationBranch(branchValue: any){
+    if(this.keepChanges===true || this.MRDocuments.length>0){
+      const dialogRef = this.dialog.open(WarningDialogComponent,this.WARNING_DIALOG_PARAM);
+      
+      dialogRef.afterClosed().subscribe(result=>{
+        if(result==="yes"){
+          this.destinationBranchValue = branchValue;
+          this.MRDocuments = [];
+          this.sendMR = false;
+          this.discardChangesClicked();
+        }
+        else{
+          console.log("destinationBranch should not be changed");
+        }
+      });
+    }
+    else{
+      this.destinationBranchValue = branchValue;
+    }
+    
   }
-  setBranch2(branchValue: any){
-    this.branch2Value = branchValue;
+  setSourceBranch(branchValue: any){
+    if(this.keepChanges===true || this.MRDocuments.length>0){
+      const dialogRef = this.dialog.open(WarningDialogComponent,this.WARNING_DIALOG_PARAM);
+      
+      dialogRef.afterClosed().subscribe(result=>{
+        if(result==="yes"){
+          this.sourceBranchValue = branchValue;
+          this.MRDocuments = [];
+          this.sendMR = false;
+          this.discardChangesClicked();
+        }
+        else{
+          console.log("sourceBranch should not be changed");
+        }
+      });
+    }
+    else{
+      this.sourceBranchValue = branchValue;
+    }
+    
   }
   setProfile(profileValue: any){
-    this.profileValue = profileValue;
+    
+    if(this.functionValue==="consistency across branch" && this.keepChanges===true){
+      const dialogRef = this.dialog.open(WarningDialogComponent,this.WARNING_DIALOG_PARAM);
+      
+      dialogRef.afterClosed().subscribe(result=>{
+        if(result==="yes"){
+          this.profileValue = profileValue;
+          this.sendMR = false;
+          this.discardChangesClicked();
+        }
+        else{
+          console.log("profile should not be changed");
+          console.log(this.profileValue);
+        }
+      });
+      //alert("Your changes will be lost");
+      //if discard changes then make keepChanges = false;
+      //else do not change the profile
+    }
+    else{
+      this.profileValue = profileValue;
+    }
   }
+  
+
+
   setICP(ICP: any){
     this.ICP = ICP;
   }
-
+  //////// SHOWING INCONSISTENT PROFILES ////////////////////
   showInconsistentProfiles(){
     let tempObject = {
       "services": [
@@ -142,7 +226,7 @@ export class WorkspaceDialogueComponent implements OnInit {
        "email": {
           "sendEmail": true,
           "recipients": [
-              "abhishekgarg.14august@gmail.com"
+              "temp@gmail.com"
           ]
       }
     }
@@ -162,12 +246,85 @@ export class WorkspaceDialogueComponent implements OnInit {
       console.log(this.inconsistentProfiles);
       this.visibleProgressSpinner = false;
 
-      this.isProfileConsistency = true;
+      if(this.inconsistentProfiles.length>0){
+        this.isProfileConsistency = true;
+      }
+      else{
+        this.propertyList = [];
+        this.ownerList = [];
+        this.displayData = "All profiles are consistent."
+      }
+
       this.visibleProgressSpinner = false;
     });
   }
-  
+   ////////////// RESOLVING BRANCH INCONSISTENCY ////////////////
+  modifySourceData(event: any){
+    this.tempSourceData = event;
+    this.keepChanges = true;
+    this.discardChanges = true;
+    this.sendMR = false;
+  }
+  keepChangesClicked(){
+    this.sourceData = this.tempSourceData;
+    this.tempSourceData = "";
+    //console.log(this.sourceData);
+    this.keepChanges = false;
+    this.discardChanges = false;
+    //switch off the keep changes button.
 
+    let found = false;
+    for(let i=0;i<this.MRDocuments.length;i++){
+      if(this.MRDocuments[i].profile===this.profileValue){
+        this.MRDocuments[i].document = this.sourceData;
+        found = true;
+      }
+    }
+    if(found===false){
+      this.MRDocuments.push({
+        "branch": this.sourceBranchValue,
+        "profile": this.profileValue,
+        "document": this.sourceData
+      })
+    }
+    console.log(this.MRDocuments);
+    let simpleSnackBarRef = this._snackBar.open("changes saved locally");
+    setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 3000);
+    this.sendMR = true;
+  }
+  discardChangesClicked(){
+    this.tempSourceData = "";
+    this.discardChanges = false;
+    this.keepChanges = false;
+    this.sourceData = "";
+    if(this.MRDocuments.length>0){
+      this.sendMR = true;
+    }
+    this.sendToCodeMirror();
+  }
+  sendMergeRequest(){
+    this.visibleProgressSpinner = true;
+    let body = {
+      "service": this.mservice.service,
+      "branch": this.sourceBranchValue,
+      "documents": this.MRDocuments
+    }
+    console.log(body);
+    this._resolveBranchInconsistency.sendMergeRequest(body).subscribe((data:any)=>{
+      let responseList = data[0].split("\n");
+      let mergeRequestMail = (responseList[2].trim()); // corresponds to email of the merge request.
+      this.visibleProgressSpinner = false;
+      let simpleSnackBarRef = this._snackBar.open("Sent Merge Request","View");
+      setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 100000);
+      simpleSnackBarRef.onAction().subscribe(()=> {
+        window.open(mergeRequestMail, "_blank");
+      });
+      
+    })
+    
+    this.sendMR = false;
+  }
+  /////////////////// SENDING DATA TO CODEMIRROR ////////////////
   sendToCodeMirror(){
     // Progress Spinner 
     this.visibleProgressSpinner = true;
@@ -186,22 +343,6 @@ export class WorkspaceDialogueComponent implements OnInit {
         this.propertyList = [];
         this.ownerList = [];
         this.visibleProgressSpinner = false;
-        this.displayData = data;
-      });
-      
-    }
-    // CONSISTENCY ACROSS BRANCHES
-    else if(this.functionValue==="consistency across branch"){
-
-      this.isBranchConsistency = true;
-      this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch1Value,this.profileValue)
-      .subscribe(data => {
-        
-        this._configFiles.getFile(this.mservice.service,this.functionValue, this.branch2Value,this.profileValue)
-        .subscribe(data2 => {  
-          this.visibleProgressSpinner = false;
-          this.displayData2 = data2;
-        });
         this.displayData = data;
       });
       
@@ -232,17 +373,54 @@ export class WorkspaceDialogueComponent implements OnInit {
         })
       })
     }
-    //// CONSISTENCY ACROSS BRANCHES
+
+    // CONSISTENCY ACROSS BRANCHES
+    else if(this.functionValue==="consistency across branch"){
+
+      this.isBranchConsistency = true;
+      this._configFiles.getFile(this.mservice.service,this.functionValue, this.destinationBranchValue,this.profileValue)
+      .subscribe(data => {
+        console.log("getting destination data");
+        // checkiong if the source data for this profile has some local changes.
+        let found = false;
+        for(let i=0;i<this.MRDocuments.length;i++){
+          
+          if(this.MRDocuments[i].profile===this.profileValue){
+            this.sourceData = this.MRDocuments[i].document;
+            found = true;
+            this.visibleProgressSpinner = false;
+          }
+        }
+        if(found===false){
+          console.log("getting source data");
+          this._configFiles.getFile(this.mservice.service,this.functionValue, this.sourceBranchValue,this.profileValue)
+          .subscribe(data2 => {  
+            this.visibleProgressSpinner = false;
+            this.sourceData = data2;
+            console.log(data2);
+          });
+        }
+
+
+        this.displayData = data;
+      });
+      
+    }
+    //// CONSISTENCY ACROSS PROFILES
     else if(this.functionValue==="consistency across profile"){
       this._configFiles.getFile(this.mservice.service,"individual",this.branchValue,this.profileValue)
       .subscribe(data => {
         this.visibleProgressSpinner = false;
         this.propertyList = [];
         this.ownerList = [];
-        this.visibleProgressSpinner = false;
         this.displayData = data;
+        this.missingProperties = this.inconsistentProfileProperties.get(this.ICP);
       });
       
     }
+  }
+  populateMissingProperty(event: any){
+    console.log(event);
+    this.chosenMissingProperty = event;
   }
 }

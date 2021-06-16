@@ -13,13 +13,10 @@ export class DataManagerService {
 
   private BASE: any;
   constructor(private http: HttpClient, @Inject('API_END_POINT') private API_END_POINT: any) {
-    this.BASE = API_END_POINT.PLATO;
+    this.BASE = API_END_POINT.PLATO; 
    }
   getServicesList(){
-    //console.log(this.BASE.GET_SERVICES.URL);
-    //console.log("http://localhost:8080/v1/services");
-    //console.log(this.BASE.GET_SERVICES.URL === "http://localhost:8080/v1/services");
-    return this.http.get(this.BASE.GET_SERVICES.URL);
+    return this.http.get(this.BASE.GET_SERVICES.URL); ////http://localhost:8080/vi/services
 
   }
   yamlToJson(temp: string){
