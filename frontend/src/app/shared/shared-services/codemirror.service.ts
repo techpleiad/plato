@@ -112,7 +112,10 @@ export class CodemirrorService {
   }
 
   private onScrollCodemirrorUpdate(codemirrorId: string): void {
-
+    // profileMapper => property to line number
+    //get current lines property and map to the div
+    //then for each property get the line number
+    //
     const parent = document.getElementById(codemirrorId);
     const lineElements = parent?.getElementsByClassName('CodeMirror-linenumber CodeMirror-gutter-elt');
     if (lineElements) {
