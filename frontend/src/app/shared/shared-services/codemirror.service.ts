@@ -136,9 +136,9 @@ export class CodemirrorService {
     let missingProp = "rest.client";
     let missingLineNumber = this.propertyTolineBreadcrumbMap.get(missingProp);
     if(missingLineNumber){
-      console.log(`${missingLineNumber}`);
+      //console.log(`${missingLineNumber}`);
       let y = Number(`${missingLineNumber}`);
-      console.log(y);
+      //console.log(y);
       this.updateColor(this._lineToDivMapper.get(`${missingLineNumber}`), 'red');
       this._mergeEditor.focus();
       this._mergeEditor.setCursor({line: y-1, ch: 0});
