@@ -118,7 +118,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
         this._codemirrorService.updateCodeMirrorVisual(this.profileColorList, this.propertyList, jsonObject,`${this.prefix}${this.id}-container`);
         //this.SUGGESTED_LIST = this.codemirrorService.findSuggestedPropertyList('');
       }, 200);
-    }, 500);
+    }, 1000);
     
   }
   get prefix(): string {

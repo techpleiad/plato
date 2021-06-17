@@ -41,6 +41,7 @@ export class CodemirrorService {
 
     //// _mergeEditor => main editor
     this._mergeEditor = codemirrorTextArea;
+    this._mergeEditor.refresh();
     //// On double click point the cursor to that area
     this._mergeEditor.on('dblclick', (instance: any, event: Event) => {
       this.breadcrumbEditorLine = instance.getCursor().line + 1;
@@ -83,7 +84,7 @@ export class CodemirrorService {
 
   updateCodeMirrorVisual(profileData: ProfileDataTO[], propertyList: PropertyDetail[], jsonObject: any, codemirrorId: string): void {
     
-    
+    this._mergeEditor.refresh();
     this._lineToDivMapper = new Map();
 
     this._propertyList = propertyList;
@@ -121,6 +122,11 @@ export class CodemirrorService {
         this._lineToDivMapper.set(div['innerText'], lineElements[i]);
       }
       const profileColorMap = new Map(this._profileData.map((prof, index) => [prof.profile, prof.color.color]));
+      if(this._propertyList.length === 0){
+        for (let i = 0; i < lineElements.length; ++i) {
+          this.updateColor(lineElements[i],"#f7f7f7");
+        }
+      }
       this._propertyList.forEach(prop => {
         const lineNumber = this._profileMapper.get(prop.property);
         this.updateColor(this._lineToDivMapper.get(`${lineNumber}`), profileColorMap.get(prop.owner));
