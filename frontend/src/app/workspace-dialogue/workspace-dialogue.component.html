@@ -13,7 +13,7 @@
       <app-dropdown [dropdownList]="branchList" [label]=" 'DESTINATION' " (change)="setDestinationBranch($event)" *ngIf="isBranch1Req" ></app-dropdown>
       <app-profile-input [mservice]="mservice" [canProfileDefault]="canProfileDefault" (profile_sent)="setProfile($event)" *ngIf="isProfileReq"></app-profile-input>
       <app-dropdown [dropdownList]="inconsistentProfiles" [label]=" 'PROFILE' " (change)="setICP($event)" *ngIf="isProfileConsistency"></app-dropdown>
-      <app-btn (clicked)="sendToCodeMirror()" [label]=" 'Show' "></app-btn>
+      <app-btn (clicked)="sendToCodeMirror()" [label]=" 'Show' " *ngIf="showBtn"></app-btn>
       <mat-progress-spinner mode="indeterminate" diameter="30" [hidden]="!visibleProgressSpinner"></mat-progress-spinner>    
   </div>
   <!-- Showing the contents accordingly -->
