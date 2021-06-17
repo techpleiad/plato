@@ -4,7 +4,7 @@ export const APPLICATION = {
 }
 export const WARNING_DIALOG_PARAM = {
   data: "",
-  height: '250px',
+  height: '150px',
   width: '400px',
   disableClose:true
 }
