@@ -21,4 +21,6 @@
                class="paginator-control"
                (page)="addToPaginator($event)">
 </mat-paginator>
-<div *ngIf="!(paginatorServices.length>0)">No Available Services</div>
+<div *ngIf="!(paginatorServices.length>0)">
+    <h1>No Available Services</h1>
+</div>
