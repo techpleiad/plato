@@ -21,10 +21,8 @@
         </mat-card>
     </div>
     <div class="mb-3">
-        <label for="recipients" class="col-form-label"><span class="text-danger mr-1">*</span>RECIPIENTS EMAIL</label>
-        <br>
         <mat-form-field class="example-chip-list">
-            <mat-label>Recipients</mat-label>
+            <mat-label>RECIPIENTS EMAIL</mat-label>
             <mat-chip-list #chipList aria-label="Recipients selection">
             <mat-chip *ngFor="let recipient of recipients" [selectable]="selectable"
                     [removable]="removable" (removed)="remove(recipient)">
@@ -50,4 +48,5 @@
 <mat-dialog-actions align="end">
   <app-btn mat-dialog-close [label]=" 'Cancel' " [isCancel]="true"></app-btn> 
   <app-btn (clicked)="checkConsistency()" [label]=" 'Send Mail' " cdkFocusInitial></app-btn>
+  <mat-progress-spinner mode="indeterminate" diameter="30" [hidden]="!visibleProgressSpinner"></mat-progress-spinner>
 </mat-dialog-actions>

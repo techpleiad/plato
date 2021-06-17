@@ -28,6 +28,8 @@ export class ConsistencyAcrossBranchDialogueComponent implements OnInit {
   branchList: string[] = [];
   checked = false;
 
+  visibleProgressSpinner = false;
+
   setFunction(service: string){
     this.service = service;
     for(let i=0;i<this.mservices.length;i++){
@@ -71,6 +73,7 @@ export class ConsistencyAcrossBranchDialogueComponent implements OnInit {
   }
 
   checkConsistency(){
+    this.visibleProgressSpinner = true;
     if(this.service.length>0) this.nservices.push(this.service);
     this.branchCons.services = this.nservices;
     if(this.checked) this.branchCons.propertyValueEqual = true;
@@ -78,6 +81,7 @@ export class ConsistencyAcrossBranchDialogueComponent implements OnInit {
     this.branchCons.email = {sendEmail: true, recipients: this.recipients};
 
     this._dataManagerService.sendBranchConsistencyEmail(this.branchCons).subscribe(data=>{
+      this.visibleProgressSpinner = false;
       this.dialogRef.close(this.branchCons);
     });
   }

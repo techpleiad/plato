@@ -29,6 +29,8 @@ export class ConsistencyAcrossProfileDialogueComponent implements OnInit {
   branchValue: string = "";
   checked = false;
 
+  visibleProgressSpinner = false;
+
   setFunction(service: string){
     this.service = service;
     for(let i=0;i<this.mservices.length;i++){
@@ -68,6 +70,7 @@ export class ConsistencyAcrossProfileDialogueComponent implements OnInit {
   }
 
   checkConsistency(){
+    this.visibleProgressSpinner = true;
     if(this.service.length>0) this.nservices.push(this.service);
     this.profileCons.services = this.nservices;
     if(this.checked) this.profileCons.includeSuppressed = true;
@@ -75,6 +78,7 @@ export class ConsistencyAcrossProfileDialogueComponent implements OnInit {
     this.profileCons.email = {sendEmail: true, recipients: this.recipients};
 
     this._dataManagerService.sendProfileConsistencyEmail(this.profileCons, this.branchValue).subscribe(data=>{
+      this.visibleProgressSpinner = false;
       this.dialogRef.close(this.profileCons);
     });
   }
