@@ -1,3 +1,4 @@
+<div *ngIf="paginatorServices.length>0">
 <div class="container" *ngFor="let s of paginatorServices" >
     <button class="service-button service-text" (click)="openWorkspace(s)">
         {{s.service | headingPipe}}
@@ -10,6 +11,8 @@
     </button>
 
 </div>
+</div>
+
 
 <mat-paginator [length]="services.length"
                [pageIndex]="pageIndex"
@@ -18,3 +21,4 @@
                class="paginator-control"
                (page)="addToPaginator($event)">
 </mat-paginator>
+<div *ngIf="!(paginatorServices.length>0)">No Available Services</div>
