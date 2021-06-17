@@ -1,8 +1,8 @@
-<div fxLayout="row">
-<h2 mat-dialog-title class="workspace-title">{{mservice.service | headingPipe}}</h2>
-<app-btn [label]=" 'Merge Changes' " (clicked)="sendMergeRequest()" *ngIf="sendMR"></app-btn>
-<hr>
+<div fxLayout="row" class="workspace-title">
+<h2 mat-dialog-title >{{mservice.service | headingPipe}}</h2>
+<app-btn [label]=" 'Merge Changes' " (clicked)="sendMergeRequest()" *ngIf="sendMR" class="merge-btn"></app-btn>
 </div>
+
 
 <mat-dialog-content class="mat-typography">
 
@@ -36,6 +36,6 @@
 <mat-dialog-actions align="end">
   <app-btn [label]=" 'Keep Changes' " (clicked)="keepChangesClicked()" *ngIf="keepChanges"></app-btn>
   <app-btn [label]=" 'Discard Changes' " (clicked)="discardChangesClicked()" *ngIf="discardChanges"></app-btn>
-  <app-btn mat-dialog-close [label]=" 'Cancel' "></app-btn>
+  <app-btn mat-dialog-close [label]=" 'Cancel' " [isCancel] = "true"></app-btn>
 </mat-dialog-actions>
 
