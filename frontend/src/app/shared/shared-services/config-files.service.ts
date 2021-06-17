@@ -7,7 +7,6 @@ import * as yaml from 'yaml';
 })
 export class ConfigFilesService {
 
-  //private _base_url = "http://localhost:8080/v1/services";
   private BASE: any;
   constructor(private http: HttpClient, @Inject('API_END_POINT') private API_END_POINT: any) {
     this.BASE = API_END_POINT.PLATO;

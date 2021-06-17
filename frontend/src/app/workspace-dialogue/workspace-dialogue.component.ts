@@ -67,7 +67,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
 
   visibleProgressSpinner = false;
-  
+  showBtn = false;
   
 ///////////////////////////////////  FUNCTIONS   //////////////////////////////////////
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService,@Inject('WARNING_DIALOG_PARAM') private WARNING_DIALOG_PARAM: any, private _configFiles: ConfigFilesService, 
@@ -93,6 +93,9 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
   setFunction(functionValue: any){
     this.functionValue = functionValue;
+    if(this.functionValue!==""){
+      this.showBtn = true;
+    }
     this.isBranchReq = false;
     this.isProfileReq = false;
     this.canProfileDefault = false;
@@ -320,7 +323,14 @@ export class WorkspaceDialogueComponent implements OnInit {
         window.open(mergeRequestMail, "_blank");
       });
       
-    })
+    },
+    err=>{
+      let errorMsg = (err.error.error.errorMessage);
+      let simpleSnackBarRef = this._snackBar.open(errorMsg,"Close");
+      setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 100000);
+      this.visibleProgressSpinner = false;
+    }
+    );
     
     this.sendMR = false;
   }
