@@ -43,6 +43,9 @@ import {  MonacoEditorModule } from 'ngx-monaco-editor';
 import { ConsistencyAcrossBranchDialogueComponent } from './consistency-across-branch-dialogue/consistency-across-branch-dialogue.component';
 import { DatePipe } from '@angular/common';
 import { ConsistencyAcrossProfileDialogueComponent } from './consistency-across-profile-dialogue/consistency-across-profile-dialogue.component';
+import { HomeComponent } from './home/home.component';
+import { RulesComponent } from './rules/rules.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -55,7 +58,10 @@ import { ConsistencyAcrossProfileDialogueComponent } from './consistency-across-
     CustomCodemirrorComponent,
     MonacoEditorComponent,
     ConsistencyAcrossBranchDialogueComponent,
-    ConsistencyAcrossProfileDialogueComponent
+    ConsistencyAcrossProfileDialogueComponent,
+    HomeComponent,
+    RulesComponent,
+    PageNotFoundComponent
   ],
   imports: [
     BrowserModule,
