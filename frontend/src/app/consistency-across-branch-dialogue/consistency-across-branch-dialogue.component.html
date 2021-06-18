@@ -4,12 +4,27 @@
   <form>
     <div class="mb-3">
         <app-dropdown [dropdownList]="services" [label]=" 'SELECT SERVICE NAME' " (change)="setFunction($event)" ></app-dropdown>
+        <div style="height:20px;">
+          <span *ngIf="!isServiceValid" class="text-danger">
+            Please select service name
+          </span>
+        </div>
     </div>
     <div class="mb-3">
         <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH 1' " (change)="setBranch1($event)" ></app-dropdown>
+        <div style="height:20px;">
+          <span *ngIf="!isBranch1Valid" class="text-danger">
+            Please select branch 1 name
+          </span>
+        </div>
     </div>
     <div class="mb-3">
         <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH 2' " (change)="setBranch2($event)" ></app-dropdown>
+        <div style="height:20px;">
+          <span *ngIf="!isBranch2Valid" class="text-danger">
+            Please select branch 2 name
+          </span>
+        </div>
     </div>
     <div class="mb-3">
         <mat-card>
@@ -37,9 +52,9 @@
             </mat-chip-list>
         </mat-form-field>
         <div style="height:20px;">
-          <!--<span *ngIf="!isRecipientValid" class="text-danger">
-            Please enter recipient name
-          </span>-->
+          <span *ngIf="!isRecipientValid" class="text-danger">
+            Please enter recipient names
+          </span>
         </div>
     </div>
   </form>
