@@ -21,7 +21,9 @@ export const PROFILE_COLORS = [
 class EndPoints {
   static VERSION = '/v1';
   static SERVICES = '/services';
+  static RULES = '/rules';
   static VERSION_SERVICES = EndPoints.VERSION+EndPoints.SERVICES;
+  static VERSION_RULES = EndPoints.VERSION+EndPoints.RULES;
 }
 
 export const HTTP_METHOD = {
@@ -53,6 +55,10 @@ export const API_END_POINT = {
           URL: `${BASE_URL}${EndPoints.VERSION_SERVICES}`,
           METHOD: HTTP_METHOD.POST
         },
+        GET_RULES: {
+            URL: `${BASE_URL}${EndPoints.VERSION_RULES}`,
+            METHOD: HTTP_METHOD.GET
+        }
         
       }
 }
