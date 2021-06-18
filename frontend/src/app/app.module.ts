@@ -23,6 +23,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatTableModule} from '@angular/material/table';
 
 import { FormsModule } from '@angular/forms';
 import { DisplayServicesComponent } from './display-services/display-services.component';
@@ -86,6 +87,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     MatPaginatorModule,
     MatSidenavModule,
     MatSnackBarModule,
+    MatTableModule,
     MonacoEditorModule.forRoot()
   ],
   providers: [

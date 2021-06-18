@@ -1,6 +1,11 @@
 export class rulesTemplate{
     ruleId: string = "";
-    scope:any;
+    scope = {
+        services: [],
+        branches: [],
+        profiles: []
+
+    };
     ruleOnProperty:string="";
     rule:any;
 

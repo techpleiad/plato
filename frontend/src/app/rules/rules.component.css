@@ -1,0 +1,8 @@
+.demo-table {
+    width: 100%;
+}
+.table-container{
+    height: 600px;
+    overflow: auto;
+    margin-top: 40px;
+}
