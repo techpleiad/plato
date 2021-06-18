@@ -68,6 +68,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   visibleProgressSpinner = false;
   showBtn = false;
+  reqValidation = true;
   
 ///////////////////////////////////  FUNCTIONS   //////////////////////////////////////
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService,@Inject('WARNING_DIALOG_PARAM') private WARNING_DIALOG_PARAM: any, private _configFiles: ConfigFilesService, 
@@ -137,6 +138,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
     if(this.functionValue==="consistency across profile"){
       this.isBranchReq = true;
+      this.branchValue = "";
     }
   }
   setBranch(branchValue: any){
@@ -333,6 +335,29 @@ export class WorkspaceDialogueComponent implements OnInit {
     );
     
     this.sendMR = false;
+  }
+
+  processFunction(){
+    this.reqValidation = true;
+    if(this.isBranchReq===true && this.branchValue===""){
+      this.reqValidation = false;
+    }
+    if(this.canProfileDefault===false && this.profileValue===""){
+      this.reqValidation = false;
+    }
+    if(this.isBranch1Req===true && this.sourceBranchValue===""){
+      this.reqValidation = false;
+    }
+    if(this.isBranch2Req===true && this.destinationBranchValue===""){
+      this.reqValidation = false;
+    }
+    if(this.isProfileConsistency===true && this.ICP===""){
+      this.reqValidation = false;
+    }
+    if(this.reqValidation === true){
+      this.sendToCodeMirror();
+    }
+    
   }
   /////////////////// SENDING DATA TO CODEMIRROR ////////////////
   sendToCodeMirror(){
