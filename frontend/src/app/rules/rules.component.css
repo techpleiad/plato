@@ -1,0 +1,12 @@
+.demo-table {
+    width: 100%;
+}
+.table-container{
+    height: 600px;
+    overflow: auto;
+    margin-top: 40px;
+}
+.mat-row:hover .mat-cell {
+    background-color: #DDDDDD;
+    cursor: pointer;
+}

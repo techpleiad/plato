@@ -65,7 +65,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
 
   constructor(private _codemirrorService: CodemirrorService, private _colorService: ColorProviderService) {
     this.SPACE_REPLACE = ' '.repeat(this.SPACES_TO_ONE_TAB);
-    this._codemirrorService.editor = CodeEditor.YAML;
+    this._codemirrorService.editor = CodeEditor.JSON;
   }
 
   ngOnInit(): void {

@@ -1,6 +1,9 @@
 <app-header></app-header>
-<app-add-search (reload_display_services)="reloadDisplayServices()" (filter_display_services)="filterDisplayServices($event)"></app-add-search>
-<app-display-services [services]="services"></app-display-services>
+<div class="container routing-div">
+    <a  class="route-text" routerLink="/home" routerLinkActive="activeRoute">Home</a>
+    <a  class="route-text" routerLink="/rules" routerLinkActive="activeRoute">Rules</a>
+    <hr>
+</div>
 <router-outlet></router-outlet>
 
 

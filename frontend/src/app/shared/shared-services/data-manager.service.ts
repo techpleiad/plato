@@ -18,7 +18,7 @@ export class DataManagerService {
     this.BASE = API_END_POINT.PLATO; 
    }
   getServicesList(){
-    return this.http.get(this.BASE.GET_SERVICES.URL); ////http://localhost:8080/vi/services
+    return this.http.get(this.BASE.GET_SERVICES.URL); 
 
   }
   yamlToJson(temp: string){
