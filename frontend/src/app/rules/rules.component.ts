@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { rulesTemplate } from '../rulesTemplate';
 import { RulesDataService } from '../shared/shared-services/rules-data.service';
 
+
 export class RuleDisplay {
   position: number=0;
   property: string;
@@ -31,6 +32,7 @@ export class RulesComponent implements OnInit {
 
   constructor(private _rulesDataService: RulesDataService) {}
 
+  // If branches/profiles empty --> include all the branches/profiles.
   ngOnInit(): void {
     this._rulesDataService.getRulesList()
         .subscribe(data => {
@@ -44,7 +46,11 @@ export class RulesComponent implements OnInit {
           console.log(this.dataSource);
         });
   }
-  
-  
+  clickedRow(rule: any){
+    console.log(rule);
+    console.log(this.rulesList[rule.position-1])
+    //accessing the rule from the position and send it to other window. 
+    //---> send(ruleList[position-1]).
+  }
 
 }
