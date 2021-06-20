@@ -22,11 +22,7 @@ export class HomeComponent implements OnInit {
         });
   }
   reloadDisplayServices(){
-    this._dataManagerService.getServicesList()
-        .subscribe(data => {
-          this.services = JSON.parse(JSON.stringify(data));
-          
-        });
+   this.services = this.servicesAll;
   }
 
   //custom-manager, Custom-Manager, CUSTOM-MANAGER

@@ -27,6 +27,7 @@ export class RulesComponent implements OnInit {
 
   rulesList: rulesTemplate[] = [];
   dataSource: RuleDisplay[] = [];
+  dataSourceAll: RuleDisplay[] = [];
   displayedColumns = ['position', 'property', 'services', 'branches', 'profiles'];
 
 
@@ -43,6 +44,7 @@ export class RulesComponent implements OnInit {
             position = position+1;
             return new RuleDisplay(position,val.ruleOnProperty,val.scope.services,val.scope.branches,val.scope.profiles);
           })
+          this.dataSourceAll = this.dataSource;
           console.log(this.dataSource);
         });
   }
@@ -51,6 +53,40 @@ export class RulesComponent implements OnInit {
     console.log(this.rulesList[rule.position-1])
     //accessing the rule from the position and send it to other window. 
     //---> send(ruleList[position-1]).
+  }
+  filterRules(event: any){
+    this.dataSource = this.dataSourceAll;
+    let searchProperty = event.property.toLowerCase();
+    let searchServices = event.services.toLowerCase();
+    console.log(searchProperty);
+    console.log(searchServices);
+    let filteredProperty:RuleDisplay[] = [];
+    if(searchProperty===""){
+      filteredProperty = this.dataSource;
+    }
+    else{
+      for(let i=0;i<this.dataSource.length;i++){
+        if(this.dataSource[i].property.includes(searchProperty)){
+          filteredProperty.push(this.dataSource[i]);
+        }
+      }
+    }
+    let filteredServices: RuleDisplay[] = [];
+    if(searchServices===""){
+      filteredServices = filteredProperty;
+    }
+    else{
+      for(let i=0;i<filteredProperty.length;i++){
+        for(let j=0;j<filteredProperty[i].services.length;j++){
+          if(filteredProperty[i].services[j].includes(searchServices)){
+            filteredServices.push(filteredProperty[i]);
+          }
+        }
+      }
+    }
+    
+    this.dataSource = filteredServices;
+
   }
 
 }

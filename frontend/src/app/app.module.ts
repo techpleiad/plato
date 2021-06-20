@@ -47,6 +47,8 @@ import { ConsistencyAcrossProfileDialogueComponent } from './consistency-across-
 import { HomeComponent } from './home/home.component';
 import { RulesComponent } from './rules/rules.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { AddFilterRulesComponent } from './add-filter-rules/add-filter-rules.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -62,7 +64,8 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     ConsistencyAcrossProfileDialogueComponent,
     HomeComponent,
     RulesComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    AddFilterRulesComponent
   ],
   imports: [
     BrowserModule,
