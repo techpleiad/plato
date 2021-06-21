@@ -29,13 +29,14 @@ export class RulesComponent implements OnInit {
   dataSource: RuleDisplay[] = [];
   dataSourceAll: RuleDisplay[] = [];
   displayedColumns = ['position', 'property', 'services', 'branches', 'profiles'];
-
+  temp:string = "";
 
   constructor(private _rulesDataService: RulesDataService) {}
 
   // If branches/profiles empty --> include all the branches/profiles.
   ngOnInit(): void {
-    this._rulesDataService.getRulesList()
+    if(this.dataSourceAll.length===0){
+      this._rulesDataService.getRulesList()
         .subscribe(data => {
           this.rulesList = JSON.parse(JSON.stringify(data));
           console.log(this.rulesList);
@@ -47,6 +48,7 @@ export class RulesComponent implements OnInit {
           this.dataSourceAll = this.dataSource;
           console.log(this.dataSource);
         });
+    }    
   }
   clickedRow(rule: any){
     console.log(rule);
@@ -58,8 +60,6 @@ export class RulesComponent implements OnInit {
     this.dataSource = this.dataSourceAll;
     let searchProperty = event.property.toLowerCase();
     let searchServices = event.services.toLowerCase();
-    console.log(searchProperty);
-    console.log(searchServices);
     let filteredProperty:RuleDisplay[] = [];
     if(searchProperty===""){
       filteredProperty = this.dataSource;
