@@ -6,7 +6,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "frontend": {
+    "plato-ui": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
@@ -20,12 +20,13 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/frontend",
+            "outputPath": "dist/plato-ui",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
+              { "glob": "**/*", "input": "node_modules/monaco-editor", "output": "assets/monaco-editor" },
               "src/favicon.ico",
               "src/assets"
             ],
@@ -36,7 +37,8 @@
             ],
             "scripts": ["./node_modules/bootstrap/dist/js/bootstrap.js",
               "./node_modules/jquery/dist/jquery.js"
-            ]
+            ],
+            "preserveSymlinks": true
           },
           "configurations": {
             "production": {
@@ -75,10 +77,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "frontend:build:production"
+              "browserTarget": "plato-ui:build:production"
             },
             "development": {
-              "browserTarget": "frontend:build:development"
+              "browserTarget": "plato-ui:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -86,7 +88,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "frontend:build"
+            "browserTarget": "plato-ui:build"
           }
         },
         "test": {
@@ -97,6 +99,7 @@
             "tsConfig": "tsconfig.spec.json",
             "karmaConfig": "karma.conf.js",
             "assets": [
+              { "glob": "**/*", "input": "node_modules/monaco-editor", "output": "assets/monaco-editor" },
               "src/favicon.ico",
               "src/assets"
             ],
@@ -110,5 +113,5 @@
       }
     }
   },
-  "defaultProject": "frontend"
+  "defaultProject": "plato-ui"
 }

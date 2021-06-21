@@ -1,7 +1,8 @@
-
-
 textarea{
     background-color:#dddddd;
-    width:80%; 
+    width:50%; 
     height:400px;
+}
+.owner{
+    color: black;
 }

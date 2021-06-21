@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Add New Service</h2>
+<h2 mat-dialog-title class="dialog-title">Add New Service</h2>
 <hr>
 <mat-dialog-content>
   <form>
@@ -23,7 +23,7 @@
 
     <div class="mb-3">
       <label for="dir" class="col-form-label"><span class="text-danger mr-1">*</span>DIRECTORY</label>
-      <input type="text" class="form-control" id="desc" name="directory" [(ngModel)]="addService.directory"
+      <input type="text" class="form-control" id="dir" name="directory" [(ngModel)]="addService.directory"
         placeholder="Enter directory">
       <div style="height:20px;">
         <span *ngIf="!isDirValid" class="text-danger">
@@ -137,7 +137,7 @@
 </mat-dialog-content>
 <hr>
 <mat-dialog-actions align="end">
-  <app-btn mat-dialog-close [label]=" 'Cancel' "></app-btn> 
+  <app-btn mat-dialog-close [label]=" 'Cancel' " [isCancel]="true"></app-btn> 
   <app-btn (clicked)="addNewService()" [label]=" 'Add' " cdkFocusInitial></app-btn>
 </mat-dialog-actions>
 

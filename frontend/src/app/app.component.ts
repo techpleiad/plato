@@ -12,6 +12,7 @@ import { DataManagerService } from './shared/shared-services/data-manager.servic
 export class AppComponent {
   title = 'frontend';
   services: microService[] = [];
+  servicesAll: microService[] = [];
 
 
   constructor(private _dataManagerService: DataManagerService){
@@ -21,8 +22,8 @@ export class AppComponent {
   ngOnInit(): void {
     this._dataManagerService.getServicesList()
         .subscribe(data => {
-          this.services = JSON.parse(JSON.stringify(data));
-          
+          this.servicesAll = JSON.parse(JSON.stringify(data));
+          this.services = this.servicesAll;
         });
   }
 
@@ -34,12 +35,29 @@ export class AppComponent {
         });
   }
 
+  //custom-manager, Custom-Manager, CUSTOM-MANAGER
+  lowerize(input: string) {  
+    let words = input.split('-');  
+    let temp: string = words[0].toLowerCase();
+    for(let i=1;i<words.length;i++){
+      temp = temp.concat('-',words[i].toLowerCase());
+    } 
+    return temp;
+  }
   filterDisplayServices(searchText: string){
+    // Manipulating the search text
+    let searchTextParts = searchText.split(" ");
+    let manipulatedSearchText: string = searchTextParts[0];
+    for(let i=1;i<searchTextParts.length;i++){
+      manipulatedSearchText = manipulatedSearchText.concat("-",searchTextParts[i]);
+    }
+    //console.log(manipulatedSearchText);
     let searchLength = searchText.length;
     let filteredServices: microService[] = [];
-    for(let i=0;i<this.services.length;i++){
-      if(this.services[i].service.slice(0,searchLength) === searchText){
-        filteredServices.push(this.services[i]);
+    for(let i=0;i<this.servicesAll.length;i++){
+      if( (this.servicesAll[i].service.slice(0,searchLength) === manipulatedSearchText)|| 
+      (this.servicesAll[i].service.slice(0,searchLength) === this.lowerize(manipulatedSearchText))){
+        filteredServices.push(this.servicesAll[i]);
       }
     }
     this.services = filteredServices;

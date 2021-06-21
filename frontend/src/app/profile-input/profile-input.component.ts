@@ -11,9 +11,16 @@ export class ProfileInputComponent implements OnInit {
   @Input() canProfileDefault!: Boolean;
   @Output() profile_sent = new EventEmitter();
 
+  defaultValue = "";
+
   constructor() { }
 
+
+
   ngOnInit(): void {
+    if(this.canProfileDefault===true){
+      this.defaultValue = "default";
+    }
   }
   sendProfile(event: any){
     if(event.value==="default"){

@@ -110,13 +110,13 @@ export class AddNewServiceComponent implements OnInit {
     this.isBranchValid=this.branches.length>0;
     if(this.checked){
       this.addService.gitRepository={url: this.url};
-      if(this.isServiceValid && this.isUrlValid){
+      if(this.isServiceValid && this.isDirValid && this.isUrlValid && this.isProfileValid && this.isBranchValid){
         this.executeAddService();
         //this.dialogRef.close(this.addService);
       }
     }else{
       this.addService.gitRepository={url: this.url, username: this.username, password: this.password};
-      if(this.isServiceValid && this.isUrlValid && this.isUsernameValid && this.isPasswordValid){
+      if(this.isServiceValid && this.isDirValid && this.isUrlValid && this.isUsernameValid && this.isPasswordValid && this.isProfileValid && this.isBranchValid){
         this.executeAddService();
         //this.dialogRef.close(this.addService);
       }

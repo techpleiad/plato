@@ -1,27 +1,15 @@
 .custom-toolbar{
-    background-color: #DA0972;
+    background-color: #E20074;
     padding-left: 0px;  
     font-weight: normal;
-    margin-bottom: 15px;
+    margin-bottom: 45px;
+    color:#FFFFFF;
 }
-.tool-title{
-    background-color: #536162;
-    color:white;
-    height: 64px;
-    padding-top: auto;
-    padding-top: 15px;
+.tool-title{    
     padding-left:10px;
-    padding-right:10px;
-    text-align: center;
+    font-size: large;
 
 }
-.team-title{
-    color:white;
-    padding-left: 20px;
-}
-.navbar-brand{
-    color: white;
-}
-.hgw{
-    color: white;
+.app-name{
+    font-weight: 500;
 }

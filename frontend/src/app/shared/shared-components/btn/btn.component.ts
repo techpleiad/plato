@@ -9,6 +9,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class BtnComponent implements OnInit {
   
   @Input() label: string = "";
+  @Input() isCancel = false;
   @Output() clicked = new EventEmitter();
 
   constructor() { }
