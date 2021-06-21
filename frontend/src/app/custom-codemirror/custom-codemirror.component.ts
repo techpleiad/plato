@@ -35,6 +35,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() propertyList: PropertyDetail[] = [];
   @Input() ownerList: string[] = [];
   @Input() cmp: string = "";
+  @Input() codemirrorMode = "YAML";
 
   
 
@@ -65,7 +66,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
 
   constructor(private _codemirrorService: CodemirrorService, private _colorService: ColorProviderService) {
     this.SPACE_REPLACE = ' '.repeat(this.SPACES_TO_ONE_TAB);
-    this._codemirrorService.editor = CodeEditor.JSON;
+    this._codemirrorService.editor = CodeEditor.YAML;
   }
 
   ngOnInit(): void {
@@ -76,12 +77,22 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       );
       this.codemirror.setSize('100%', '430px');
       
+
       this.codemirror.refresh();
+      if(this.codemirror){
+        this._colorService.reset();
+        if(this.content!=="")
+        this.update();
+      }
   }
   ngOnChanges(changes: SimpleChanges): void {
-
     console.log("something changed");
     console.log(changes);
+
+    if(this.codemirrorMode==="JSON"){
+      this._codemirrorService.editor = CodeEditor.JSON;
+    }
+    
     //console.log(this.ownerList);
     this.content = this.content || "";
     this.profileColorList = [];
@@ -96,6 +107,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
 
   private update(): void{
     const jsonObject = yaml.parse(this.content);
+    console.log(jsonObject);
     //console.log("This is content")
    // console.log(this.content);
     

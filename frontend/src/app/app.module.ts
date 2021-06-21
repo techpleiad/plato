@@ -48,6 +48,7 @@ import { HomeComponent } from './home/home.component';
 import { RulesComponent } from './rules/rules.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { AddFilterRulesComponent } from './add-filter-rules/add-filter-rules.component';
+import { RulesSchemaComponent } from './rules-schema/rules-schema.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import { AddFilterRulesComponent } from './add-filter-rules/add-filter-rules.com
     HomeComponent,
     RulesComponent,
     PageNotFoundComponent,
-    AddFilterRulesComponent
+    AddFilterRulesComponent,
+    RulesSchemaComponent
   ],
   imports: [
     BrowserModule,

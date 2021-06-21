@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { RulesSchemaComponent } from '../rules-schema/rules-schema.component';
 import { rulesTemplate } from '../rulesTemplate';
 import { RulesDataService } from '../shared/shared-services/rules-data.service';
 
@@ -31,7 +33,7 @@ export class RulesComponent implements OnInit {
   displayedColumns = ['position', 'property', 'services', 'branches', 'profiles'];
   temp:string = "";
 
-  constructor(private _rulesDataService: RulesDataService) {}
+  constructor(private _rulesDataService: RulesDataService, public dialog: MatDialog) {}
 
   // If branches/profiles empty --> include all the branches/profiles.
   ngOnInit(): void {
@@ -53,6 +55,10 @@ export class RulesComponent implements OnInit {
   clickedRow(rule: any){
     console.log(rule);
     console.log(this.rulesList[rule.position-1])
+    const dialogRef = this.dialog.open(RulesSchemaComponent,
+      {data: this.rulesList[rule.position-1]
+      }
+    );
     //accessing the rule from the position and send it to other window. 
     //---> send(ruleList[position-1]).
   }
