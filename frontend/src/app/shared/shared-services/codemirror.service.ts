@@ -19,6 +19,11 @@ export class CodemirrorService {
   private _content = '';  //// _content => main content inside the editor
   private _editor: CodeEditor = CodeEditor.JSON; //// setting default editor type to JSON.
 
+  private _profileData: ProfileDataTO[] = [];
+  private _propertyList: any[] = [];
+  private _profileMapper: any = null;
+  private _lineToDivMapper = new Map();
+
   constructor() { }
 
   get editor(): CodeEditor {
@@ -29,19 +34,24 @@ export class CodemirrorService {
   }
 
   //// This func sets the content according to the Editor Type
-  mergeEditorConstruct(codemirrorTextArea: any, configuration: any, data: any): void {
+  mergeEditorConstruct(codemirrorTextArea: any, configuration: any, data: any, codemirrorId: any): void {
 
     configuration.foldGutter = false;
     configuration.readOnly = true;
 
     //// _mergeEditor => main editor
     this._mergeEditor = codemirrorTextArea;
-
+    this._mergeEditor.refresh();
     //// On double click point the cursor to that area
     this._mergeEditor.on('dblclick', (instance: any, event: Event) => {
       this.breadcrumbEditorLine = instance.getCursor().line + 1;
-      //SpringProfileComponent.DisplayPropertyPathOrFind = true; // circular dependency
+      //SpringProfileComponent.DisplayPropertyPathOrFind = true; // circular dependency  
     });
+    
+    this._mergeEditor.on('update', (instance: any) => {
+      this.onScrollCodemirrorUpdate(codemirrorId);
+    });
+    
 
     switch (this._editor) {
       case CodeEditor.JSON: {
@@ -57,7 +67,7 @@ export class CodemirrorService {
   //// Showing the Editor
   showEditor(): void {
     this._mergeEditor.setValue(this._content);
-    this._mergeEditor.setSize('100%', '100%');
+    this._mergeEditor.setSize('100%', '400px');
     this._mergeEditor.refresh();
   }
 
@@ -73,55 +83,57 @@ export class CodemirrorService {
   }
 
   updateCodeMirrorVisual(profileData: ProfileDataTO[], propertyList: PropertyDetail[], jsonObject: any, codemirrorId: string): void {
+    
+    this._mergeEditor.refresh();
+    this._lineToDivMapper = new Map();
+
+    this._propertyList = propertyList;
+    this._profileData = profileData;
+
+    const profileMapper = new Map();
+
+    this.lineToPropertyBreadcrumbMap = new Map();
+    this.propertyTolineBreadcrumbMap = new Map();
+    this._breadcrumbEditorLine = -1;
+
+    switch (this._editor) {
+      case CodeEditor.JSON: {
+        this.currentLineInEditor = JSON_PARSER.INITIAL_LINE;
+        this.jsonLineReader('', jsonObject, profileMapper, JSON_PARSER);
+        break;
+      }
+      case CodeEditor.YAML: {
+        this.currentLineInEditor = YAML_PARSER.INITIAL_LINE;
+        this.yamlLineReaderInObject('', jsonObject, profileMapper, YAML_PARSER);
+        break;
+      }
+    }
+    this._profileMapper = profileMapper;
+    this.onScrollCodemirrorUpdate(codemirrorId);
+  }
+
+  private onScrollCodemirrorUpdate(codemirrorId: string): void {
 
     const parent = document.getElementById(codemirrorId);
-    console.log(parent);
     const lineElements = parent?.getElementsByClassName('CodeMirror-linenumber CodeMirror-gutter-elt');
-    console.log(lineElements);
-    //const contentLineElements = parent?.getElementsByClassName('CodeMirror-line');
-    //console.log(contentLineElements);
     if (lineElements) {
-
-      const profileMapper = new Map();
-
-      this.lineToPropertyBreadcrumbMap = new Map();
-      this.propertyTolineBreadcrumbMap = new Map();
-      this._breadcrumbEditorLine = -1;
-
-      switch (this._editor) {
-
-        case CodeEditor.JSON: {
-          this.currentLineInEditor = JSON_PARSER.INITIAL_LINE;
-          this.jsonLineReader('', jsonObject, profileMapper, JSON_PARSER);
-          break;
-        }
-        case CodeEditor.YAML: {
-          this.currentLineInEditor = YAML_PARSER.INITIAL_LINE;
-          this.yamlLineReaderInObject('', jsonObject, profileMapper, YAML_PARSER);
-          break;
+      for (let i = 0; i < lineElements.length; ++i) {
+        const div: any = lineElements[i];
+        this._lineToDivMapper.set(div['innerText'], lineElements[i]);
+      }
+      const profileColorMap = new Map(this._profileData.map((prof, index) => [prof.profile, prof.color.color]));
+      if(this._propertyList.length === 0){
+        for (let i = 0; i < lineElements.length; ++i) {
+          this.updateColor(lineElements[i],"#f7f7f7");
         }
       }
-      console.log(this.propertyTolineBreadcrumbMap);
-      console.log(profileMapper);
-
-      
-      const profileColorMap = new Map(profileData.map((prof, index) => [prof.profile, prof.color.color]));
-      
-      //tslint:disable-next-line:prefer-for-of
-      
-      for (let i = 0; i < propertyList.length; ++i) {
-        const prop = propertyList[i];
-        const lineNumber = profileMapper.get(prop.property);
-        this.updateColor(lineElements[lineNumber], profileColorMap.get(prop.owner));
-      }
-      ///// updating color of the sied-bar
-      profileData.forEach((profile, index) => {
+      this._propertyList.forEach(prop => {
+        const lineNumber = this._profileMapper.get(prop.property);
+        this.updateColor(this._lineToDivMapper.get(`${lineNumber}`), profileColorMap.get(prop.owner));
+      });
+      this._profileData.forEach((profile, index) => {
         this.updateColor(document.getElementById(`side-bar-${index}`), profile.color.color);
       });
-      /*    consistency coloring solved   . 
-      if(contentLineElements)
-      this.updateColor(contentLineElements[1],"#2f5d62")
-      */
     }
   }
 
@@ -294,12 +306,12 @@ export class CodemirrorService {
 
   yamlLineReaderInArray(path: string, root: any,  profileMapper: any, config: CodemirrorReader): void {
 
-    const parentIndex = this.currentLineInEditor;
+    //const parentIndex = this.currentLineInEditor;
     for (const pro of Object.keys(root)) {
       const val = root[pro];
       const newPath = this.generatePropertyPath(path, pro);
 
-      profileMapper.set(path, parentIndex);
+      //profileMapper.set(path, parentIndex);
       switch (this.propertyType(val)) {
         case 'primitive': {
           this.lineToPropertyBreadcrumbMap.set(this.currentLineInEditor, `${newPath}.${val}`);

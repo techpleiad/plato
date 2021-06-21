@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import * as yaml from 'yaml';
 
 @Injectable({
@@ -7,11 +7,12 @@ import * as yaml from 'yaml';
 })
 export class ConfigFilesService {
 
-  private _base_url = "http://localhost:8080/v1/services";
-
-  constructor(private http: HttpClient) { }
+  private BASE: any;
+  constructor(private http: HttpClient, @Inject('API_END_POINT') private API_END_POINT: any) {
+    this.BASE = API_END_POINT.PLATO;
+   }
   getFile(service:any, type:any, branch:any, profile:any){
-    return this.http.get(`${this._base_url}/${service}/branches/${branch}`,{
+    return this.http.get(`${this.BASE.GET_SERVICES.URL}/${service}/branches/${branch}`,{
       params:{
         format:"yaml",
         type,

@@ -1,12 +1,21 @@
 import { environment } from 'src/environments/environment';
+export const APPLICATION = {
+  APP_NAME: 'PLATO'
+}
+export const WARNING_DIALOG_PARAM = {
+  data: "",
+  height: '150px',
+  width: '400px',
+  disableClose:true
+}
 export const PROFILE_COLORS = [
-    '#0068ff',
-    '#ffa500',
-    '#349721',
-    '#f81aa1',
-    '#cbbeb5',
-    '#654ef2',
-    '#ff4040',
+    '#E99497',
+    '#F3C583',
+    '#B3E283',
+    '#B6C9F0',
+    '#A58FAA',
+    '#CAF7E3',
+    '#FDBAF8',
   ];
   
 class EndPoints {
@@ -43,7 +52,7 @@ export const API_END_POINT = {
         ADD_SERVICES: {
           URL: `${BASE_URL}${EndPoints.VERSION_SERVICES}`,
           METHOD: HTTP_METHOD.POST
-      }
+        },
         
       }
 }
