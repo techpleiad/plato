@@ -9,6 +9,7 @@ export class DropdownComponent implements OnInit {
 
   @Input() dropdownList: string [] = [];
   @Input() label: string = "";
+  @Input() defaultValue: string = "";
   @Output() change = new EventEmitter();
   constructor() {
     

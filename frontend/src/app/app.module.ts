@@ -23,6 +23,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatTableModule} from '@angular/material/table';
 
 import { FormsModule } from '@angular/forms';
 import { DisplayServicesComponent } from './display-services/display-services.component';
@@ -43,6 +44,12 @@ import {  MonacoEditorModule } from 'ngx-monaco-editor';
 import { ConsistencyAcrossBranchDialogueComponent } from './consistency-across-branch-dialogue/consistency-across-branch-dialogue.component';
 import { DatePipe } from '@angular/common';
 import { ConsistencyAcrossProfileDialogueComponent } from './consistency-across-profile-dialogue/consistency-across-profile-dialogue.component';
+import { HomeComponent } from './home/home.component';
+import { RulesComponent } from './rules/rules.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { AddFilterRulesComponent } from './add-filter-rules/add-filter-rules.component';
+import { RulesSchemaComponent } from './rules-schema/rules-schema.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -55,7 +62,12 @@ import { ConsistencyAcrossProfileDialogueComponent } from './consistency-across-
     CustomCodemirrorComponent,
     MonacoEditorComponent,
     ConsistencyAcrossBranchDialogueComponent,
-    ConsistencyAcrossProfileDialogueComponent
+    ConsistencyAcrossProfileDialogueComponent,
+    HomeComponent,
+    RulesComponent,
+    PageNotFoundComponent,
+    AddFilterRulesComponent,
+    RulesSchemaComponent
   ],
   imports: [
     BrowserModule,
@@ -80,6 +92,7 @@ import { ConsistencyAcrossProfileDialogueComponent } from './consistency-across-
     MatPaginatorModule,
     MatSidenavModule,
     MatSnackBarModule,
+    MatTableModule,
     MonacoEditorModule.forRoot()
   ],
   providers: [

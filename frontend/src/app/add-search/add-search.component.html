@@ -1,6 +1,6 @@
-<div class="container">
+<div class="container add-search-box" fxLayout="row" fxLayoutAlign="space-around center">
     <app-btn (clicked)="openAddServiceDialog()" [label]=" 'Add Service' "></app-btn>
+    <app-btn (clicked)="consistencyAcrossBranch()" [label]=" 'Mail Across Branch Report' "></app-btn>
+    <app-btn (clicked)="consistencyAcrossProfile()" [label]=" 'Mail Across Profile Report' "></app-btn>
     <input class="search-field" type="text" (keyup)="filterServices($event)" placeholder="Search">
-    <app-btn (clicked)="consistencyAcrossBranch()" [label]=" 'Check Consistency Across Branch' "></app-btn>
-    <app-btn (clicked)="consistencyAcrossProfile()" [label]=" 'Check Consistency Across Profile' "></app-btn>
 </div>

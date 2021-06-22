@@ -67,7 +67,8 @@ export class WorkspaceDialogueComponent implements OnInit {
 
 
   visibleProgressSpinner = false;
-  
+  showBtn = false;
+  reqValidation = true;
   
 ///////////////////////////////////  FUNCTIONS   //////////////////////////////////////
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService,@Inject('WARNING_DIALOG_PARAM') private WARNING_DIALOG_PARAM: any, private _configFiles: ConfigFilesService, 
@@ -93,6 +94,9 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
   setFunction(functionValue: any){
     this.functionValue = functionValue;
+    if(this.functionValue!==""){
+      this.showBtn = true;
+    }
     this.isBranchReq = false;
     this.isProfileReq = false;
     this.canProfileDefault = false;
@@ -134,6 +138,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
     if(this.functionValue==="consistency across profile"){
       this.isBranchReq = true;
+      this.branchValue = "";
     }
   }
   setBranch(branchValue: any){
@@ -320,9 +325,39 @@ export class WorkspaceDialogueComponent implements OnInit {
         window.open(mergeRequestMail, "_blank");
       });
       
-    })
+    },
+    err=>{
+      let errorMsg = (err.error.error.errorMessage);
+      let simpleSnackBarRef = this._snackBar.open(errorMsg,"Close");
+      setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 100000);
+      this.visibleProgressSpinner = false;
+    }
+    );
     
     this.sendMR = false;
+  }
+
+  processFunction(){
+    this.reqValidation = true;
+    if(this.isBranchReq===true && this.branchValue===""){
+      this.reqValidation = false;
+    }
+    if(this.canProfileDefault===false && this.profileValue===""){
+      this.reqValidation = false;
+    }
+    if(this.isBranch1Req===true && this.sourceBranchValue===""){
+      this.reqValidation = false;
+    }
+    if(this.isBranch2Req===true && this.destinationBranchValue===""){
+      this.reqValidation = false;
+    }
+    if(this.isProfileConsistency===true && this.ICP===""){
+      this.reqValidation = false;
+    }
+    if(this.reqValidation === true){
+      this.sendToCodeMirror();
+    }
+    
   }
   /////////////////// SENDING DATA TO CODEMIRROR ////////////////
   sendToCodeMirror(){

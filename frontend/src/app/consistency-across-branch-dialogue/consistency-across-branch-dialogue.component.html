@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Check Consistency Across Branches</h2>
+<h2 mat-dialog-title class="dialog-title">Check Consistency Across Branches</h2>
 <hr>
 <mat-dialog-content>
   <form>
@@ -48,6 +48,6 @@
 </mat-dialog-content>
 <hr>
 <mat-dialog-actions align="end">
-  <app-btn mat-dialog-close [label]=" 'Cancel' "></app-btn> 
+  <app-btn mat-dialog-close [label]=" 'Cancel' " [isCancel]="true"></app-btn> 
   <app-btn (clicked)="checkConsistency()" [label]=" 'Send Mail' " cdkFocusInitial></app-btn>
 </mat-dialog-actions>

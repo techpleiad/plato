@@ -4,24 +4,26 @@ export const APPLICATION = {
 }
 export const WARNING_DIALOG_PARAM = {
   data: "",
-  height: '250px',
+  height: '150px',
   width: '400px',
   disableClose:true
 }
 export const PROFILE_COLORS = [
-    '#0068ff',
-    '#ffa500',
-    '#349721',
-    '#f81aa1',
-    '#cbbeb5',
-    '#654ef2',
-    '#ff4040',
+    '#E99497',
+    '#F3C583',
+    '#B3E283',
+    '#B6C9F0',
+    '#A58FAA',
+    '#CAF7E3',
+    '#FDBAF8',
   ];
   
 class EndPoints {
   static VERSION = '/v1';
   static SERVICES = '/services';
+  static RULES = '/rules';
   static VERSION_SERVICES = EndPoints.VERSION+EndPoints.SERVICES;
+  static VERSION_RULES = EndPoints.VERSION+EndPoints.RULES;
 }
 
 export const HTTP_METHOD = {
@@ -53,6 +55,10 @@ export const API_END_POINT = {
           URL: `${BASE_URL}${EndPoints.VERSION_SERVICES}`,
           METHOD: HTTP_METHOD.POST
         },
+        GET_RULES: {
+            URL: `${BASE_URL}${EndPoints.VERSION_RULES}`,
+            METHOD: HTTP_METHOD.GET
+        }
         
       }
 }

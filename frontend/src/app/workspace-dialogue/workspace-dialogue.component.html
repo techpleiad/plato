@@ -1,19 +1,20 @@
-<div fxLayout="row">
-<h2 mat-dialog-title class="workspace-title">{{mservice.service | headingPipe}}</h2>
-<app-btn [label]=" 'Merge Changes' " (clicked)="sendMergeRequest()" *ngIf="sendMR"></app-btn>
-<hr>
+<div fxLayout="row" class="workspace-title">
+<h2 mat-dialog-title >{{mservice.service | headingPipe}}</h2>
+<app-btn [label]=" 'Merge Changes' " (clicked)="sendMergeRequest()" *ngIf="sendMR" class="merge-btn"></app-btn>
 </div>
+
 
 <mat-dialog-content class="mat-typography">
 
   <div fxLayout="row" fxLayoutAlign="start center">
-      <app-dropdown [dropdownList]="functionList" [label]=" 'FUNCTION' " (change)="setFunction($event)" ></app-dropdown>
-      <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH' " (change)="setBranch($event)" *ngIf="isBranchReq" ></app-dropdown>
-      <app-dropdown [dropdownList]="branchList" [label]=" 'SOURCE' " (change)="setSourceBranch($event)" *ngIf="isBranch2Req" ></app-dropdown>
-      <app-dropdown [dropdownList]="branchList" [label]=" 'DESTINATION' " (change)="setDestinationBranch($event)" *ngIf="isBranch1Req" ></app-dropdown>
+      <app-dropdown [dropdownList]="functionList" [label]=" 'FUNCTION' "  (change)="setFunction($event)" ></app-dropdown>
+      <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH' " [defaultValue]="branchValue" (change)="setBranch($event)" *ngIf="isBranchReq" ></app-dropdown>
+      <app-dropdown [dropdownList]="branchList" [label]=" 'SOURCE' " [defaultValue]="sourceBranchValue" (change)="setSourceBranch($event)" *ngIf="isBranch2Req" ></app-dropdown>
+      <app-dropdown [dropdownList]="branchList" [label]=" 'DESTINATION' " [defaultValue]="destinationBranchValue" (change)="setDestinationBranch($event)" *ngIf="isBranch1Req" ></app-dropdown>
       <app-profile-input [mservice]="mservice" [canProfileDefault]="canProfileDefault" (profile_sent)="setProfile($event)" *ngIf="isProfileReq"></app-profile-input>
-      <app-dropdown [dropdownList]="inconsistentProfiles" [label]=" 'PROFILE' " (change)="setICP($event)" *ngIf="isProfileConsistency"></app-dropdown>
-      <app-btn (clicked)="sendToCodeMirror()" [label]=" 'Show' "></app-btn>
+      <app-dropdown [dropdownList]="inconsistentProfiles" [label]=" 'PROFILE' " [defaultValue]="ICP" (change)="setICP($event)" *ngIf="isProfileConsistency"></app-dropdown>
+      <app-btn (clicked)="processFunction()" [label]=" 'Show' " *ngIf="showBtn"></app-btn>
+      <span style="color:red;" *ngIf="!reqValidation">Please fill the required fields*</span>
       <mat-progress-spinner mode="indeterminate" diameter="30" [hidden]="!visibleProgressSpinner"></mat-progress-spinner>    
   </div>
   <!-- Showing the contents accordingly -->
@@ -37,6 +38,6 @@
 <mat-dialog-actions align="end">
   <app-btn [label]=" 'Keep Changes' " (clicked)="keepChangesClicked()" *ngIf="keepChanges"></app-btn>
   <app-btn [label]=" 'Discard Changes' " (clicked)="discardChangesClicked()" *ngIf="discardChanges"></app-btn>
-  <app-btn mat-dialog-close [label]=" 'Cancel' "></app-btn>
+  <app-btn mat-dialog-close [label]=" 'Cancel' " [isCancel] = "true"></app-btn>
 </mat-dialog-actions>
 

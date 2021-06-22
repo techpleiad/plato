@@ -36,6 +36,9 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() propertyList: PropertyDetail[] = [];
   @Input() ownerList: string[] = [];
   @Input() cmp: string = "";
+  @Input() codemirrorMode = "YAML";
+  @Input() codemirrorHeight = "400px";
+  @Input() codemirrorWidth = "100%";
 
   
 
@@ -75,14 +78,24 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     this.codemirror = CodeMirror.fromTextArea(document.getElementById(`${this.prefix}${this.id}`) as HTMLTextAreaElement,
       this.CODEMIRROR_CONFIG
       );
-      this.codemirror.setSize('100%', '430px');
+      this.codemirror.setSize('100%', '400px');
       
+
       this.codemirror.refresh();
+      if(this.codemirror){
+        this._colorService.reset();
+        if(this.content!=="")
+        this.update();
+      }
   }
   ngOnChanges(changes: SimpleChanges): void {
-
     console.log("something changed");
     console.log(changes);
+
+    if(this.codemirrorMode==="JSON"){
+      this._codemirrorService.editor = CodeEditor.JSON;
+    }
+    
     //console.log(this.ownerList);
     this.content = this.content || "";
     this.profileColorList = [];
@@ -97,6 +110,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
 
   private update(): void{
     const jsonObject = yaml.parse(this.content);
+    console.log(jsonObject);
     //console.log("This is content")
    // console.log(this.content);
     
@@ -120,12 +134,12 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     //console.log(this.propertyList);
 
     setTimeout(() => {
-      this._codemirrorService.showEditor();
+      this._codemirrorService.showEditor(this.codemirrorHeight,this.codemirrorWidth);
       setTimeout(() => {
         this._codemirrorService.updateCodeMirrorVisual(this.profileColorList, this.propertyList, jsonObject,`${this.prefix}${this.id}-container`);
         //this.SUGGESTED_LIST = this.codemirrorService.findSuggestedPropertyList('');
       }, 200);
-    }, 500);
+    }, 1000);
     
   }
   get prefix(): string {
