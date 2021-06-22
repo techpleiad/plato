@@ -40,8 +40,6 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() codemirrorHeight = "400px";
   @Input() codemirrorWidth = "100%";
 
-  
-
   private codemirror: any;
 
   SPACES_TO_ONE_TAB = 2;
@@ -78,9 +76,8 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     this.codemirror = CodeMirror.fromTextArea(document.getElementById(`${this.prefix}${this.id}`) as HTMLTextAreaElement,
       this.CODEMIRROR_CONFIG
       );
-      this.codemirror.setSize('100%', '400px');
-      
 
+      this.codemirror.setSize('100%', '400px');
       this.codemirror.refresh();
       if(this.codemirror){
         this._colorService.reset();
@@ -95,7 +92,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     if(this.codemirrorMode==="JSON"){
       this._codemirrorService.editor = CodeEditor.JSON;
     }
-    
+
     //console.log(this.ownerList);
     this.content = this.content || "";
     this.profileColorList = [];

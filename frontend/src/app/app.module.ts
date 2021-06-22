@@ -68,6 +68,7 @@ import { RulesSchemaComponent } from './rules-schema/rules-schema.component';
     PageNotFoundComponent,
     AddFilterRulesComponent,
     RulesSchemaComponent
+
   ],
   imports: [
     BrowserModule,
