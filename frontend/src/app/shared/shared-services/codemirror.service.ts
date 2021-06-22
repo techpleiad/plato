@@ -34,7 +34,7 @@ export class CodemirrorService {
   }
 
   //// This func sets the content according to the Editor Type
-  mergeEditorConstruct(codemirrorTextArea: any, configuration: any, data: any, codemirrorId: any): void {
+  mergeEditorConstruct(codemirrorTextArea: any, configuration: any, data: any, codemirrorId: any, cmp: string): void {
 
     configuration.foldGutter = false;
     configuration.readOnly = true;
@@ -49,7 +49,7 @@ export class CodemirrorService {
     });
     
     this._mergeEditor.on('update', (instance: any) => {
-      this.onScrollCodemirrorUpdate(codemirrorId);
+      this.onScrollCodemirrorUpdate(codemirrorId,cmp);
     });
     
 
@@ -82,7 +82,7 @@ export class CodemirrorService {
     this._breadcrumbEditorLine = line;
   }
 
-  updateCodeMirrorVisual(profileData: ProfileDataTO[], propertyList: PropertyDetail[], jsonObject: any, codemirrorId: string): void {
+  updateCodeMirrorVisual(profileData: ProfileDataTO[], propertyList: PropertyDetail[], jsonObject: any, codemirrorId: string,cmp: string): void {
     
     this._mergeEditor.refresh();
     this._lineToDivMapper = new Map();
@@ -109,10 +109,10 @@ export class CodemirrorService {
       }
     }
     this._profileMapper = profileMapper;
-    this.onScrollCodemirrorUpdate(codemirrorId);
+    this.onScrollCodemirrorUpdate(codemirrorId,cmp);
   }
 
-  private onScrollCodemirrorUpdate(codemirrorId: string): void {
+  private onScrollCodemirrorUpdate(codemirrorId: string,cmp: string): void {
     // profileMapper => property to line number
     //get current lines property and map to the div
     //then for each property get the line number
@@ -139,15 +139,15 @@ export class CodemirrorService {
       });
     }
     //missing property -> actual line number -> 
-    let missingProp = "rest.client";
+    let missingProp = cmp;
     let missingLineNumber = this.propertyTolineBreadcrumbMap.get(missingProp);
     if(missingLineNumber){
       //console.log(`${missingLineNumber}`);
       let y = Number(`${missingLineNumber}`);
       //console.log(y);
       this.updateColor(this._lineToDivMapper.get(`${missingLineNumber}`), 'red');
-      this._mergeEditor.focus();
-      this._mergeEditor.setCursor({line: y-1, ch: 0});
+      //this._mergeEditor.focus();
+      //this._mergeEditor.setCursor({line: y-1, ch: 0});
     }
   }
 

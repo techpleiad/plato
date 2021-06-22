@@ -218,10 +218,6 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
   
 
-
-  setICP(ICP: any){
-    this.ICP = ICP;
-  }
   //////// SHOWING INCONSISTENT PROFILES ////////////////////
   showInconsistentProfiles(){
     let tempObject = {
@@ -264,6 +260,11 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.visibleProgressSpinner = false;
     });
   }
+  setICP(ICP: any){
+    this.ICP = ICP;
+  }
+
+
    ////////////// RESOLVING BRANCH INCONSISTENCY ////////////////
   modifySourceData(event: any){
     this.tempSourceData = event;
@@ -457,10 +458,28 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
   }
   populateMissingProperty(event: any){
+    // Removing the chosen missing property from the list.
+    let jsonDisplayData = yaml.parse(this.displayData);
     console.log(event);
+    //this.chosenMissingProperty = event;
     this.chosenMissingProperty = event;
+
+    let parentList = this.chosenMissingProperty.split(".");
+    let curr = jsonDisplayData;
+    for(let i=0;i<parentList.length-1;i++){
+      if(!curr[parentList[i]]){
+        curr[parentList[i]] = {};
+      }
+      curr = curr[parentList[i]];
+    }
+    curr[parentList[parentList.length-1]] = "";
+    console.log(jsonDisplayData);
+    this.displayData = JSON.stringify(jsonDisplayData,null,2);
+    console.log(this.displayData);
   }
   modifyProfileData(event: any){
-    console.log(event);
+    //// Here we keep on saving the changes. 
+    //console.log(event);
+    console.log("Modify Profile data");
   }
 }
