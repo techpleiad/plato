@@ -119,7 +119,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
     this.missingProperties = [];
     this.reqValidation = true;
-    
+
     this.setBranchProfileReq();
   }
   setBranchProfileReq(){
@@ -343,8 +343,8 @@ export class WorkspaceDialogueComponent implements OnInit {
     if(this.isBranchReq===true && this.branchValue===""){
       this.reqValidation = false;
     }
+
     if(this.canProfileDefault===false && this.isProfileReq===true && this.profileValue===""){
-      console.log("hello");
       this.reqValidation = false;
     }
     if(this.isBranch1Req===true && this.sourceBranchValue===""){

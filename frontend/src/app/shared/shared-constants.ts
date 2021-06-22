@@ -55,10 +55,13 @@ export const API_END_POINT = {
           URL: `${BASE_URL}${EndPoints.VERSION_SERVICES}`,
           METHOD: HTTP_METHOD.POST
         },
+<<<<<<< HEAD
         GET_RULES: {
             URL: `${BASE_URL}${EndPoints.VERSION_RULES}`,
             METHOD: HTTP_METHOD.GET
         }
+=======
+>>>>>>> 738c56aa5f2f90d1a0d87aea97398c4b5d1f3bf6
         
       }
 }
