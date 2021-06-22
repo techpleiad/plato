@@ -36,6 +36,8 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() ownerList: string[] = [];
   @Input() cmp: string = "";
   @Input() codemirrorMode = "YAML";
+  @Input() codemirrorHeight = "400px";
+  @Input() codemirrorWidth = "100%";
 
   
 
@@ -75,7 +77,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     this.codemirror = CodeMirror.fromTextArea(document.getElementById(`${this.prefix}${this.id}`) as HTMLTextAreaElement,
       this.CODEMIRROR_CONFIG
       );
-      this.codemirror.setSize('100%', '430px');
+      this.codemirror.setSize('100%', '400px');
       
 
       this.codemirror.refresh();
@@ -125,7 +127,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     //console.log(this.propertyList);
 
     setTimeout(() => {
-      this._codemirrorService.showEditor();
+      this._codemirrorService.showEditor(this.codemirrorHeight,this.codemirrorWidth);
       setTimeout(() => {
         this._codemirrorService.updateCodeMirrorVisual(this.profileColorList, this.propertyList, jsonObject,`${this.prefix}${this.id}-container`);
         //this.SUGGESTED_LIST = this.codemirrorService.findSuggestedPropertyList('');

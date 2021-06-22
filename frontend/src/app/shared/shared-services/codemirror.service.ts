@@ -65,9 +65,9 @@ export class CodemirrorService {
   }
 
   //// Showing the Editor
-  showEditor(): void {
+  showEditor(codemirrorHeight: string, codemirrorWidth: string): void {
     this._mergeEditor.setValue(this._content);
-    this._mergeEditor.setSize('100%', '400px');
+    this._mergeEditor.setSize(codemirrorWidth, codemirrorHeight);
     this._mergeEditor.refresh();
   }
 
