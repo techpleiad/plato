@@ -109,6 +109,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     const jsonObject = yaml.parse(this.content);
     //console.log("This is content")
    // console.log(this.content);
+   
     
     this._codemirrorService.mergeEditorConstruct(
       this.codemirror,

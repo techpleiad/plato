@@ -105,6 +105,7 @@ export class CodemirrorService {
       }
       case CodeEditor.YAML: {
         this.currentLineInEditor = YAML_PARSER.INITIAL_LINE;
+        if(jsonObject!==null)
         this.yamlLineReaderInObject('', jsonObject, profileMapper, YAML_PARSER);
         break;
       }
