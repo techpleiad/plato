@@ -1,4 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { CustomValidateDialogueComponent } from '../custom-validate-dialogue/custom-validate-dialogue.component';
 
 @Component({
   selector: 'app-add-filter-rules',
@@ -10,7 +12,7 @@ export class AddFilterRulesComponent implements OnInit {
   searchProperty: string = "";
   searchServices: string = "";
 
-  constructor() { }
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit(): void {
   }
@@ -21,6 +23,21 @@ export class AddFilterRulesComponent implements OnInit {
   filterServices(event: any){
     this.searchServices = event.target.value;
     this.filter_rules.emit({property:this.searchProperty,services:this.searchServices});
+  }
+  openCustomValidationDialog(){
+    const dialogRef = this.dialog.open(CustomValidateDialogueComponent,{
+      width: "600px",
+      minHeight: "300px"
+    });
+
+    dialogRef.afterClosed().subscribe((result: any)=>{
+      if(result){
+        console.log(result);
+      }
+      else{
+        console.log("null value");
+      }
+    });
   }
 
 }

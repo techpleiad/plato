@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { RulesSchemaComponent } from '../rules-schema/rules-schema.component';
-import { CustomValidateDialogueComponent } from '../custom-validate-dialogue/custom-validate-dialogue.component';
 import { rulesTemplate } from '../rulesTemplate';
 import { RulesDataService } from '../shared/shared-services/rules-data.service';
 
@@ -94,22 +93,6 @@ export class RulesComponent implements OnInit {
     
     this.dataSource = filteredServices;
 
-  }
-
-  openCustomValidationDialog(){
-    const dialogRef = this.dialog.open(CustomValidateDialogueComponent,{
-      width: "600px",
-      minHeight: "300px"
-    });
-
-    dialogRef.afterClosed().subscribe((result: any)=>{
-      if(result){
-        console.log(result);
-      }
-      else{
-        console.log("null value");
-      }
-    });
   }
 
 }
