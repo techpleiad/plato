@@ -20,12 +20,15 @@
   <!-- Showing the contents accordingly -->
   <div fxLayout="row">
 
-    <app-custom-codemirror fxFlex [content]="displayData" [id]=" 'custom' " 
+    
+    <app-custom-codemirror [content]="displayData" [id]=" 'custom' " 
     [propertyList]="propertyList" [ownerList]="ownerList" 
     [cmp]="chosenMissingProperty"
     (modifyProfileData) = "modifyProfileData($event)"
-     *ngIf="!isBranchConsistency">
+    *ngIf="!isBranchConsistency" fxFlex>
     </app-custom-codemirror>
+    
+    
 
     <app-dropdown [dropdownList]="missingProperties" [label]=" 'Missing Properties' " (change)="populateMissingProperty($event)"   *ngIf="missingProperties.length>0"></app-dropdown>
     <!--<app-custom-codemirror fxFlex [content]="displayData2" [id]=" 'custom2' " [propertyList]="propertyList" [ownerList]="ownerList" [differenceProperties]="differenceProperties" *ngIf="isBranch2Req"></app-custom-codemirror>-->

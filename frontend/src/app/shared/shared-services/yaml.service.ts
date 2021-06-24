@@ -17,20 +17,22 @@ export class YamlService {
 
   replaceAll = (data: string, search: string, replace: string) => data.split(search).join(replace);
 
-  validateYAML(file: File, content: string): boolean {
+  validateYAML(content: string): boolean {
     try {
       yaml.load(content);
-      this.profileErrorMessage.delete(file.name);
+      //this.profileErrorMessage.delete(file.name);
+      console.log("correct editing");
       return true;
     }
     catch (e) {
-      this.profileErrorMessage.set(file.name, e.message);
+      console.log(e.message);
+      //this.profileErrorMessage.set(e.message);
     }
     return false;
   }
 
-  updateCssValidate(divStatus: any, file: File, content: string): void {
-    if (this.validateYAML(file, content)) {
+  updateCssValidate(divStatus: any, content: string): void {
+    if (this.validateYAML(content)) {
       this.toggleValidInValid(divStatus, 'bg-warning', 'bg-success');
     }
     else {

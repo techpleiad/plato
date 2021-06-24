@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CustomValidateDialogueComponent } from '../custom-validate-dialogue/custom-validate-dialogue.component';
+import { JsonSchemaWriterComponent } from '../json-schema-writer/json-schema-writer.component';
 
 @Component({
   selector: 'app-add-filter-rules',
@@ -37,6 +38,12 @@ export class AddFilterRulesComponent implements OnInit {
       else{
         console.log("null value");
       }
+    });
+  }
+  openJsonSchemaEditor(){
+    const dialogRef = this.dialog.open(JsonSchemaWriterComponent,{
+      width: "600px",
+      minHeight: "300px"
     });
   }
 

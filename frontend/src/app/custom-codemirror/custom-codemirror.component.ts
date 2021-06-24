@@ -17,6 +17,7 @@ import { CodeEditor } from '../shared/shared-services/codemirror.config';
 import { ProfileSpecTO, PropertyDetail } from '../shared/models/ProfileSpecTO';
 import { ColorProviderService } from '../shared/shared-services/color-provider.service';
 import { ProfileDataTO } from '../shared/models/ProfileDataTO';
+import { YamlService } from '../shared/shared-services/yaml.service';
 
 
 
@@ -65,7 +66,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     autofocus: true
   };
 
-  constructor(private _codemirrorService: CodemirrorService, private _colorService: ColorProviderService) {
+  constructor(private _codemirrorService: CodemirrorService, private _colorService: ColorProviderService, private yamlFileService: YamlService) {
     this.SPACE_REPLACE = ' '.repeat(this.SPACES_TO_ONE_TAB);
     this._codemirrorService.editor = CodeEditor.YAML;
   }
@@ -84,6 +85,13 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
         if(this.content!=="")
         this.update();
       }
+      this.codemirror.on('change',(editor: any)=>{
+        //console.log(editor.getValue());
+        console.log("event emitted");
+        const divStatus = document.getElementById('profile-expand-status');
+        this.yamlFileService.updateCssValidate(divStatus,editor.getValue());
+        this.modifyProfileData.emit(editor.getValue());
+      })
   }
   ngOnChanges(changes: SimpleChanges): void {
     //console.log("something changed");
@@ -118,11 +126,6 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       `${this.prefix}${this.id}-container`,
       this.cmp
     );
-
-    this.codemirror.on('change',(editor: any)=>{
-      //console.log(editor.getValue());
-      this.modifyProfileData.emit(editor.getValue());  
-    })
 
     this.profileColorList = [];
     this.profileColorList = this.ownerList.map((val:string)=>{

@@ -7,10 +7,12 @@ import { ProfileAggregatorService } from '../shared/shared-services/profile-aggr
 import { SprimeraFilesService } from '../shared/shared-services/sprimera-files.service';
 import * as diff from 'deep-diff'
 import * as yaml from 'yaml';
+import * as js_yaml from 'js-yaml';
 import { CapService } from '../shared/shared-services/cap.service';
 import { ResolveBranchInconsistencyService } from '../shared/shared-services/resolve-branch-inconsistency.service';
 import { WarningDialogComponent } from '../shared/shared-components/warning-dialog/warning-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Y } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-workspace-dialogue',
@@ -523,3 +525,4 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
   }
 }
+
