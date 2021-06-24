@@ -25,7 +25,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatTableModule} from '@angular/material/table';
 
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DisplayServicesComponent } from './display-services/display-services.component';
 import { WorkspaceDialogueComponent } from './workspace-dialogue/workspace-dialogue.component';
 import { ContentDisplayComponent } from './content-display/content-display.component';
@@ -47,6 +47,7 @@ import { ConsistencyAcrossProfileDialogueComponent } from './consistency-across-
 import { HomeComponent } from './home/home.component';
 import { RulesComponent } from './rules/rules.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { CustomValidateDialogueComponent } from './custom-validate-dialogue/custom-validate-dialogue.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -62,7 +63,8 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     ConsistencyAcrossProfileDialogueComponent,
     HomeComponent,
     RulesComponent,
-    PageNotFoundComponent
+    PageNotFoundComponent,
+    CustomValidateDialogueComponent
   ],
   imports: [
     BrowserModule,
@@ -80,6 +82,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
     MatSelectModule,
     MatInputModule,
     FormsModule,
+    ReactiveFormsModule,
     MatProgressSpinnerModule,
     FlexLayoutModule,
     SharedComponentsModule,

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { CustomValidateDialogueComponent } from '../custom-validate-dialogue/custom-validate-dialogue.component';
 import { rulesTemplate } from '../rulesTemplate';
 import { RulesDataService } from '../shared/shared-services/rules-data.service';
 
@@ -30,7 +32,7 @@ export class RulesComponent implements OnInit {
   displayedColumns = ['position', 'property', 'services', 'branches', 'profiles'];
 
 
-  constructor(private _rulesDataService: RulesDataService) {}
+  constructor(private _rulesDataService: RulesDataService, public dialog: MatDialog) {}
 
   // If branches/profiles empty --> include all the branches/profiles.
   ngOnInit(): void {
@@ -51,6 +53,22 @@ export class RulesComponent implements OnInit {
     console.log(this.rulesList[rule.position-1])
     //accessing the rule from the position and send it to other window. 
     //---> send(ruleList[position-1]).
+  }
+
+  openCustomValidationDialog(){
+    const dialogRef = this.dialog.open(CustomValidateDialogueComponent,{
+      width: "600px",
+      minHeight: "300px"
+    });
+
+    dialogRef.afterClosed().subscribe((result: any)=>{
+      if(result){
+        console.log(result);
+      }
+      else{
+        console.log("null value");
+      }
+    });
   }
 
 }
