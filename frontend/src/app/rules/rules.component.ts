@@ -47,6 +47,18 @@ export class RulesComponent implements OnInit {
             position = position+1;
             return new RuleDisplay(position,val.ruleOnProperty,val.scope.services,val.scope.branches,val.scope.profiles);
           })
+          // putting "ALL" in case of empty list.
+          for(let i=0;i<this.dataSource.length;i++){
+            if(this.dataSource[i].services.length===0){
+              this.dataSource[i].services.push("ALL");
+            }
+            if(this.dataSource[i].branches.length===0){
+              this.dataSource[i].branches.push("ALL");
+            }
+            if(this.dataSource[i].profiles.length===0){
+              this.dataSource[i].profiles.push("ALL");
+            }
+          }
           this.dataSourceAll = this.dataSource;
           console.log(this.dataSource);
         });
