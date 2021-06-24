@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
 import * as CodeMirror from 'codemirror';
 import { CodemirrorService } from '../shared/shared-services/codemirror.service';
 import * as yaml from 'yaml';
@@ -26,6 +26,7 @@ import { ProfileDataTO } from '../shared/models/ProfileDataTO';
   styleUrls: ['./custom-codemirror.component.css']
 })
 export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChanges {
+  @Output() modifyProfileData = new EventEmitter()
 
   static get Prefix(): string {
     return "codemirror-";
@@ -85,8 +86,8 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       }
   }
   ngOnChanges(changes: SimpleChanges): void {
-    console.log("something changed");
-    console.log(changes);
+    //console.log("something changed");
+    //console.log(changes);
 
     if(this.codemirrorMode==="JSON"){
       this._codemirrorService.editor = CodeEditor.JSON;
@@ -106,27 +107,34 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
 
   private update(): void{
     const jsonObject = yaml.parse(this.content);
-    console.log(jsonObject);
     //console.log("This is content")
    // console.log(this.content);
+   
     
     this._codemirrorService.mergeEditorConstruct(
       this.codemirror,
       JSON.parse(JSON.stringify(this.CODEMIRROR_CONFIG)),
       jsonObject,
-      `${this.prefix}${this.id}-container`
+      `${this.prefix}${this.id}-container`,
+      this.cmp
     );
+
+    this.codemirror.on('change',(editor: any)=>{
+      //console.log(editor.getValue());
+      this.modifyProfileData.emit(editor.getValue());  
+    })
+
     this.profileColorList = [];
     this.profileColorList = this.ownerList.map((val:string)=>{
       return new ProfileDataTO(val,this._colorService.getColor());
     })
-    console.log(this.profileColorList);
+    //console.log(this.profileColorList);
     //console.log(this.propertyList);
 
     setTimeout(() => {
       this._codemirrorService.showEditor(this.codemirrorHeight,this.codemirrorWidth);
       setTimeout(() => {
-        this._codemirrorService.updateCodeMirrorVisual(this.profileColorList, this.propertyList, jsonObject,`${this.prefix}${this.id}-container`);
+        this._codemirrorService.updateCodeMirrorVisual(this.profileColorList, this.propertyList, jsonObject,`${this.prefix}${this.id}-container`,this.cmp);
         //this.SUGGESTED_LIST = this.codemirrorService.findSuggestedPropertyList('');
       }, 200);
     }, 1000);

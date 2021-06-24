@@ -143,11 +143,32 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
   }
   setBranch(branchValue: any){
-    this.branchValue = branchValue;
-    if(this.functionValue === "consistency across profile"){
-      this.showInconsistentProfiles();
-      this.visibleProgressSpinner = true;
+    if(this.keepChanges===true || this.MRDocuments.length>0){
+      const dialogRef = this.dialog.open(WarningDialogComponent,this.WARNING_DIALOG_PARAM);
+      
+      dialogRef.afterClosed().subscribe(result=>{
+        if(result==="yes"){
+          this.branchValue = branchValue;
+          this.MRDocuments = [];
+          this.sendMR = false;
+          this.discardChangesClicked();
+          this.showInconsistentProfiles();
+          this.visibleProgressSpinner = true;
+          
+        }
+        else{
+          console.log("Branch should not be changed");
+        }
+      });
     }
+    else{
+      this.branchValue = branchValue;
+      if(this.functionValue === "consistency across profile"){
+        this.showInconsistentProfiles();
+        this.visibleProgressSpinner = true;
+      }
+    }
+    
   }
 
   setDestinationBranch(branchValue: any){
@@ -218,12 +239,9 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
   
 
-
-  setICP(ICP: any){
-    this.ICP = ICP;
-  }
   //////// SHOWING INCONSISTENT PROFILES ////////////////////
   showInconsistentProfiles(){
+    this.missingProperties = [];
     let tempObject = {
       "services": [
           this.mservice.service
@@ -264,6 +282,11 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.visibleProgressSpinner = false;
     });
   }
+  setICP(ICP: any){
+    this.ICP = ICP;
+  }
+
+
    ////////////// RESOLVING BRANCH INCONSISTENCY ////////////////
   modifySourceData(event: any){
     this.tempSourceData = event;
@@ -272,6 +295,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.sendMR = false;
   }
   keepChangesClicked(){
+    
     this.sourceData = this.tempSourceData;
     this.tempSourceData = "";
     //console.log(this.sourceData);
@@ -281,17 +305,34 @@ export class WorkspaceDialogueComponent implements OnInit {
 
     let found = false;
     for(let i=0;i<this.MRDocuments.length;i++){
-      if(this.MRDocuments[i].profile===this.profileValue){
-        this.MRDocuments[i].document = this.sourceData;
-        found = true;
+      if(this.isBranchConsistency){
+        if(this.MRDocuments[i].profile===this.profileValue){
+          this.MRDocuments[i].document = this.sourceData;
+          found = true;
+        }
+      }
+      else if(this.isProfileConsistency){
+        if(this.MRDocuments[i].profile===this.ICP){
+          this.MRDocuments[i].document = this.sourceData;
+          found = true;
+        }
       }
     }
     if(found===false){
-      this.MRDocuments.push({
-        "branch": this.sourceBranchValue,
-        "profile": this.profileValue,
-        "document": this.sourceData
-      })
+      if(this.isBranchConsistency){
+        this.MRDocuments.push({
+          "branch": this.sourceBranchValue,
+          "profile": this.profileValue,
+          "document": this.sourceData
+        })
+      }
+      else if(this.isProfileConsistency){
+        this.MRDocuments.push({
+          "branch": this.branchValue,
+          "profile": this.ICP,
+          "document": this.sourceData
+        })
+      }
     }
     console.log(this.MRDocuments);
     let simpleSnackBarRef = this._snackBar.open("changes saved locally");
@@ -306,20 +347,32 @@ export class WorkspaceDialogueComponent implements OnInit {
     if(this.MRDocuments.length>0){
       this.sendMR = true;
     }
+    if(this.isBranchConsistency)
     this.sendToCodeMirror();
   }
   sendMergeRequest(){
     this.visibleProgressSpinner = true;
-    let body = {
-      "service": this.mservice.service,
-      "branch": this.sourceBranchValue,
-      "documents": this.MRDocuments
+    let body: any;
+    if(this.isBranchConsistency){
+      body = {
+        "service": this.mservice.service,
+        "branch": this.sourceBranchValue,
+        "documents": this.MRDocuments
+      }
+    }
+    else if(this.isProfileConsistency){
+      body = {
+        "service": this.mservice.service,
+        "branch": this.branchValue,
+        "documents": this.MRDocuments
+      }
     }
     console.log(body);
     this._resolveBranchInconsistency.sendMergeRequest(body).subscribe((data:any)=>{
       let responseList = data[0].split("\n");
       let mergeRequestMail = (responseList[2].trim()); // corresponds to email of the merge request.
       this.visibleProgressSpinner = false;
+      this.MRDocuments = [];
       let simpleSnackBarRef = this._snackBar.open("Sent Merge Request","View");
       setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 100000);
       simpleSnackBarRef.onAction().subscribe(()=> {
@@ -445,8 +498,9 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
     //// CONSISTENCY ACROSS PROFILES
     else if(this.functionValue==="consistency across profile"){
-      this._configFiles.getFile(this.mservice.service,"individual",this.branchValue,this.profileValue)
+      this._configFiles.getFile(this.mservice.service,"individual",this.branchValue,this.ICP)
       .subscribe(data => {
+        console.log(data);
         this.visibleProgressSpinner = false;
         this.propertyList = [];
         this.ownerList = [];
@@ -457,7 +511,32 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
   }
   populateMissingProperty(event: any){
+    // Removing the chosen missing property from the list.
+    let jsonDisplayData = yaml.parse(this.displayData);
     console.log(event);
+    //this.chosenMissingProperty = event;
     this.chosenMissingProperty = event;
+
+    let parentList = this.chosenMissingProperty.split(".");
+    let curr = jsonDisplayData;
+    for(let i=0;i<parentList.length-1;i++){
+      if(!curr[parentList[i]]){
+        curr[parentList[i]] = {};
+      }
+      curr = curr[parentList[i]];
+    }
+    curr[parentList[parentList.length-1]] = "";
+    console.log(jsonDisplayData);
+    this.displayData = JSON.stringify(jsonDisplayData,null,2);
+    console.log(this.displayData);
+    this.keepChanges = true;
+    this.discardChanges = true;
+    this.sendMR = false;
+  }
+  modifyProfileData(event: any){
+    if(this.chosenMissingProperty!==""){
+      this.tempSourceData = event;
+      console.log("Modify Profile data");
+    }
   }
 }

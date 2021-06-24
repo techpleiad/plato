@@ -11,7 +11,7 @@ import { PropertyDetail } from '../models/ProfileSpecTO';
 export class CodemirrorService {
 
   private lineToPropertyBreadcrumbMap: any;
-  private propertyTolineBreadcrumbMap: any;
+  private propertyTolineBreadcrumbMap = new Map();
   private _breadcrumbEditorLine = -1;
   private currentLineInEditor = 0;
   private _mergeEditor: any;
@@ -34,7 +34,7 @@ export class CodemirrorService {
   }
 
   //// This func sets the content according to the Editor Type
-  mergeEditorConstruct(codemirrorTextArea: any, configuration: any, data: any, codemirrorId: any): void {
+  mergeEditorConstruct(codemirrorTextArea: any, configuration: any, data: any, codemirrorId: any, cmp: string): void {
 
     configuration.foldGutter = false;
     configuration.readOnly = true;
@@ -49,7 +49,7 @@ export class CodemirrorService {
     });
     
     this._mergeEditor.on('update', (instance: any) => {
-      this.onScrollCodemirrorUpdate(codemirrorId);
+      this.onScrollCodemirrorUpdate(codemirrorId,cmp);
     });
     
 
@@ -59,7 +59,10 @@ export class CodemirrorService {
         break;
       }
       case CodeEditor.YAML: {
+        console.log(data);
+        //YAML_PRETTIER.scalarOptions.str.defaultType  = 'PLAIN';
         this._content = YAML_PRETTIER.stringify(data);
+        console.log(this._content);
       }
     }
   }
@@ -83,7 +86,7 @@ export class CodemirrorService {
     this._breadcrumbEditorLine = line;
   }
 
-  updateCodeMirrorVisual(profileData: ProfileDataTO[], propertyList: PropertyDetail[], jsonObject: any, codemirrorId: string): void {
+  updateCodeMirrorVisual(profileData: ProfileDataTO[], propertyList: PropertyDetail[], jsonObject: any, codemirrorId: string,cmp: string): void {
     
     this._mergeEditor.refresh();
     this._lineToDivMapper = new Map();
@@ -105,16 +108,20 @@ export class CodemirrorService {
       }
       case CodeEditor.YAML: {
         this.currentLineInEditor = YAML_PARSER.INITIAL_LINE;
+        if(jsonObject!==null)
         this.yamlLineReaderInObject('', jsonObject, profileMapper, YAML_PARSER);
         break;
       }
     }
     this._profileMapper = profileMapper;
-    this.onScrollCodemirrorUpdate(codemirrorId);
+    this.onScrollCodemirrorUpdate(codemirrorId,cmp);
   }
 
-  private onScrollCodemirrorUpdate(codemirrorId: string): void {
-
+  private onScrollCodemirrorUpdate(codemirrorId: string,cmp: string): void {
+    // profileMapper => property to line number
+    //get current lines property and map to the div
+    //then for each property get the line number
+    //
     const parent = document.getElementById(codemirrorId);
     const lineElements = parent?.getElementsByClassName('CodeMirror-linenumber CodeMirror-gutter-elt');
     if (lineElements) {
@@ -135,6 +142,17 @@ export class CodemirrorService {
       this._profileData.forEach((profile, index) => {
         this.updateColor(document.getElementById(`side-bar-${index}`), profile.color.color);
       });
+    }
+    //missing property -> actual line number -> 
+    let missingProp = cmp;
+    let missingLineNumber = this.propertyTolineBreadcrumbMap.get(missingProp);
+    if(missingLineNumber){
+      //console.log(`${missingLineNumber}`);
+      let y = Number(`${missingLineNumber}`);
+      //console.log(y);
+      this.updateColor(this._lineToDivMapper.get(`${missingLineNumber}`), 'red');
+      //this._mergeEditor.focus();
+      //this._mergeEditor.setCursor({line: y-1, ch: 0});
     }
   }
 
