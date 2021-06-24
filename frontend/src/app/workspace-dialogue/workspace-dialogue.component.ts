@@ -534,13 +534,8 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.sendMR = false;
   }
   modifyProfileData(event: any){
-    //// Here we keep on saving the changes. 
-    //console.log(event);
     if(this.chosenMissingProperty!==""){
       this.tempSourceData = event;
-      //this.keepChanges = true;
-      //this.discardChanges = true;
-      //this.sendMR = false;
       console.log("Modify Profile data");
     }
   }

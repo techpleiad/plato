@@ -59,7 +59,10 @@ export class CodemirrorService {
         break;
       }
       case CodeEditor.YAML: {
+        console.log(data);
+        //YAML_PRETTIER.scalarOptions.str.defaultType  = 'PLAIN';
         this._content = YAML_PRETTIER.stringify(data);
+        console.log(this._content);
       }
     }
   }
