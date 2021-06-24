@@ -44,16 +44,17 @@ export class WorkspaceDialogueComponent implements OnInit {
   sourceData!: string;
   MRDocuments: any[] = [];
   isBranchConsistency = false;
+
+  // Consistency variables 
   keepChanges = false;
   discardChanges = false;
   sendMR = false;
 
   // Variables for consistency across profile
+  isProfileConsistency = false;  
   inconsistentProfileProperties = new Map();
-  missingProperties: any[] = [];
-  isProfileConsistency = false;
-
   inconsistentProfiles: string[] = [];
+  missingProperties: any[] = [];
   ICP: string = "";
   chosenMissingProperty: string = "";
 
@@ -68,9 +69,9 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   visibleProgressSpinner = false;
   showBtn = false;
-  reqValidation = true;
+  reqValidation = true; // No error msg
   
-///////////////////////////////////  FUNCTIONS   //////////////////////////////////////
+  // Consructor initialize branches and profiles.
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService,@Inject('WARNING_DIALOG_PARAM') private WARNING_DIALOG_PARAM: any, private _configFiles: ConfigFilesService, 
   private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService,
   private _capService: CapService, private _resolveBranchInconsistency: ResolveBranchInconsistencyService,
@@ -94,9 +95,8 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
   setFunction(functionValue: any){
     this.functionValue = functionValue;
-    if(this.functionValue!==""){
-      this.showBtn = true;
-    }
+    this.showBtn = true;
+
     this.isBranchReq = false;
     this.isProfileReq = false;
     this.canProfileDefault = false;
@@ -127,34 +127,35 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.isBranchReq = true;
       this.isProfileReq = true;
     }
-
     if(this.functionValue==="consistency across branch"){
       this.isBranch1Req = true;
       this.isBranch2Req = true;
       this.isProfileReq = true;
     }
-  
     if(this.functionValue==="show individual file" || this.functionValue==="consistency across branch"){
       this.canProfileDefault = true;
     }
     if(this.functionValue==="consistency across profile"){
       this.isBranchReq = true;
-      this.branchValue = "";
+      this.branchValue = ""; //branch is unset, want inconsistent profiles acc to branch.
     }
   }
   setBranch(branchValue: any){
+    // cannot change branch directly in case of profile consistency function.
     if(this.keepChanges===true || this.MRDocuments.length>0){
       const dialogRef = this.dialog.open(WarningDialogComponent,this.WARNING_DIALOG_PARAM);
       
       dialogRef.afterClosed().subscribe(result=>{
         if(result==="yes"){
           this.branchValue = branchValue;
+          this.ICP = "";
+
           this.MRDocuments = [];
-          this.sendMR = false;
+          this.sendMR = false
+
           this.discardChangesClicked();
           this.showInconsistentProfiles();
-          this.visibleProgressSpinner = true;
-          
+          this.visibleProgressSpinner = true; 
         }
         else{
           console.log("Branch should not be changed");
@@ -214,7 +215,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     
   }
   setProfile(profileValue: any){
-    
+    // profile cannot be changed directly in case of branch consistency function.
     if(this.functionValue==="consistency across branch" && this.keepChanges===true){
       const dialogRef = this.dialog.open(WarningDialogComponent,this.WARNING_DIALOG_PARAM);
       
@@ -226,23 +227,18 @@ export class WorkspaceDialogueComponent implements OnInit {
         }
         else{
           console.log("profile should not be changed");
-          console.log(this.profileValue);
         }
       });
-      //alert("Your changes will be lost");
-      //if discard changes then make keepChanges = false;
-      //else do not change the profile
     }
     else{
       this.profileValue = profileValue;
     }
   }
   
-
   //////// SHOWING INCONSISTENT PROFILES ////////////////////
   showInconsistentProfiles(){
     this.missingProperties = [];
-    let tempObject = {
+    let profileAPIObject = {
       "services": [
           this.mservice.service
       ],
@@ -254,8 +250,7 @@ export class WorkspaceDialogueComponent implements OnInit {
           ]
       }
     }
-    this._capService.getReport(this.branchValue,tempObject).subscribe((data: any[])=>{
-      console.log(data[0]);
+    this._capService.getReport(this.branchValue,profileAPIObject).subscribe((data: any[])=>{
       let actual_content = JSON.parse(JSON.stringify(data[0]));
 
       // Making the list of inconsistent profiles
@@ -264,10 +259,7 @@ export class WorkspaceDialogueComponent implements OnInit {
         let missingProperties = (actual_content["missingProperty"][i]["properties"]);
         this.inconsistentProfileProperties.set(profile,missingProperties);
       }
-      console.log("Incosistent Profile Properties Map");
-      console.log(this.inconsistentProfileProperties);
       this.inconsistentProfiles = Array.from( this.inconsistentProfileProperties.keys() );
-      console.log(this.inconsistentProfiles);
       this.visibleProgressSpinner = false;
 
       if(this.inconsistentProfiles.length>0){
@@ -278,14 +270,40 @@ export class WorkspaceDialogueComponent implements OnInit {
         this.ownerList = [];
         this.displayData = "All profiles are consistent."
       }
-
-      this.visibleProgressSpinner = false;
     });
   }
   setICP(ICP: any){
     this.ICP = ICP;
   }
+  populateMissingProperty(event: any){
+    // Removing the chosen missing property from the list.
+    let jsonDisplayData = yaml.parse(this.displayData);
+    console.log(event);
+    //this.chosenMissingProperty = event;
+    this.chosenMissingProperty = event;
 
+    let parentList = this.chosenMissingProperty.split(".");
+    let curr = jsonDisplayData;
+    for(let i=0;i<parentList.length-1;i++){
+      if(!curr[parentList[i]]){
+        curr[parentList[i]] = {};
+      }
+      curr = curr[parentList[i]];
+    }
+    curr[parentList[parentList.length-1]] = "";
+    console.log(jsonDisplayData);
+    this.displayData = JSON.stringify(jsonDisplayData,null,2);
+    console.log(this.displayData);
+    this.keepChanges = true;
+    this.discardChanges = true;
+    this.sendMR = false;
+  }
+  modifyProfileData(event: any){
+    if(this.chosenMissingProperty!==""){
+      this.tempSourceData = event;
+      console.log("Modify Profile data");
+    }
+  }
 
    ////////////// RESOLVING BRANCH INCONSISTENCY ////////////////
   modifySourceData(event: any){
@@ -298,10 +316,8 @@ export class WorkspaceDialogueComponent implements OnInit {
     
     this.sourceData = this.tempSourceData;
     this.tempSourceData = "";
-    //console.log(this.sourceData);
     this.keepChanges = false;
     this.discardChanges = false;
-    //switch off the keep changes button.
 
     let found = false;
     for(let i=0;i<this.MRDocuments.length;i++){
@@ -334,7 +350,6 @@ export class WorkspaceDialogueComponent implements OnInit {
         })
       }
     }
-    console.log(this.MRDocuments);
     let simpleSnackBarRef = this._snackBar.open("changes saved locally");
     setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 3000);
     this.sendMR = true;
@@ -349,6 +364,10 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
     if(this.isBranchConsistency)
     this.sendToCodeMirror();
+    if(this.isProfileConsistency===true && this.ICP!==""){
+      //when branch is changed we dont have ICP so we cannot send to codemirror.
+      this.sendToCodeMirror();
+    }
   }
   sendMergeRequest(){
     this.visibleProgressSpinner = true;
@@ -367,7 +386,6 @@ export class WorkspaceDialogueComponent implements OnInit {
         "documents": this.MRDocuments
       }
     }
-    console.log(body);
     this._resolveBranchInconsistency.sendMergeRequest(body).subscribe((data:any)=>{
       let responseList = data[0].split("\n");
       let mergeRequestMail = (responseList[2].trim()); // corresponds to email of the merge request.
@@ -387,7 +405,6 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.visibleProgressSpinner = false;
     }
     );
-    
     this.sendMR = false;
   }
 
@@ -411,8 +428,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
     if(this.reqValidation === true){
       this.sendToCodeMirror();
-    }
-    
+    } 
   }
   /////////////////// SENDING DATA TO CODEMIRROR ////////////////
   sendToCodeMirror(){
@@ -435,7 +451,6 @@ export class WorkspaceDialogueComponent implements OnInit {
         this.visibleProgressSpinner = false;
         this.displayData = data;
       });
-      
     }
  
     // SPIMERA
@@ -482,7 +497,7 @@ export class WorkspaceDialogueComponent implements OnInit {
           }
         }
         if(found===false){
-          console.log("getting source data");
+          console.log("getting source data from API");
           this._configFiles.getFile(this.mservice.service,this.functionValue, this.sourceBranchValue,this.profileValue)
           .subscribe(data2 => {  
             this.visibleProgressSpinner = false;
@@ -490,11 +505,8 @@ export class WorkspaceDialogueComponent implements OnInit {
             console.log(data2);
           });
         }
-
-
         this.displayData = data;
-      });
-      
+      }); 
     }
     //// CONSISTENCY ACROSS PROFILES
     else if(this.functionValue==="consistency across profile"){
@@ -508,35 +520,6 @@ export class WorkspaceDialogueComponent implements OnInit {
         this.missingProperties = this.inconsistentProfileProperties.get(this.ICP);
       });
       
-    }
-  }
-  populateMissingProperty(event: any){
-    // Removing the chosen missing property from the list.
-    let jsonDisplayData = yaml.parse(this.displayData);
-    console.log(event);
-    //this.chosenMissingProperty = event;
-    this.chosenMissingProperty = event;
-
-    let parentList = this.chosenMissingProperty.split(".");
-    let curr = jsonDisplayData;
-    for(let i=0;i<parentList.length-1;i++){
-      if(!curr[parentList[i]]){
-        curr[parentList[i]] = {};
-      }
-      curr = curr[parentList[i]];
-    }
-    curr[parentList[parentList.length-1]] = "";
-    console.log(jsonDisplayData);
-    this.displayData = JSON.stringify(jsonDisplayData,null,2);
-    console.log(this.displayData);
-    this.keepChanges = true;
-    this.discardChanges = true;
-    this.sendMR = false;
-  }
-  modifyProfileData(event: any){
-    if(this.chosenMissingProperty!==""){
-      this.tempSourceData = event;
-      console.log("Modify Profile data");
     }
   }
 }
