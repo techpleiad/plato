@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { branchConsistency } from 'src/app/branchConsistency';
+import { customValidate } from 'src/app/customValidate';
 import { microService } from 'src/app/microService';
 import { profileConsistency } from 'src/app/profileConsistency';
 import * as yaml from 'yaml';
@@ -39,6 +40,11 @@ export class DataManagerService {
   sendProfileConsistencyEmail(profileCons: profileConsistency, branchValue: string): Observable<any>{
     console.log(profileCons);
     return this.http.post(`${this.BASE.ADD_SERVICES.URL}/branches/${branchValue}/across-profiles-validate`, profileCons);
+  }
+
+  sendCustomValidateEmail(cusVal: customValidate){
+    console.log(cusVal);
+    return this.http.post(`${this.BASE.ADD_SERVICES.URL}/branches/custom-validate`, cusVal);
   }
 }
 

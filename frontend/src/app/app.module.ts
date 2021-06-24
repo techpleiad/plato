@@ -25,7 +25,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatTableModule} from '@angular/material/table';
 
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DisplayServicesComponent } from './display-services/display-services.component';
 import { WorkspaceDialogueComponent } from './workspace-dialogue/workspace-dialogue.component';
 import { ContentDisplayComponent } from './content-display/content-display.component';
@@ -49,7 +49,7 @@ import { RulesComponent } from './rules/rules.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { AddFilterRulesComponent } from './add-filter-rules/add-filter-rules.component';
 import { RulesSchemaComponent } from './rules-schema/rules-schema.component';
-
+import { CustomValidateDialogueComponent } from './custom-validate-dialogue/custom-validate-dialogue.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -67,8 +67,8 @@ import { RulesSchemaComponent } from './rules-schema/rules-schema.component';
     RulesComponent,
     PageNotFoundComponent,
     AddFilterRulesComponent,
-    RulesSchemaComponent
-
+    RulesSchemaComponent,
+    CustomValidateDialogueComponent
   ],
   imports: [
     BrowserModule,
@@ -86,6 +86,7 @@ import { RulesSchemaComponent } from './rules-schema/rules-schema.component';
     MatSelectModule,
     MatInputModule,
     FormsModule,
+    ReactiveFormsModule,
     MatProgressSpinnerModule,
     FlexLayoutModule,
     SharedComponentsModule,
