@@ -1,7 +1,8 @@
 <div fxLayout="row">
-<app-custom-codemirror fxFlex="50" [id]=" 'input-json' " [codemirrorHeight]=" '600px' " (modifyProfileData) = "modifyProfileData($event)">
+<app-custom-codemirror fxFlex="50" [id]=" 'input-json' " [codemirrorHeight]=" '600px' " 
+    [isEditable]="true" [codemirrorMode]="'JSON'" (modifyProfileData) = "modifyProfileData($event)">
 </app-custom-codemirror>
 <app-custom-codemirror fxFlex="50" [id]=" 'output-json-schema' " [content]="jsonSchema"
-[codemirrorMode]="'JSON'">
+    [codemirrorMode]="'JSON'">
 </app-custom-codemirror>
 </div>

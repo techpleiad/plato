@@ -21,16 +21,25 @@ export class YamlService {
 
   validateYAML(content: string): void{
     try {
+      console.log("correct yaml");
       yaml.load(content);
-      //console.log(content);
-      //this.profileErrorMessage.delete(file.name);
-      console.log("correct editing");
       this._errorObservable$.next(false);
     }
     catch (e) {
       this._errorObservable$.next(true);
       console.log(e.message);
       //this.profileErrorMessage.set(e.message);
+    }
+  }
+  validateJSON(content: string): void{
+    try{
+      JSON.parse(content);
+      console.log("correct");
+      this._errorObservable$.next(false);
+    }
+    catch(e){
+      console.log(e);
+      this._errorObservable$.next(true);
     }
   }
   resetError(){

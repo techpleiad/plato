@@ -16,9 +16,11 @@ export class JsonSchemaWriterComponent implements OnInit {
   }
   modifyProfileData(event: any){
     console.log(event);
+
     let jsonObject = (JSON.parse(event));
-    console.log(toJsonSchema(jsonObject));
     this.jsonSchema = JSON.stringify(toJsonSchema(jsonObject));
+    //console.log(jsonObject);
+      
   }
 
 }

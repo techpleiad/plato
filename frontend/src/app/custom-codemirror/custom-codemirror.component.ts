@@ -96,9 +96,12 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       this.codemirror.on('change',(editor: any)=>{
         //console.log(editor.getValue());
         let newContent = this.yamlFileService.replaceAll(editor.getValue(),'\t',this.SPACE_REPLACE);
+        console.log(newContent);
         //console.log("event emitted");
-        const divStatus = document.getElementById('profile-expand-status');
-        this.yamlFileService.validateYAML(newContent);
+        if(this.codemirrorMode === "YAML")
+          this.yamlFileService.validateYAML(newContent);
+        if(this.codemirrorMode === "JSON")
+          this.yamlFileService.validateJSON(newContent);
         this.modifyProfileData.emit(newContent);
       })
   }
