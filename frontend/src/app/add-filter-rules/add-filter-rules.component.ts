@@ -42,8 +42,8 @@ export class AddFilterRulesComponent implements OnInit {
   }
   openJsonSchemaEditor(){
     const dialogRef = this.dialog.open(JsonSchemaWriterComponent,{
-      width: "600px",
-      minHeight: "300px"
+      width: "100%",
+      minHeight: "600px"
     });
   }
 

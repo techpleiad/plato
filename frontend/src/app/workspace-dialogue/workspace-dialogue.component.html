@@ -24,6 +24,7 @@
     <app-custom-codemirror [content]="displayData" [id]=" 'custom' " 
     [propertyList]="propertyList" [ownerList]="ownerList" 
     [cmp]="chosenMissingProperty"
+    [isEditable]="isEditable"
     (modifyProfileData) = "modifyProfileData($event)"
     *ngIf="!isBranchConsistency" fxFlex>
     </app-custom-codemirror>

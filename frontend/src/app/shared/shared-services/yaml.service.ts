@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as yaml from 'js-yaml';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +8,7 @@ import * as yaml from 'js-yaml';
 export class YamlService {
   private profileErrorMessage = new Map();
   private profileYAMLLoaded = new Set();
+  private _errorObservable$ = new BehaviorSubject<boolean>(false);
 
   constructor() { }
 
@@ -17,20 +19,27 @@ export class YamlService {
 
   replaceAll = (data: string, search: string, replace: string) => data.split(search).join(replace);
 
-  validateYAML(content: string): boolean {
+  validateYAML(content: string): void{
     try {
       yaml.load(content);
+      //console.log(content);
       //this.profileErrorMessage.delete(file.name);
       console.log("correct editing");
-      return true;
+      this._errorObservable$.next(false);
     }
     catch (e) {
+      this._errorObservable$.next(true);
       console.log(e.message);
       //this.profileErrorMessage.set(e.message);
     }
-    return false;
   }
-
+  resetError(){
+    this._errorObservable$.next(false);
+  }
+  get errorObservable$(): any{
+    return this._errorObservable$;
+  }
+  /*
   updateCssValidate(divStatus: any, content: string): void {
     if (this.validateYAML(content)) {
       this.toggleValidInValid(divStatus, 'bg-warning', 'bg-success');
@@ -38,7 +47,7 @@ export class YamlService {
     else {
       this.toggleValidInValid(divStatus, 'bg-success', 'bg-warning');
     }
-  }
+  }*/
 
   private toggleValidInValid(div: any, removeClass: string, addClass: string): void {
     div.classList.remove(removeClass);

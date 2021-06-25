@@ -72,6 +72,8 @@ export class WorkspaceDialogueComponent implements OnInit {
   visibleProgressSpinner = false;
   showBtn = false;
   reqValidation = true; // No error msg
+
+  isEditable = false;
   
   // Consructor initialize branches and profiles.
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService,@Inject('WARNING_DIALOG_PARAM') private WARNING_DIALOG_PARAM: any, private _configFiles: ConfigFilesService, 
@@ -121,6 +123,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
     this.missingProperties = [];
     this.reqValidation = true;
+    this.isEditable = false;
 
     this.setBranchProfileReq();
   }
@@ -292,7 +295,7 @@ export class WorkspaceDialogueComponent implements OnInit {
       }
       curr = curr[parentList[i]];
     }
-    curr[parentList[parentList.length-1]] = "";
+    curr[parentList[parentList.length-1]] = null;
     console.log(jsonDisplayData);
     this.displayData = JSON.stringify(jsonDisplayData,null,2);
     console.log(this.displayData);
@@ -515,6 +518,7 @@ export class WorkspaceDialogueComponent implements OnInit {
       this._configFiles.getFile(this.mservice.service,"individual",this.branchValue,this.ICP)
       .subscribe(data => {
         console.log(data);
+        this.isEditable = true;
         this.visibleProgressSpinner = false;
         this.propertyList = [];
         this.ownerList = [];

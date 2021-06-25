@@ -40,6 +40,9 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() codemirrorMode = "YAML";
   @Input() codemirrorHeight = "400px";
   @Input() codemirrorWidth = "100%";
+  @Input() isEditable = false;
+  contentValid = true;
+
 
   private codemirror: any;
 
@@ -72,6 +75,11 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   }
 
   ngOnInit(): void {
+    console.log(this.isEditable);
+    this.yamlFileService.errorObservable$.subscribe((data:boolean)=>{
+      console.log(data);
+      this.contentValid = !data;
+    })
   }
   ngAfterViewInit(): void {
     this.codemirror = CodeMirror.fromTextArea(document.getElementById(`${this.prefix}${this.id}`) as HTMLTextAreaElement,
@@ -87,10 +95,11 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       }
       this.codemirror.on('change',(editor: any)=>{
         //console.log(editor.getValue());
-        console.log("event emitted");
+        let newContent = this.yamlFileService.replaceAll(editor.getValue(),'\t',this.SPACE_REPLACE);
+        //console.log("event emitted");
         const divStatus = document.getElementById('profile-expand-status');
-        this.yamlFileService.updateCssValidate(divStatus,editor.getValue());
-        this.modifyProfileData.emit(editor.getValue());
+        this.yamlFileService.validateYAML(newContent);
+        this.modifyProfileData.emit(newContent);
       })
   }
   ngOnChanges(changes: SimpleChanges): void {

@@ -8,30 +8,17 @@ import * as toJsonSchema from 'to-json-schema';
 })
 export class JsonSchemaWriterComponent implements OnInit {
 
+  jsonSchema: any;
   constructor() {
-    let object = {
-      India: "In",
-      Europe: "Eu"
-    };
-    //console.log(JSON.stringify(object));
-    let jsonSchema = toJsonSchema(object);
-    console.log(JSON.stringify(jsonSchema,null,2));
-    
    }
 
   ngOnInit(): void {
   }
   modifyProfileData(event: any){
-    /*
-    console.log(JSON.stringify(event));
-    let jsonString = event.replace(/\n/g,"");
-    jsonString = jsonString.replace(/\t/g,"");
-    jsonString = jsonString.replace(/   /g,"");
-    console.log(JSON.stringify(jsonString));*/
     console.log(event);
     let jsonObject = (JSON.parse(event));
     console.log(toJsonSchema(jsonObject));
-    
+    this.jsonSchema = JSON.stringify(toJsonSchema(jsonObject));
   }
 
 }

@@ -1,2 +1,7 @@
-<app-custom-codemirror [id]=" 'input-json' " (modifyProfileData) = "modifyProfileData($event)">
+<div fxLayout="row">
+<app-custom-codemirror fxFlex="50" [id]=" 'input-json' " [codemirrorHeight]=" '600px' " (modifyProfileData) = "modifyProfileData($event)">
 </app-custom-codemirror>
+<app-custom-codemirror fxFlex="50" [id]=" 'output-json-schema' " [content]="jsonSchema"
+[codemirrorMode]="'JSON'">
+</app-custom-codemirror>
+</div>
