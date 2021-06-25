@@ -41,8 +41,8 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() codemirrorHeight = "400px";
   @Input() codemirrorWidth = "100%";
   @Input() isEditable = false;
+  @Input() isJsonSchemaEditor = false;
   contentValid = true;
-  jsonContent: any;
 
 
   private codemirror: any;
@@ -103,15 +103,17 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
         this.modifyProfileData.emit(newContent);
       })
       this.codemirror.on('dblclick', (instance: any, event: Event) => {
-        this.jsonContent = JSON.parse(JSON.stringify(this.content));
-        //this._codemirrorService.breadcrumbEditorLine = instance.getCursor().line + 1;
         let schemaProperty = (this._codemirrorService.lineToPropertyBreadcrumbMap.get(instance.getCursor().line+1));
         console.log(schemaProperty);
-        // Here get the type of this property. 
+        if(this.isJsonSchemaEditor){
+          let type = this.getSchemaPropertyType(schemaProperty);
+          console.log(type);
+        }
+        
       });
   }
   ngOnChanges(changes: SimpleChanges): void {
-    //console.log("something changed");
+    console.log("something changed");
     //console.log(changes);
 
     if(this.codemirrorMode==="JSON"){
@@ -130,10 +132,6 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
         this._codemirrorService.content = "";
       }
     }
-
-    
-    
-
   }
 
   private update(): void{
@@ -170,6 +168,27 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     return CustomCodemirrorComponent.Prefix;
   }
 
+  getSchemaPropertyType(schemaProperty: string){
+    let jsonSchemaContent = JSON.parse(this.content);
+    let parentList = schemaProperty.split(".");
+    let curr = jsonSchemaContent;
+    for(let i=0;i<parentList.length;i++){
+      if(!curr[parentList[i]]){
+            curr[parentList[i]] = {};
+      }
+      curr = curr[parentList[i]];
+    }
+    console.log(curr);
+    return curr.type;
+    /*
+    curr["minLength"] = 2;
+    this.content = JSON.stringify(jsonSchemaContent,null,2);
+    this.update();*/
+    
+
+  }
+
 }
+
 
 // constructor() -> ngOnInit() -> ngOnChanges() -> ngAfterViewInit() -> ngOnDestroy()

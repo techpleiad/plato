@@ -25,6 +25,8 @@ export class CodemirrorService {
   private _profileMapper: any = null;
   private _lineToDivMapper = new Map();
 
+  private missingLineNumber: any;
+
   constructor() { }
 
   get editor(): CodeEditor {
@@ -113,6 +115,13 @@ export class CodemirrorService {
     }
     this._profileMapper = profileMapper;
     this.onScrollCodemirrorUpdate(codemirrorId,cmp);
+    if(this.missingLineNumber){
+      let y = Number(`${this.missingLineNumber}`);
+      console.log("property added at line ", y);
+      this._mergeEditor.focus();
+      this._mergeEditor.setCursor({line: y-1, ch: 0});
+      //this.missingLineNumber = undefined;
+    }
   }
 
   private onScrollCodemirrorUpdate(codemirrorId: string,cmp: string): void {
@@ -143,16 +152,14 @@ export class CodemirrorService {
     }
     //missing property -> actual line number -> 
     let missingProp = cmp;
-    let missingLineNumber = this.propertyTolineBreadcrumbMap.get(missingProp);
-    if(missingLineNumber){
-      //console.log(`${missingLineNumber}`);
-      let y = Number(`${missingLineNumber}`);
-      //console.log(y);
-      this.updateColor(this._lineToDivMapper.get(`${missingLineNumber}`), 'green');
-      console.log("property added at line ", y);
-      //this._mergeEditor.focus();
-      //this._mergeEditor.setCursor({line: y-1, ch: 0});
+    this.missingLineNumber = this.propertyTolineBreadcrumbMap.get(missingProp);
+    //console.log(this.missingLineNumber);
+    /*
+    if(this.missingLineNumber){
+      this.updateColor(this._lineToDivMapper.get(`${this.missingLineNumber}`), 'green');
     }
+    */
+    
   }
 
   updateColor(element: any, color: any): void {

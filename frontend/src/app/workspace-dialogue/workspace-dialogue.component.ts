@@ -279,6 +279,7 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
   setICP(ICP: any){
     this.ICP = ICP;
+    this.chosenMissingProperty = "";
   }
   populateMissingProperty(event: any){
     // Removing the chosen missing property from the list.
@@ -333,6 +334,7 @@ export class WorkspaceDialogueComponent implements OnInit {
         }
       }
       else if(this.isProfileConsistency){
+        this.chosenMissingProperty = "";
         if(this.MRDocuments[i].profile===this.ICP){
           this.MRDocuments[i].document = this.sourceData;
           found = true;
@@ -370,6 +372,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     if(this.isBranchConsistency)
     this.sendToCodeMirror();
     if(this.isProfileConsistency===true && this.ICP!==""){
+      this.chosenMissingProperty = "";
       //when branch is changed we dont have ICP so we cannot send to codemirror.
       this.sendToCodeMirror();
     }

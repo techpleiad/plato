@@ -14,7 +14,8 @@
 
     <div fxLayout="column" fxFlex="50">
         <div class="editor-header"><b>JSON SCHEMA</b></div>
-        <app-custom-codemirror [id]=" 'output-json-schema' " [content]="jsonSchema"
+        <app-custom-codemirror [id]=" 'output-json-schema' " [content]="jsonSchema" 
+        [isJsonSchemaEditor] = "true"
         [codemirrorHeight]=" '600px' " [codemirrorMode]="'JSON'">
         </app-custom-codemirror>
     </div>
