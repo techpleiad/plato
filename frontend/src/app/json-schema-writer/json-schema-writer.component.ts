@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as toJsonSchema from 'to-json-schema';
+import * as yaml from 'yaml';
 
 @Component({
   selector: 'app-json-schema-writer',
@@ -9,6 +10,7 @@ import * as toJsonSchema from 'to-json-schema';
 export class JsonSchemaWriterComponent implements OnInit {
 
   jsonSchema: any;
+  editorMode = "JSON";
   constructor() {
    }
 
@@ -17,9 +19,20 @@ export class JsonSchemaWriterComponent implements OnInit {
   modifyProfileData(event: any){
     console.log(event);
 
-    let jsonObject = (JSON.parse(event));
-    this.jsonSchema = JSON.stringify(toJsonSchema(jsonObject));
-    //console.log(jsonObject);
+    if(this.editorMode==="JSON"){
+      if(event===""){
+        this.jsonSchema = "";
+      }
+      else{
+        let jsonObject = (JSON.parse(event));
+        this.jsonSchema = JSON.stringify(toJsonSchema(jsonObject));
+      }
+    }
+    else if(this.editorMode==="YAML"){
+      console.log("editor mode is YAML");
+      let jsonObject = yaml.parse(event);
+      this.jsonSchema = JSON.stringify(toJsonSchema(jsonObject));
+    }
       
   }
 

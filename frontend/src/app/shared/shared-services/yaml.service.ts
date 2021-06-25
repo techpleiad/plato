@@ -21,7 +21,6 @@ export class YamlService {
 
   validateYAML(content: string): void{
     try {
-      console.log("correct yaml");
       yaml.load(content);
       this._errorObservable$.next(false);
     }
@@ -34,7 +33,6 @@ export class YamlService {
   validateJSON(content: string): void{
     try{
       JSON.parse(content);
-      console.log("correct");
       this._errorObservable$.next(false);
     }
     catch(e){

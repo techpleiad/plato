@@ -77,7 +77,6 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   ngOnInit(): void {
     console.log(this.isEditable);
     this.yamlFileService.errorObservable$.subscribe((data:boolean)=>{
-      console.log(data);
       this.contentValid = !data;
     })
   }
@@ -86,7 +85,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       this.CODEMIRROR_CONFIG
       );
 
-      this.codemirror.setSize('100%', '400px');
+      this.codemirror.setSize('100%', this.codemirrorHeight);
       this.codemirror.refresh();
       if(this.codemirror){
         this._colorService.reset();
@@ -96,8 +95,6 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       this.codemirror.on('change',(editor: any)=>{
         //console.log(editor.getValue());
         let newContent = this.yamlFileService.replaceAll(editor.getValue(),'\t',this.SPACE_REPLACE);
-        console.log(newContent);
-        //console.log("event emitted");
         if(this.codemirrorMode === "YAML")
           this.yamlFileService.validateYAML(newContent);
         if(this.codemirrorMode === "JSON")

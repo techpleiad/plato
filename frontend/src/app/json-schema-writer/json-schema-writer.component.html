@@ -1,8 +1,21 @@
+<h2 mat-dialog-title class="dialog-title" >JSON Schema Editor</h2>
+
 <div fxLayout="row">
-<app-custom-codemirror fxFlex="50" [id]=" 'input-json' " [codemirrorHeight]=" '600px' " 
-    [isEditable]="true" [codemirrorMode]="'JSON'" (modifyProfileData) = "modifyProfileData($event)">
-</app-custom-codemirror>
-<app-custom-codemirror fxFlex="50" [id]=" 'output-json-schema' " [content]="jsonSchema"
-    [codemirrorMode]="'JSON'">
-</app-custom-codemirror>
+    <div fxLayout="column" fxFlex="50">
+        <mat-radio-group class="example-radio-group editor-header" [(ngModel)]="editorMode">
+            <mat-radio-button class="example-radio-button .mat-h3"  value="JSON">JSON</mat-radio-button>
+            &nbsp;&nbsp;
+            <mat-radio-button class="example-radio-button"  value="YAML">YAML</mat-radio-button>
+        </mat-radio-group>
+        <app-custom-codemirror [id]=" 'input-json' " [codemirrorHeight]=" '600px' " 
+        [isEditable]="true" [codemirrorMode]="editorMode" (modifyProfileData) = "modifyProfileData($event)">
+        </app-custom-codemirror>
+    </div>
+
+    <div fxLayout="column" fxFlex="50">
+        <div class="editor-header">JSON Schema</div>
+        <app-custom-codemirror [id]=" 'output-json-schema' " [content]="jsonSchema"
+        [codemirrorHeight]=" '600px' " [codemirrorMode]="'JSON'">
+        </app-custom-codemirror>
+    </div>
 </div>

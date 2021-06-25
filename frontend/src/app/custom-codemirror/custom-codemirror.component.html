@@ -9,8 +9,9 @@
 
 
 <div class="border" id="{{prefix}}{{id}}-container" 
-    [ngClass]="{
-        'p-1 bg-danger': isEditable && !contentValid
+    [ngClass]= "{'p-1': true,
+        'bg-danger': (isEditable && !contentValid),
+        'bg-success': (isEditable && contentValid)
     }"> 
     <textarea id="{{prefix}}{{id}}"></textarea>
 </div>
