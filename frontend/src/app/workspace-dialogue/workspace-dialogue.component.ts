@@ -7,10 +7,12 @@ import { ProfileAggregatorService } from '../shared/shared-services/profile-aggr
 import { SprimeraFilesService } from '../shared/shared-services/sprimera-files.service';
 import * as diff from 'deep-diff'
 import * as yaml from 'yaml';
+import * as js_yaml from 'js-yaml';
 import { CapService } from '../shared/shared-services/cap.service';
 import { ResolveBranchInconsistencyService } from '../shared/shared-services/resolve-branch-inconsistency.service';
 import { WarningDialogComponent } from '../shared/shared-components/warning-dialog/warning-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Y } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-workspace-dialogue',
@@ -70,6 +72,8 @@ export class WorkspaceDialogueComponent implements OnInit {
   visibleProgressSpinner = false;
   showBtn = false;
   reqValidation = true; // No error msg
+
+  isEditable = false;
   
   // Consructor initialize branches and profiles.
   constructor(@Inject(MAT_DIALOG_DATA) public data: microService,@Inject('WARNING_DIALOG_PARAM') private WARNING_DIALOG_PARAM: any, private _configFiles: ConfigFilesService, 
@@ -119,6 +123,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
     this.missingProperties = [];
     this.reqValidation = true;
+    this.isEditable = false;
 
     this.setBranchProfileReq();
   }
@@ -290,7 +295,7 @@ export class WorkspaceDialogueComponent implements OnInit {
       }
       curr = curr[parentList[i]];
     }
-    curr[parentList[parentList.length-1]] = "";
+    curr[parentList[parentList.length-1]] = null;
     console.log(jsonDisplayData);
     this.displayData = JSON.stringify(jsonDisplayData,null,2);
     console.log(this.displayData);
@@ -513,6 +518,7 @@ export class WorkspaceDialogueComponent implements OnInit {
       this._configFiles.getFile(this.mservice.service,"individual",this.branchValue,this.ICP)
       .subscribe(data => {
         console.log(data);
+        this.isEditable = true;
         this.visibleProgressSpinner = false;
         this.propertyList = [];
         this.ownerList = [];
@@ -523,3 +529,4 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
   }
 }
+

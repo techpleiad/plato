@@ -50,6 +50,7 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 import { AddFilterRulesComponent } from './add-filter-rules/add-filter-rules.component';
 import { RulesSchemaComponent } from './rules-schema/rules-schema.component';
 import { CustomValidateDialogueComponent } from './custom-validate-dialogue/custom-validate-dialogue.component';
+import { JsonSchemaWriterComponent } from './json-schema-writer/json-schema-writer.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -68,7 +69,8 @@ import { CustomValidateDialogueComponent } from './custom-validate-dialogue/cust
     PageNotFoundComponent,
     AddFilterRulesComponent,
     RulesSchemaComponent,
-    CustomValidateDialogueComponent
+    CustomValidateDialogueComponent,
+    JsonSchemaWriterComponent
   ],
   imports: [
     BrowserModule,

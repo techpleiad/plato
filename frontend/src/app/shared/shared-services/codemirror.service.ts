@@ -150,7 +150,8 @@ export class CodemirrorService {
       //console.log(`${missingLineNumber}`);
       let y = Number(`${missingLineNumber}`);
       //console.log(y);
-      this.updateColor(this._lineToDivMapper.get(`${missingLineNumber}`), 'red');
+      this.updateColor(this._lineToDivMapper.get(`${missingLineNumber}`), 'green');
+      console.log("property added at line ", y);
       //this._mergeEditor.focus();
       //this._mergeEditor.setCursor({line: y-1, ch: 0});
     }
