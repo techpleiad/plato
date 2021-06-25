@@ -42,6 +42,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() codemirrorWidth = "100%";
   @Input() isEditable = false;
   contentValid = true;
+  jsonContent: any;
 
 
   private codemirror: any;
@@ -101,6 +102,13 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
           this.yamlFileService.validateJSON(newContent);
         this.modifyProfileData.emit(newContent);
       })
+      this.codemirror.on('dblclick', (instance: any, event: Event) => {
+        this.jsonContent = JSON.parse(JSON.stringify(this.content));
+        //this._codemirrorService.breadcrumbEditorLine = instance.getCursor().line + 1;
+        let schemaProperty = (this._codemirrorService.lineToPropertyBreadcrumbMap.get(instance.getCursor().line+1));
+        console.log(schemaProperty);
+        // Here get the type of this property. 
+      });
   }
   ngOnChanges(changes: SimpleChanges): void {
     //console.log("something changed");
@@ -116,8 +124,14 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     this.codemirror?.refresh();
     if(this.codemirror){
       this._colorService.reset();
-      this.update();
+      if(this.content !== "")
+        this.update();
+      else{
+        this._codemirrorService.content = "";
+      }
     }
+
+    
     
 
   }

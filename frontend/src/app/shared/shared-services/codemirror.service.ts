@@ -10,13 +10,14 @@ import { PropertyDetail } from '../models/ProfileSpecTO';
 })
 export class CodemirrorService {
 
-  private lineToPropertyBreadcrumbMap: any;
+  public lineToPropertyBreadcrumbMap: any;
   private propertyTolineBreadcrumbMap = new Map();
   private _breadcrumbEditorLine = -1;
   private currentLineInEditor = 0;
   private _mergeEditor: any;
 
   private _content = '';  //// _content => main content inside the editor
+  private _jsonContent: any;
   private _editor: CodeEditor = CodeEditor.JSON; //// setting default editor type to JSON.
 
   private _profileData: ProfileDataTO[] = [];
@@ -43,10 +44,7 @@ export class CodemirrorService {
     this._mergeEditor = codemirrorTextArea;
     this._mergeEditor.refresh();
     //// On double click point the cursor to that area
-    this._mergeEditor.on('dblclick', (instance: any, event: Event) => {
-      this.breadcrumbEditorLine = instance.getCursor().line + 1;
-      //SpringProfileComponent.DisplayPropertyPathOrFind = true; // circular dependency  
-    });
+    
     
     this._mergeEditor.on('update', (instance: any) => {
       this.onScrollCodemirrorUpdate(codemirrorId,cmp);

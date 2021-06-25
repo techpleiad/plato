@@ -19,20 +19,21 @@ export class JsonSchemaWriterComponent implements OnInit {
   modifyProfileData(event: any){
     console.log(event);
 
-    if(this.editorMode==="JSON"){
-      if(event===""){
-        this.jsonSchema = "";
-      }
-      else{
+    if(event===""){
+      this.jsonSchema = "";
+    }
+    else{
+      if(this.editorMode==="JSON"){
         let jsonObject = (JSON.parse(event));
         this.jsonSchema = JSON.stringify(toJsonSchema(jsonObject));
       }
+      else if(this.editorMode==="YAML"){
+        console.log("editor mode is YAML");
+        let jsonObject = yaml.parse(event);
+        this.jsonSchema = JSON.stringify(toJsonSchema(jsonObject));
+      }
     }
-    else if(this.editorMode==="YAML"){
-      console.log("editor mode is YAML");
-      let jsonObject = yaml.parse(event);
-      this.jsonSchema = JSON.stringify(toJsonSchema(jsonObject));
-    }
+    
       
   }
 
