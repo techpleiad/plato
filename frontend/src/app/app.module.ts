@@ -51,6 +51,7 @@ import { AddFilterRulesComponent } from './add-filter-rules/add-filter-rules.com
 import { RulesSchemaComponent } from './rules-schema/rules-schema.component';
 import { CustomValidateDialogueComponent } from './custom-validate-dialogue/custom-validate-dialogue.component';
 import { JsonSchemaWriterComponent } from './json-schema-writer/json-schema-writer.component';
+import { DatatypeInputsComponent } from './datatype-inputs/datatype-inputs.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -70,7 +71,8 @@ import { JsonSchemaWriterComponent } from './json-schema-writer/json-schema-writ
     AddFilterRulesComponent,
     RulesSchemaComponent,
     CustomValidateDialogueComponent,
-    JsonSchemaWriterComponent
+    JsonSchemaWriterComponent,
+    DatatypeInputsComponent
   ],
   imports: [
     BrowserModule,

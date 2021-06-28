@@ -18,6 +18,7 @@ import { ProfileSpecTO, PropertyDetail } from '../shared/models/ProfileSpecTO';
 import { ColorProviderService } from '../shared/shared-services/color-provider.service';
 import { ProfileDataTO } from '../shared/models/ProfileDataTO';
 import { YamlService } from '../shared/shared-services/yaml.service';
+import { SchemaTypeHandlerService } from '../shared/shared-services/schema-type-handler.service';
 
 
 
@@ -71,7 +72,9 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     autofocus: true
   };
 
-  constructor(private _codemirrorService: CodemirrorService, private _colorService: ColorProviderService, private yamlFileService: YamlService) {
+  constructor(private _codemirrorService: CodemirrorService, private _colorService: ColorProviderService, private yamlFileService: YamlService,
+    private _schemaTypeHandlerService: SchemaTypeHandlerService) {
+      
     this.SPACE_REPLACE = ' '.repeat(this.SPACES_TO_ONE_TAB);
     this._codemirrorService.editor = CodeEditor.YAML;
   }
@@ -116,6 +119,8 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
         if(this.isJsonSchemaEditor){
           let type = this.getSchemaPropertyType(schemaProperty);
           console.log(type);
+          if(type)
+            this._schemaTypeHandlerService.takeInputs(type);
         }
         
       });
