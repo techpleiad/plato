@@ -3,7 +3,7 @@
 
 <div fxLayout="row">
     <div fxLayout="column" fxFlex="50">
-        <mat-radio-group class="example-radio-group editor-header" [(ngModel)]="editorMode">
+        <mat-radio-group class="example-radio-group editor-header" [(ngModel)]="editorMode" (change)="showJsonSchema()">
             <mat-radio-button class="example-radio-button .mat-h3"  value="JSON"><b>JSON</b></mat-radio-button>
             &nbsp;&nbsp;
             <mat-radio-button class="example-radio-button"  value="YAML"><b>YAML</b></mat-radio-button>

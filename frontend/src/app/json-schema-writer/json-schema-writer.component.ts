@@ -11,25 +11,29 @@ export class JsonSchemaWriterComponent implements OnInit {
 
   jsonSchema: any;
   editorMode = "JSON";
+  editorContent = "";
   constructor() {
    }
 
   ngOnInit(): void {
   }
   modifyProfileData(event: any){
-    console.log(event);
-
-    if(event===""){
+    this.editorContent = event;
+    this.showJsonSchema();
+  }
+  
+  showJsonSchema(){
+    if(this.editorContent===""){
       this.jsonSchema = "";
     }
     else{
       if(this.editorMode==="JSON"){
-        let jsonObject = (JSON.parse(event));
+        let jsonObject = (JSON.parse(this.editorContent));
         this.jsonSchema = JSON.stringify(toJsonSchema(jsonObject));
       }
       else if(this.editorMode==="YAML"){
         console.log("editor mode is YAML");
-        let jsonObject = yaml.parse(event);
+        let jsonObject = yaml.parse(this.editorContent);
         this.jsonSchema = JSON.stringify(toJsonSchema(jsonObject));
       }
     }

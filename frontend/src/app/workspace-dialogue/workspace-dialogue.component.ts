@@ -98,6 +98,9 @@ export class WorkspaceDialogueComponent implements OnInit {
   ngOnInit(): void {
   }
   setFunction(functionValue: any){
+    this.displayData = "";
+    this.propertyList = [];
+    this.ownerList = [];
     this.functionValue = functionValue;
     this.showBtn = true;
 
@@ -271,8 +274,6 @@ export class WorkspaceDialogueComponent implements OnInit {
         this.isProfileConsistency = true;
       }
       else{
-        this.propertyList = [];
-        this.ownerList = [];
         this.displayData = "All profiles are consistent."
       }
     });
@@ -454,8 +455,6 @@ export class WorkspaceDialogueComponent implements OnInit {
       }
       this._configFiles.getFile(this.mservice.service,type, this.branchValue,this.profileValue)
       .subscribe(data => {
-        this.propertyList = [];
-        this.ownerList = [];
         this.visibleProgressSpinner = false;
         this.displayData = data;
       });
@@ -523,8 +522,6 @@ export class WorkspaceDialogueComponent implements OnInit {
         console.log(data);
         this.isEditable = true;
         this.visibleProgressSpinner = false;
-        this.propertyList = [];
-        this.ownerList = [];
         this.displayData = data;
         this.missingProperties = this.inconsistentProfileProperties.get(this.ICP);
       });
