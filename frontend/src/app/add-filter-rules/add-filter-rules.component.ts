@@ -40,11 +40,6 @@ export class AddFilterRulesComponent implements OnInit {
       }
     });
   }
-  openJsonSchemaEditor(){
-    const dialogRef = this.dialog.open(JsonSchemaWriterComponent,{
-      width: "100%",
-      minHeight: "600px"
-    });
-  }
+  
 
 }
