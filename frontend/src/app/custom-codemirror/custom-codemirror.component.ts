@@ -43,6 +43,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() isEditable = false;
   @Input() isJsonSchemaEditor = false;
   contentValid = true;
+  contentChanged = false;
 
 
   private codemirror: any;
@@ -78,7 +79,9 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   ngOnInit(): void {
     console.log(this.isEditable);
     this.yamlFileService.errorObservable$.subscribe((data:boolean)=>{
-      this.contentValid = !data;
+      if(this.contentChanged===true)
+        this.contentValid = !data;
+      this.contentChanged = false;
     })
   }
   ngAfterViewInit(): void {
@@ -94,6 +97,11 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
         this.update();
       }
       this.codemirror.on('change',(editor: any)=>{
+        this.contentChanged = true;
+        if(editor.getValue()===""){
+          this.contentValid = true;
+          this.contentChanged = false;
+        }
         //console.log(editor.getValue());
         let newContent = this.yamlFileService.replaceAll(editor.getValue(),'\t',this.SPACE_REPLACE);
         if(this.codemirrorMode === "YAML")
