@@ -10,7 +10,7 @@ export class SchemaTypeHandlerService {
 
   dataTypeMap = new Map()
   inputValuesList: any[] = [];
-  private _includeParams$ = new BehaviorSubject<any>(this.inputValuesList);
+  private _includeParams$ = new BehaviorSubject<boolean>(false);
 
   constructor(public dialog: MatDialog) {
     this.dataTypeMap.set('string',[
@@ -47,7 +47,7 @@ export class SchemaTypeHandlerService {
         })
       }
       console.log(this.inputValuesList);
-      this._includeParams$.next(this.inputValuesList);
+      this._includeParams$.next(true);
       
     });
   }

@@ -74,7 +74,8 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     autofocus: true
   };
 
-  constructor(private _codemirrorService: CodemirrorService, private _colorService: ColorProviderService, private yamlFileService: YamlService,
+  constructor(private _codemirrorService: CodemirrorService, private _colorService: ColorProviderService,
+    private yamlFileService: YamlService,
     private _schemaTypeHandlerService: SchemaTypeHandlerService) {
       
     this.SPACE_REPLACE = ' '.repeat(this.SPACES_TO_ONE_TAB);
@@ -90,7 +91,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       this.contentChanged = false;
     })
     
-    this._schemaTypeHandlerService.includeParams$.subscribe((data:any)=>{
+    this._schemaTypeHandlerService.includeParams$.subscribe((data:boolean)=>{
       console.log("getting data from service");
       console.log(data);
       //this.additionalParams = data;
@@ -226,10 +227,13 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       let param = Object.keys(this.additionalParams[i])[0];
       console.log(param);
     }
+
+
     /*
     curr["minLength"] = 2;
     this.content = JSON.stringify(jsonSchemaContent,null,2);
-    this.update();*/
+    this.update();
+    */
   }
 
 }
