@@ -45,6 +45,8 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() isJsonSchemaEditor = false;
   contentValid = true;
   contentChanged = false;
+  additionalParams: any[] = []
+  schemaPropertyClicked: string="";
 
 
   private codemirror: any;
@@ -82,10 +84,19 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   ngOnInit(): void {
     console.log(this.isEditable);
     this.yamlFileService.errorObservable$.subscribe((data:boolean)=>{
+      console.log("working")
       if(this.contentChanged===true)
         this.contentValid = !data;
       this.contentChanged = false;
     })
+    
+    this._schemaTypeHandlerService.includeParams$.subscribe((data:any)=>{
+      console.log("getting data from service");
+      console.log(data);
+      //this.additionalParams = data;
+      this.setAdditionalParams();
+    })
+    
   }
   ngAfterViewInit(): void {
     this.codemirror = CodeMirror.fromTextArea(document.getElementById(`${this.prefix}${this.id}`) as HTMLTextAreaElement,
@@ -114,15 +125,16 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
         this.modifyProfileData.emit(newContent);
       })
       this.codemirror.on('dblclick', (instance: any, event: Event) => {
-        let schemaProperty = (this._codemirrorService.lineToPropertyBreadcrumbMap.get(instance.getCursor().line+1));
-        console.log(schemaProperty);
+        console.log(this.additionalParams);
+        this._schemaTypeHandlerService.resetInputValues();
+        this.schemaPropertyClicked = (this._codemirrorService.lineToPropertyBreadcrumbMap.get(instance.getCursor().line+1));
+        console.log(this.schemaPropertyClicked);
         if(this.isJsonSchemaEditor){
-          let type = this.getSchemaPropertyType(schemaProperty);
+          let type = this.getSchemaPropertyType(this.schemaPropertyClicked);
           console.log(type);
           if(type)
-            this._schemaTypeHandlerService.takeInputs(type);
+            this._schemaTypeHandlerService.takeInputs(type); 
         }
-        
       });
   }
   ngOnChanges(changes: SimpleChanges): void {
@@ -191,14 +203,33 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       }
       curr = curr[parentList[i]];
     }
-    console.log(curr);
+    //console.log(curr);
     return curr.type;
     /*
     curr["minLength"] = 2;
     this.content = JSON.stringify(jsonSchemaContent,null,2);
     this.update();*/
-    
-
+  }
+  setAdditionalParams(){
+    let jsonSchemaContent = JSON.parse(this.content);
+    let parentList = this.schemaPropertyClicked.split(".");
+    let curr = jsonSchemaContent;
+    for(let i=0;i<parentList.length;i++){
+      if(!curr[parentList[i]]){
+            curr[parentList[i]] = {};
+      }
+      curr = curr[parentList[i]];
+    }
+    console.log('params');
+    console.log(this.additionalParams);
+    for(let i=0;i<this.additionalParams.length;i++){
+      let param = Object.keys(this.additionalParams[i])[0];
+      console.log(param);
+    }
+    /*
+    curr["minLength"] = 2;
+    this.content = JSON.stringify(jsonSchemaContent,null,2);
+    this.update();*/
   }
 
 }
