@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { addRuleTemplate } from 'src/app/addRuleTemplate';
 
 @Injectable({
   providedIn: 'root'
@@ -12,5 +14,9 @@ export class RulesDataService {
   }
   getRulesList(){
     return this.http.get(this.BASE.GET_RULES.URL); 
+  }
+
+  addRule(addNewRule: addRuleTemplate): Observable<any>{
+    return this.http.post(this.BASE.ADD_RULES.URL, addNewRule);
   }
 }

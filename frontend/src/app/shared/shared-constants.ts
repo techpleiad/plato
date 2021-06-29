@@ -58,6 +58,10 @@ export const API_END_POINT = {
         GET_RULES: {
             URL: `${BASE_URL}${EndPoints.VERSION_RULES}`,
             METHOD: HTTP_METHOD.GET
+        },
+        ADD_RULES: {
+            URL: `${BASE_URL}${EndPoints.VERSION_RULES}`,
+            METHOD: HTTP_METHOD.POST
         }
         
       }
