@@ -2,6 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { AddRuleDialogueComponent } from '../add-rule-dialogue/add-rule-dialogue.component';
 import { CustomValidateDialogueComponent } from '../custom-validate-dialogue/custom-validate-dialogue.component';
+import { JsonSchemaWriterComponent } from '../json-schema-writer/json-schema-writer.component';
 
 @Component({
   selector: 'app-add-filter-rules',
@@ -40,6 +41,7 @@ export class AddFilterRulesComponent implements OnInit {
       }
     });
   }
+
   openAddRuleDialog(){
     const dialogRef = this.dialog.open(AddRuleDialogueComponent,{
       width: "1400px",
@@ -55,5 +57,6 @@ export class AddFilterRulesComponent implements OnInit {
       }
     });
   }
+
 
 }

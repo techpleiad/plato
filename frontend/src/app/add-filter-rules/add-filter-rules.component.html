@@ -9,5 +9,11 @@
     <input matInput placeholder="Placeholder" (keyup)="filterServices($event)">
 </mat-form-field>
 <app-btn (clicked)="openCustomValidationDialog()" [label]=" 'Mail Custom Validation Report' "></app-btn>
+
 <app-btn (clicked)="openAddRuleDialog()" [label]=" 'Add Rule' "></app-btn>
+
+<a  class="route-text" routerLink="/schema-writer" routerLinkActive="activeRoute">
+    <app-btn  [label]=" 'JSON Schema Editor' "></app-btn>
+</a>
+
 </div>

@@ -17,6 +17,8 @@ import { CodeEditor } from '../shared/shared-services/codemirror.config';
 import { ProfileSpecTO, PropertyDetail } from '../shared/models/ProfileSpecTO';
 import { ColorProviderService } from '../shared/shared-services/color-provider.service';
 import { ProfileDataTO } from '../shared/models/ProfileDataTO';
+import { YamlService } from '../shared/shared-services/yaml.service';
+import { SchemaTypeHandlerService } from '../shared/shared-services/schema-type-handler.service';
 
 
 
@@ -39,6 +41,14 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() codemirrorMode = "YAML";
   @Input() codemirrorHeight = "400px";
   @Input() codemirrorWidth = "100%";
+  @Input() isEditable = false;
+  @Input() isJsonSchemaEditor = false;
+  contentValid = true;
+  contentChanged = false;
+  additionalParams: any[] = []
+  schemaPropertyClicked: string="";
+  
+
 
   private codemirror: any;
 
@@ -65,28 +75,79 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     autofocus: true
   };
 
-  constructor(private _codemirrorService: CodemirrorService, private _colorService: ColorProviderService) {
+  constructor(private _codemirrorService: CodemirrorService, private _colorService: ColorProviderService,
+    private yamlFileService: YamlService,
+    private _schemaTypeHandlerService: SchemaTypeHandlerService) {
+      
     this.SPACE_REPLACE = ' '.repeat(this.SPACES_TO_ONE_TAB);
     this._codemirrorService.editor = CodeEditor.YAML;
   }
 
   ngOnInit(): void {
+    console.log(this.isEditable);
+    this.yamlFileService.errorObservable$.subscribe((data:boolean)=>{
+      //console.log("working")
+      if(this.contentChanged===true)
+        this.contentValid = !data;
+      this.contentChanged = false;
+    })
+    
+    this._schemaTypeHandlerService.includeParams$.subscribe((data:any)=>{
+      console.log("getting data from service");
+      console.log(data);
+      this.additionalParams = data;
+      //console.log(this.content);
+      this.setAdditionalParams();
+    })
+    
   }
   ngAfterViewInit(): void {
     this.codemirror = CodeMirror.fromTextArea(document.getElementById(`${this.prefix}${this.id}`) as HTMLTextAreaElement,
       this.CODEMIRROR_CONFIG
       );
 
-      this.codemirror.setSize('100%', '400px');
+      this.codemirror.setSize('100%', this.codemirrorHeight);
       this.codemirror.refresh();
       if(this.codemirror){
         this._colorService.reset();
         if(this.content!=="")
         this.update();
       }
+      this.codemirror.on('change',(editor: any)=>{
+        this.contentChanged = true;
+        
+        if(editor.getValue()===""){
+          this.contentValid = true;
+          this.contentChanged = false;
+        }
+        //console.log(editor.getValue());
+        let newContent = this.yamlFileService.replaceAll(editor.getValue(),'\t',this.SPACE_REPLACE);
+        if(this.codemirrorMode === "YAML")
+          this.yamlFileService.validateYAML(newContent);
+        if(this.codemirrorMode === "JSON")
+          this.yamlFileService.validateJSON(newContent);
+        
+          console.log("contentChanged");
+          console.log(newContent);
+        this.modifyProfileData.emit(newContent);
+      })
+
+
+      this.codemirror.on('dblclick', (instance: any, event: Event) => {
+        this._schemaTypeHandlerService.resetInputValues();
+        this.schemaPropertyClicked = (this._codemirrorService.lineToPropertyBreadcrumbMap.get(instance.getCursor().line+1));
+        console.log(this.schemaPropertyClicked);
+        if(this.isJsonSchemaEditor){
+          let type = this.getSchemaPropertyType(this.schemaPropertyClicked);
+          console.log(this.content);
+          console.log(type);
+          if(type)
+            this._schemaTypeHandlerService.takeInputs(type); 
+        }
+      });
   }
   ngOnChanges(changes: SimpleChanges): void {
-    //console.log("something changed");
+    console.log("something changed");
     //console.log(changes);
 
     if(this.codemirrorMode==="JSON"){
@@ -99,10 +160,12 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     this.codemirror?.refresh();
     if(this.codemirror){
       this._colorService.reset();
-      this.update();
+      if(this.content !== "")
+        this.update();
+      else{
+        this._codemirrorService.content = "";
+      }
     }
-    
-
   }
 
   private update(): void{
@@ -118,11 +181,6 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       `${this.prefix}${this.id}-container`,
       this.cmp
     );
-
-    this.codemirror.on('change',(editor: any)=>{
-      //console.log(editor.getValue());
-      this.modifyProfileData.emit(editor.getValue());  
-    })
 
     this.profileColorList = [];
     this.profileColorList = this.ownerList.map((val:string)=>{
@@ -144,6 +202,48 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     return CustomCodemirrorComponent.Prefix;
   }
 
+  getSchemaPropertyType(schemaProperty: string){
+    let jsonSchemaContent = JSON.parse(this.content);
+    let parentList = schemaProperty.split(".");
+    let curr = jsonSchemaContent;
+    for(let i=0;i<parentList.length;i++){
+      if(!curr[parentList[i]]){
+            curr[parentList[i]] = {};
+      }
+      curr = curr[parentList[i]];
+    }
+    return curr.type;
+    
+  }
+  setAdditionalParams(){
+    if(this.content){
+      console.log("setting add param");
+      let jsonSchemaContent = JSON.parse(this.content);
+      let parentList = this.schemaPropertyClicked.split(".");
+      let curr = jsonSchemaContent;
+      for(let i=0;i<parentList.length;i++){
+        if(!curr[parentList[i]]){
+            curr[parentList[i]] = {};
+        }
+        curr = curr[parentList[i]];
+      }
+      console.log('params');
+      console.log(this.additionalParams);
+      for(let i=0;i<this.additionalParams.length;i++){
+        let param = Object.keys(this.additionalParams[i])[0];
+        console.log(param);
+        if(this.additionalParams[i][param]!=null){
+          curr[param] = this.additionalParams[i][param];
+        }
+      }
+      this.content = JSON.stringify(jsonSchemaContent,null,2);
+      this.update();
+    
+    }
+    
+  }
+
 }
+
 
 // constructor() -> ngOnInit() -> ngOnChanges() -> ngAfterViewInit() -> ngOnDestroy()

@@ -8,9 +8,13 @@
 </div>
 
 
-<div class="border bg-success" id="{{prefix}}{{id}}-container"> 
+<div class="border" id="{{prefix}}{{id}}-container" 
+    [ngClass]= "{'p-1': true,
+        'wrong-code': (isEditable && !contentValid),
+        'correct-code': (isEditable && contentValid)
+    }"> 
     <textarea id="{{prefix}}{{id}}"></textarea>
 </div>
-
+<div id="profile-expand-status" style="width:5px" class="mr-2"></div>
 
 

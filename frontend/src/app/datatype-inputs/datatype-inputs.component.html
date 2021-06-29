@@ -1,0 +1,16 @@
+<h1>{{datatype}}</h1>
+<h2 *ngFor="let i of typeInputs">
+    <div *ngIf="i.inputType==='integer' ">
+        <mat-form-field appearance="fill">
+        <mat-label>{{i.param}}</mat-label>
+        <input matInput type="number" [(ngModel)]="inputValuesObject[i.param]">
+        </mat-form-field>
+    </div>
+    <div *ngIf="i.inputType!=='integer' "> 
+        <mat-form-field appearance="fill">
+            <mat-label>{{i.param}}</mat-label>
+            <input matInput [(ngModel)]="inputValuesObject[i.param]">
+            </mat-form-field>
+    </div>
+</h2>
+<app-btn (clicked)="tempShow()" [label]=" 'Add' "></app-btn>

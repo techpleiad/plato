@@ -10,19 +10,22 @@ import { PropertyDetail } from '../models/ProfileSpecTO';
 })
 export class CodemirrorService {
 
-  private lineToPropertyBreadcrumbMap: any;
+  public lineToPropertyBreadcrumbMap: any;
   private propertyTolineBreadcrumbMap = new Map();
   private _breadcrumbEditorLine = -1;
   private currentLineInEditor = 0;
   private _mergeEditor: any;
 
   private _content = '';  //// _content => main content inside the editor
+  private _jsonContent: any;
   private _editor: CodeEditor = CodeEditor.JSON; //// setting default editor type to JSON.
 
   private _profileData: ProfileDataTO[] = [];
   private _propertyList: any[] = [];
   private _profileMapper: any = null;
   private _lineToDivMapper = new Map();
+
+  private missingLineNumber: any;
 
   constructor() { }
 
@@ -43,10 +46,7 @@ export class CodemirrorService {
     this._mergeEditor = codemirrorTextArea;
     this._mergeEditor.refresh();
     //// On double click point the cursor to that area
-    this._mergeEditor.on('dblclick', (instance: any, event: Event) => {
-      this.breadcrumbEditorLine = instance.getCursor().line + 1;
-      //SpringProfileComponent.DisplayPropertyPathOrFind = true; // circular dependency  
-    });
+    
     
     this._mergeEditor.on('update', (instance: any) => {
       this.onScrollCodemirrorUpdate(codemirrorId,cmp);
@@ -115,6 +115,13 @@ export class CodemirrorService {
     }
     this._profileMapper = profileMapper;
     this.onScrollCodemirrorUpdate(codemirrorId,cmp);
+    if(this.missingLineNumber){
+      let y = Number(`${this.missingLineNumber}`);
+      console.log("property added at line ", y);
+      this._mergeEditor.focus();
+      this._mergeEditor.setCursor({line: y-1, ch: 0});
+      //this.missingLineNumber = undefined;
+    }
   }
 
   private onScrollCodemirrorUpdate(codemirrorId: string,cmp: string): void {
@@ -145,15 +152,14 @@ export class CodemirrorService {
     }
     //missing property -> actual line number -> 
     let missingProp = cmp;
-    let missingLineNumber = this.propertyTolineBreadcrumbMap.get(missingProp);
-    if(missingLineNumber){
-      //console.log(`${missingLineNumber}`);
-      let y = Number(`${missingLineNumber}`);
-      //console.log(y);
-      this.updateColor(this._lineToDivMapper.get(`${missingLineNumber}`), 'red');
-      //this._mergeEditor.focus();
-      //this._mergeEditor.setCursor({line: y-1, ch: 0});
+    this.missingLineNumber = this.propertyTolineBreadcrumbMap.get(missingProp);
+    //console.log(this.missingLineNumber);
+    /*
+    if(this.missingLineNumber){
+      this.updateColor(this._lineToDivMapper.get(`${this.missingLineNumber}`), 'green');
     }
+    */
+    
   }
 
   updateColor(element: any, color: any): void {
