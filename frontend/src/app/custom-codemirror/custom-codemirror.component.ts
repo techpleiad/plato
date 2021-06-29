@@ -91,10 +91,11 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       this.contentChanged = false;
     })
     
-    this._schemaTypeHandlerService.includeParams$.subscribe((data:boolean)=>{
+    this._schemaTypeHandlerService.includeParams$.subscribe((data:any)=>{
       console.log("getting data from service");
       console.log(data);
-      //this.additionalParams = data;
+      this.additionalParams = data;
+      //console.log(this.content);
       this.setAdditionalParams();
     })
     
@@ -132,6 +133,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
         console.log(this.schemaPropertyClicked);
         if(this.isJsonSchemaEditor){
           let type = this.getSchemaPropertyType(this.schemaPropertyClicked);
+          console.log(this.content);
           console.log(type);
           if(type)
             this._schemaTypeHandlerService.takeInputs(type); 
@@ -204,36 +206,35 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       }
       curr = curr[parentList[i]];
     }
-    //console.log(curr);
     return curr.type;
-    /*
-    curr["minLength"] = 2;
-    this.content = JSON.stringify(jsonSchemaContent,null,2);
-    this.update();*/
+    
   }
   setAdditionalParams(){
-    let jsonSchemaContent = JSON.parse(this.content);
-    let parentList = this.schemaPropertyClicked.split(".");
-    let curr = jsonSchemaContent;
-    for(let i=0;i<parentList.length;i++){
-      if(!curr[parentList[i]]){
+    if(this.content){
+      console.log("setting add param");
+      let jsonSchemaContent = JSON.parse(this.content);
+      let parentList = this.schemaPropertyClicked.split(".");
+      let curr = jsonSchemaContent;
+      for(let i=0;i<parentList.length;i++){
+        if(!curr[parentList[i]]){
             curr[parentList[i]] = {};
+        }
+        curr = curr[parentList[i]];
       }
-      curr = curr[parentList[i]];
+      console.log('params');
+      console.log(this.additionalParams);
+      for(let i=0;i<this.additionalParams.length;i++){
+        let param = Object.keys(this.additionalParams[i])[0];
+        console.log(param);
+        if(this.additionalParams[i][param]!=null){
+          curr[param] = this.additionalParams[i][param];
+        }
+      }
+      this.content = JSON.stringify(jsonSchemaContent,null,2);
+      this.update();
+    
     }
-    console.log('params');
-    console.log(this.additionalParams);
-    for(let i=0;i<this.additionalParams.length;i++){
-      let param = Object.keys(this.additionalParams[i])[0];
-      console.log(param);
-    }
-
-
-    /*
-    curr["minLength"] = 2;
-    this.content = JSON.stringify(jsonSchemaContent,null,2);
-    this.update();
-    */
+    
   }
 
 }
