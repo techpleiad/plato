@@ -19,6 +19,7 @@ export class AddRuleDialogueComponent implements OnInit {
   profilesSelected = new FormControl();
 
   nRule!: addRuleTemplate;
+  ruleData: string = "";
   mservices: microService[] = [];
   serviceList: string[] = [];
   branchList: string[] = [];
@@ -28,23 +29,20 @@ export class AddRuleDialogueComponent implements OnInit {
   isRuleOnPropertyValid = true;
   isServiceValid = true;
 
-  displayData!: string;
-  sourceData!: string;
-  tempSourceData!: string;
-  editorMode = "JSON";
-
   constructor(private dialogRef: MatDialogRef<AddRuleDialogueComponent>,@Inject(MAT_DIALOG_DATA) private data: addRuleTemplate, private _dataManagerService: DataManagerService, private _codemirrorService: CodemirrorService, private _rulesDataService: RulesDataService) {
     this.nRule = new addRuleTemplate();
   }
 
-  modifyProfileData(event: any){
-    this.tempSourceData = event;
-  }
+  
 
-  modifySourceData(event: any){
-    this.tempSourceData = event;
+  ngOnInit(): void {
+    this._dataManagerService.getServicesList().subscribe(data => {
+      this.mservices = JSON.parse(JSON.stringify(data));
+      for(let i=0;i<this.mservices.length;i++){
+        this.serviceList.push(this.mservices[i].service);
+      }
+    });
   }
-
   setFunction(){
     this.branchList = [];
     this.profileList = [];
@@ -66,6 +64,13 @@ export class AddRuleDialogueComponent implements OnInit {
     }
   }
 
+
+  updateRuleData(event: any){
+    this.ruleData = event;
+    console.log(typeof event);
+  }
+
+
   addNewRule(){
     let sList: string[] = [];
     let bList: string[] = [];
@@ -80,53 +85,45 @@ export class AddRuleDialogueComponent implements OnInit {
     };
     this.isRuleOnPropertyValid = this.nRule.ruleOnProperty.length>0;
     this.isServiceValid = sList.length>0;
+    
     let temp = {
+      
       "rule": {
         "id": "https://example.com/person.schema.json",
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "description": "something",
         "title": "Person",
-        "type": "object",
-        "properties": {
-            "firstName": {
-                "type": "string",
-                "description": "The person's first name."
-            },
-            "lastName": {
-                "type": "string",
-                "description": "The person's last name."
-            },
-            "age": {
-                "description": "Age in years which must be equal to or greater than zero.",
-                "type": "integer",
-                "minimum": 0
-            }
-        }
       }
-    };
+    }
+
     if(this.isRuleOnPropertyValid && this.isServiceValid){
       this.visibleProgressSpinner = true;
-      let s1 = JSON.stringify(temp), s2 = JSON.stringify(this.nRule);
+      //this.ruleData = this.ruleData.slice(1);
+      //this.ruleData = this.ruleData.slice(0,this.ruleData.length-1);
+      console.log(this.ruleData);
+      temp["rule"] = JSON.parse(this.ruleData);
+      temp["rule"]["id"] = "https://example.com/person.schema.json";
+      temp["rule"]["$schema"] = "https://json-schema.org/draft/2020-12/schema";
+      temp["rule"]["description"] = "something",
+      temp["rule"]["title"] = "Person"
+      console.log(temp);
+
+      let s1 = JSON.stringify(temp,null,2), s2 = JSON.stringify(this.nRule,null,2);
+      console.log(s1);
+      console.log(this.ruleData);
       s1 = s1.slice(1);
       s1 = s1.slice(0,s1.length-1);
       s2 = s2.slice(1);
       s2 = s2.slice(0,s2.length-1);
       let newRule = "{"+s1+","+s2+"}";
       let addNewRule = JSON.parse(newRule);
+      console.log(newRule);
+      
       this._rulesDataService.addRule(addNewRule).subscribe(data=>{
         this.visibleProgressSpinner = false;
         this.dialogRef.close(addNewRule);
       });
     }
-  }
-
-  ngOnInit(): void {
-    this._dataManagerService.getServicesList().subscribe(data => {
-      this.mservices = JSON.parse(JSON.stringify(data));
-      for(let i=0;i<this.mservices.length;i++){
-        this.serviceList.push(this.mservices[i].service);
-      }
-    });
   }
 
 }

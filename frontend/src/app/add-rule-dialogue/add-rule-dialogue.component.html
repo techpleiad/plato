@@ -2,12 +2,15 @@
     <h2 mat-dialog-title >Add Rule</h2>
 </div>
 
-<div fxLayout="row">
+<app-json-schema-writer (jsonSchemaEdited) = "updateRuleData($event)"></app-json-schema-writer>
+    <!--
     <app-custom-codemirror fxFlex [id]=" 'rule' "
     [codemirrorMode]="editorMode"
     (modifyProfileData) = "modifyProfileData($event)">
     </app-custom-codemirror>
-</div>
+-->
+
+
 
 <mat-dialog-content>
     <form>
