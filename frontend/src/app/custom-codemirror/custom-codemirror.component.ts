@@ -47,6 +47,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   contentChanged = false;
   additionalParams: any[] = []
   schemaPropertyClicked: string="";
+  
 
 
   private codemirror: any;
@@ -85,7 +86,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   ngOnInit(): void {
     console.log(this.isEditable);
     this.yamlFileService.errorObservable$.subscribe((data:boolean)=>{
-      console.log("working")
+      //console.log("working")
       if(this.contentChanged===true)
         this.contentValid = !data;
       this.contentChanged = false;
@@ -114,6 +115,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       }
       this.codemirror.on('change',(editor: any)=>{
         this.contentChanged = true;
+        
         if(editor.getValue()===""){
           this.contentValid = true;
           this.contentChanged = false;
@@ -124,10 +126,14 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
           this.yamlFileService.validateYAML(newContent);
         if(this.codemirrorMode === "JSON")
           this.yamlFileService.validateJSON(newContent);
+        
+          console.log("contentChanged");
+          console.log(newContent);
         this.modifyProfileData.emit(newContent);
       })
+
+
       this.codemirror.on('dblclick', (instance: any, event: Event) => {
-        console.log(this.additionalParams);
         this._schemaTypeHandlerService.resetInputValues();
         this.schemaPropertyClicked = (this._codemirrorService.lineToPropertyBreadcrumbMap.get(instance.getCursor().line+1));
         console.log(this.schemaPropertyClicked);

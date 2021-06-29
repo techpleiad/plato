@@ -18,7 +18,8 @@
         <div class="editor-header"><b>JSON SCHEMA</b></div>
         <app-custom-codemirror [id]=" 'output-json-schema' " [content]="jsonSchema" 
         [isJsonSchemaEditor] = "true" [isEditable]="true"
-        [codemirrorHeight]=" '500px' " [codemirrorMode]="'JSON'">
+        [codemirrorHeight]=" '500px' " [codemirrorMode]="'JSON'" 
+        (modifyProfileData)="updateJsonSchemaContent($event)">
         </app-custom-codemirror>
     </div>
 </div>
