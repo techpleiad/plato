@@ -24,6 +24,7 @@ export class JsonSchemaWriterComponent implements OnInit {
   modifyProfileData(event: any){
     this.editorContent = event;
     this.showJsonSchema();
+    console.log("event mpf");
   }
   
   showJsonSchema(){
@@ -44,6 +45,7 @@ export class JsonSchemaWriterComponent implements OnInit {
   }
   
   updateJsonSchemaContent(event: string){
+    console.log("eJS");
     this.finalJsonSchema = event;
     this.jsonSchemaEdited.emit(this.finalJsonSchema);
     //console.log(this.finalJsonSchema);

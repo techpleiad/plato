@@ -89,35 +89,27 @@ export class AddRuleDialogueComponent implements OnInit {
     let temp = {
       
       "rule": {
-        "id": "https://example.com/person.schema.json",
         "$schema": "https://json-schema.org/draft/2020-12/schema",
-        "description": "something",
-        "title": "Person",
       }
     }
-
     if(this.isRuleOnPropertyValid && this.isServiceValid){
       this.visibleProgressSpinner = true;
-      //this.ruleData = this.ruleData.slice(1);
-      //this.ruleData = this.ruleData.slice(0,this.ruleData.length-1);
       console.log(this.ruleData);
       temp["rule"] = JSON.parse(this.ruleData);
-      temp["rule"]["id"] = "https://example.com/person.schema.json";
       temp["rule"]["$schema"] = "https://json-schema.org/draft/2020-12/schema";
-      temp["rule"]["description"] = "something",
-      temp["rule"]["title"] = "Person"
-      console.log(temp);
 
       let s1 = JSON.stringify(temp,null,2), s2 = JSON.stringify(this.nRule,null,2);
-      console.log(s1);
-      console.log(this.ruleData);
+      //console.log(s1);
+      //console.log(this.ruleData);
       s1 = s1.slice(1);
       s1 = s1.slice(0,s1.length-1);
       s2 = s2.slice(1);
       s2 = s2.slice(0,s2.length-1);
       let newRule = "{"+s1+","+s2+"}";
-      let addNewRule = JSON.parse(newRule);
-      console.log(newRule);
+      let addNewRule: addRuleTemplate = JSON.parse(newRule);
+      console.log(addNewRule);
+      //console.log(newRule);
+      //console.log(addNewRule);
       
       this._rulesDataService.addRule(addNewRule).subscribe(data=>{
         this.visibleProgressSpinner = false;

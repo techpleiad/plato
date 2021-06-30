@@ -17,6 +17,9 @@ export class RulesDataService {
   }
 
   addRule(addNewRule: addRuleTemplate): Observable<any>{
+    console.log(JSON.stringify(addNewRule,null,2));
+    console.log(addNewRule);
+
     return this.http.post(this.BASE.ADD_RULES.URL, addNewRule);
   }
 }

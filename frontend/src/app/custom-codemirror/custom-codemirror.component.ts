@@ -46,7 +46,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   contentValid = true;
   contentChanged = false;
   additionalParams: any[] = []
-  schemaPropertyClicked: string="";
+  schemaPropertyClicked!: string;
   
 
 
@@ -127,8 +127,8 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
         if(this.codemirrorMode === "JSON")
           this.yamlFileService.validateJSON(newContent);
         
-          console.log("contentChanged");
-          console.log(newContent);
+          //console.log("contentChanged");
+          //console.log(newContent);
         this.modifyProfileData.emit(newContent);
       })
 
@@ -147,7 +147,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       });
   }
   ngOnChanges(changes: SimpleChanges): void {
-    console.log("something changed");
+    console.log("noOnChanges");
     //console.log(changes);
 
     if(this.codemirrorMode==="JSON"){
@@ -186,8 +186,6 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     this.profileColorList = this.ownerList.map((val:string)=>{
       return new ProfileDataTO(val,this._colorService.getColor());
     })
-    //console.log(this.profileColorList);
-    //console.log(this.propertyList);
 
     setTimeout(() => {
       this._codemirrorService.showEditor(this.codemirrorHeight,this.codemirrorWidth);
@@ -216,8 +214,8 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     
   }
   setAdditionalParams(){
+    console.log("setting add params");
     if(this.content){
-      console.log("setting add param");
       let jsonSchemaContent = JSON.parse(this.content);
       let parentList = this.schemaPropertyClicked.split(".");
       let curr = jsonSchemaContent;
@@ -227,11 +225,8 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
         }
         curr = curr[parentList[i]];
       }
-      console.log('params');
-      console.log(this.additionalParams);
       for(let i=0;i<this.additionalParams.length;i++){
         let param = Object.keys(this.additionalParams[i])[0];
-        console.log(param);
         if(this.additionalParams[i][param]!=null){
           curr[param] = this.additionalParams[i][param];
         }

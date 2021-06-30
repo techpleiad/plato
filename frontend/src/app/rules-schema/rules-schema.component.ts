@@ -14,7 +14,7 @@ export class RulesSchemaComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: rulesTemplate) {
     console.log(data.rule);
-    this.ruleJsonSchema = JSON.stringify(data.rule);
+    this.ruleJsonSchema = JSON.stringify(data.rule,null,2);
     console.log(this.ruleJsonSchema);
     console.log(typeof this.ruleJsonSchema);
    }
