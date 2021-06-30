@@ -1,4 +1,9 @@
-<div class="container">
+<div class="container" fxLayout="row" fxLayoutAlign="space-around center">
+
+<app-btn (clicked)="openAddRuleDialog()" [label]=" 'Add Rule' "></app-btn>
+
+<app-btn (clicked)="openCustomValidationDialog()" [label]=" 'Mail Custom Validation Report' "></app-btn>
+
 <mat-form-field appearance="standard">
     <mat-label>Search Property</mat-label>
     <input matInput placeholder="Placeholder" (keyup)="filterProperty($event)">
@@ -8,12 +13,5 @@
     <mat-label>Search Services</mat-label>
     <input matInput placeholder="Placeholder" (keyup)="filterServices($event)">
 </mat-form-field>
-<app-btn (clicked)="openCustomValidationDialog()" [label]=" 'Mail Custom Validation Report' "></app-btn>
-
-<app-btn (clicked)="openAddRuleDialog()" [label]=" 'Add Rule' "></app-btn>
-
-<a  class="route-text" routerLink="/schema-writer" routerLinkActive="activeRoute">
-    <app-btn  [label]=" 'JSON Schema Editor' "></app-btn>
-</a>
 
 </div>
