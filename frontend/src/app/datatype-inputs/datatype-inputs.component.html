@@ -6,11 +6,20 @@
         <input matInput type="number" [(ngModel)]="inputValuesObject[i.param]">
         </mat-form-field>
     </div>
-    <div *ngIf="i.inputType!=='integer' "> 
+    <div *ngIf="i.inputType==='string' "> 
         <mat-form-field appearance="fill">
             <mat-label>{{i.param}}</mat-label>
             <input matInput [(ngModel)]="inputValuesObject[i.param]">
             </mat-form-field>
+    </div>
+    <div *ngIf="i.inputType==='boolean' ">
+        <mat-form-field appearance="fill">
+            <mat-label>{{i.param}}</mat-label>
+            <mat-select [(ngModel)]="inputValuesObject[i.param]">
+              <mat-option [value]="true">True</mat-option>
+              <mat-option [value]="false">False</mat-option>
+            </mat-select>
+          </mat-form-field>
     </div>
 </h2>
 <app-btn (clicked)="tempShow()" [label]=" 'Add' "></app-btn>

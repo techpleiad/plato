@@ -20,12 +20,18 @@ export class SchemaTypeHandlerService {
       {param: "enum", inputType: "list"}
     ]);
     this.dataTypeMap.set('integer',[
-      {param: "minValue", inputType: "integer"},
-      {param: "maxValue", inputType: "integer"},
+      {param: "minimum", inputType: "integer"},
+      {param: "maximum", inputType: "integer"},
       {param: "const", inputType: "integer"}
     ]);
-    this.dataTypeMap.set('object',[]);
-    this.dataTypeMap.set('array',[]);
+    this.dataTypeMap.set('object',[
+      {param: "required", inputType: "list"}
+    ]);
+    this.dataTypeMap.set('array',[
+      {param: "uniqueItems", inputType: "boolean"},
+      {param: "minItems", inputType: "integer"},
+      {param: "maxItems", inputType: "integer"}
+    ]);
   }
 
 
