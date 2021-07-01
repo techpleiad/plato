@@ -81,7 +81,7 @@ export class WorkspaceDialogueComponent implements OnInit {
   private _capService: CapService, private _resolveBranchInconsistency: ResolveBranchInconsistencyService,
   public dialog: MatDialog, private _snackBar: MatSnackBar) {
 
-    this.functionList = ["show merged file","show individual file","sprimera",
+    this.functionList = ["show individual file","sprimera",
     "consistency across branch","consistency across profile"];
     this.mservice = data;
     this.branchValue = "";
@@ -400,11 +400,14 @@ export class WorkspaceDialogueComponent implements OnInit {
       let mergeRequestMail = (responseList[2].trim()); // corresponds to email of the merge request.
       this.visibleProgressSpinner = false;
       this.MRDocuments = [];
-      let simpleSnackBarRef = this._snackBar.open("Sent Merge Request","View");
-      setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 100000);
+      window.open(mergeRequestMail,"_blank");
+      /*
+      let simpleSnackBarRef = this._snackBar.open("Created New Branch","View");
+      setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 10000);
       simpleSnackBarRef.onAction().subscribe(()=> {
         window.open(mergeRequestMail, "_blank");
       });
+      */
       
     },
     err=>{
