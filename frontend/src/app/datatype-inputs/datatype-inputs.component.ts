@@ -43,8 +43,6 @@ export class DatatypeInputsComponent implements OnInit {
   addInList(event: MatChipInputEvent,idx: number){
     console.log("adding in list");
     const value = (event.value || '').trim();
-
-    // Add our fruit
     if(this.inputValuesObject[this.typeInputs[idx].param]===null){
       this.inputValuesObject[this.typeInputs[idx].param] = [];
     }
@@ -52,7 +50,10 @@ export class DatatypeInputsComponent implements OnInit {
       this.inputValuesObject[this.typeInputs[idx].param].push(value);
     }
 
-    // Clear the input value
+    if(this.inputValuesObject[this.typeInputs[idx].param].length===0){
+      this.inputValuesObject[this.typeInputs[idx].param] = null;
+    }
+
     event.chipInput!.clear();
   }
 

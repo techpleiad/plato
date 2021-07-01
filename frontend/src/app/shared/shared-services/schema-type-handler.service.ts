@@ -48,9 +48,10 @@ export class SchemaTypeHandlerService {
     dialogRef.afterClosed().subscribe((result: any)=>{
       console.log(result);
       for(let key in result){
-        this.inputValuesList.push({
-          [key]:result[key]
-        })
+          this.inputValuesList.push({
+            [key]:result[key]
+          })
+        
       }
       console.log(this.inputValuesList);
       this._includeParams$.next(this.inputValuesList);

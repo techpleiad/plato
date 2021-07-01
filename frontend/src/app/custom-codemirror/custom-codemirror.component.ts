@@ -227,7 +227,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       }
       for(let i=0;i<this.additionalParams.length;i++){
         let param = Object.keys(this.additionalParams[i])[0];
-        if(this.additionalParams[i][param]!=null){
+        if(this.additionalParams[i][param]!==null && this.additionalParams[i][param]!==[]){
           curr[param] = this.additionalParams[i][param];
         }
       }
