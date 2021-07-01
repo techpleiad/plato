@@ -7,8 +7,8 @@ textarea{
     color: black;
 }
 .wrong-code {
-    background-color: red;
+    background-color: #FF616D;
 }
 .correct-code {
-    background-color: green;
+    background-color: #78DEC7;
 }

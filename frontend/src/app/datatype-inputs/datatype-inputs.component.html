@@ -1,5 +1,5 @@
 <h1>{{datatype}}</h1>
-<h2 *ngFor="let i of typeInputs">
+<h2 *ngFor="let i of typeInputs; index as idx">
     <div *ngIf="i.inputType==='integer' ">
         <mat-form-field appearance="fill">
         <mat-label>{{i.param}}</mat-label>
@@ -19,6 +19,23 @@
               <mat-option [value]="true">True</mat-option>
               <mat-option [value]="false">False</mat-option>
             </mat-select>
+          </mat-form-field>
+    </div>
+
+    <div *ngIf="i.inputType==='list' ">
+        <mat-form-field class="example-chip-list">
+            <mat-label>{{i.param}}</mat-label>
+            <mat-chip-list #chipList>
+              <mat-chip *ngFor="let l of inputValuesObject[i.param]" [selectable]="true"
+                       [removable]="true" (removed)="removeFromList(l,idx)">
+                {{l}}
+                <mat-icon matChipRemove *ngIf="true">cancel</mat-icon>
+              </mat-chip>
+              <input [matChipInputFor]="chipList"
+                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                     [matChipInputAddOnBlur]="true"
+                     (matChipInputTokenEnd)="addInList($event,idx)">
+            </mat-chip-list>
           </mat-form-field>
     </div>
 </h2>

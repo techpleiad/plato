@@ -3,13 +3,18 @@
 
 <div fxLayout="row">
     <div fxLayout="column" fxFlex="50">
-        <mat-radio-group class="example-radio-group editor-header" [(ngModel)]="editorMode" (change)="showJsonSchema()">
+        <div fxLayout="row">
+        <mat-radio-group class="example-radio-group editor-header" [(ngModel)]="editorMode">
             <mat-radio-button class="example-radio-button .mat-h3"  value="JSON"><b>JSON</b></mat-radio-button>
             &nbsp;&nbsp;
             <mat-radio-button class="example-radio-button"  value="YAML"><b>YAML</b></mat-radio-button>
         </mat-radio-group>
+        &nbsp;&nbsp;
+        <app-btn [label]="'Generate'" (clicked)="showJsonSchema()"></app-btn>
+        </div>
         
-        <app-custom-codemirror [id]=" 'input-json' " [codemirrorHeight]=" '500px' " 
+        <app-custom-codemirror [id]=" 'input-json' "
+        [codemirrorHeight]=" '500px' " 
         [isEditable]="true" [codemirrorMode]="editorMode" (modifyProfileData) = "modifyProfileData($event)">
         </app-custom-codemirror>
     </div>
