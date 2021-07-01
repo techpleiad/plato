@@ -1,16 +1,14 @@
-<h1>{{datatype}}</h1>
+<h1>{{datatype | headingPipe}}</h1>
 <h2 *ngFor="let i of typeInputs; index as idx">
-    <div *ngIf="i.inputType==='integer' ">
-        <mat-form-field appearance="fill">
-        <mat-label>{{i.param}}</mat-label>
-        <input matInput type="number" [(ngModel)]="inputValuesObject[i.param]">
-        </mat-form-field>
+    <div *ngIf="i.inputType==='integer' " class="form-group">
+        
+        <label>{{i.param}}</label>
+        <input type="number" class="form-control" [(ngModel)]="inputValuesObject[i.param]">
+       
     </div>
-    <div *ngIf="i.inputType==='string' "> 
-        <mat-form-field appearance="fill">
-            <mat-label>{{i.param}}</mat-label>
-            <input matInput [(ngModel)]="inputValuesObject[i.param]">
-            </mat-form-field>
+    <div *ngIf="i.inputType==='string' " class="form-group">
+            <label>{{i.param}}</label>
+            <input class="form-control" [(ngModel)]="inputValuesObject[i.param]">
     </div>
     <div *ngIf="i.inputType==='boolean' ">
         <mat-form-field appearance="fill">
@@ -22,7 +20,7 @@
           </mat-form-field>
     </div>
 
-    <div *ngIf="i.inputType==='list' ">
+    <div *ngIf="i.inputType==='list' " class="form-group">
         <mat-form-field class="example-chip-list">
             <mat-label>{{i.param}}</mat-label>
             <mat-chip-list #chipList>

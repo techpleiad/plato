@@ -17,7 +17,8 @@ export class SchemaTypeHandlerService {
       {param: "minLength", inputType: "integer"},
       {param: "maxLength", inputType: "integer"},
       {param: "const", inputType: "string"},
-      {param: "enum", inputType: "list"}
+      {param: "pattern", inputType: "string"},
+      {param: "enum", inputType: "list"},
     ]);
     this.dataTypeMap.set('integer',[
       {param: "minimum", inputType: "integer"},
@@ -25,6 +26,7 @@ export class SchemaTypeHandlerService {
       {param: "const", inputType: "integer"}
     ]);
     this.dataTypeMap.set('object',[
+      {param: "additionalProperties", inputType: "boolean"},
       {param: "required", inputType: "list"}
     ]);
     this.dataTypeMap.set('array',[
@@ -41,8 +43,8 @@ export class SchemaTypeHandlerService {
         datatype: datatype,
         typeInputs: this.dataTypeMap.get(datatype)
       },
-      height: '400px',
-      width: '400px',
+      height: 'auto',
+      width: '500px',
     });
 
     dialogRef.afterClosed().subscribe((result: any)=>{
