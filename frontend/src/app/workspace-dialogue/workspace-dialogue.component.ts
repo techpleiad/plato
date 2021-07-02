@@ -400,7 +400,10 @@ export class WorkspaceDialogueComponent implements OnInit {
       let mergeRequestMail = (responseList[2].trim()); // corresponds to email of the merge request.
       this.visibleProgressSpinner = false;
       this.MRDocuments = [];
-      window.open(mergeRequestMail,"_blank");
+
+      let temp = mergeRequestMail.split("pull/new");
+      let temp2 = temp[0]+"compare/"+body["branch"]+".."+temp[1];
+      window.open(temp2,"_blank");
       /*
       let simpleSnackBarRef = this._snackBar.open("Created New Branch","View");
       setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 10000);
