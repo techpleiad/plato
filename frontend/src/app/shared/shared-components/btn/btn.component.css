@@ -64,3 +64,8 @@
     border-color: #6B6B6B;
     color: #262626;
 }
+mat-icon {
+    position: relative;
+    top: 5px;
+    margin-right: 3px;
+}

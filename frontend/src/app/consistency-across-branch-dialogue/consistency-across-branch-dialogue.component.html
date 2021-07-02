@@ -63,7 +63,7 @@
 </mat-dialog-content>
 <hr>
 <mat-dialog-actions align="end">
-  <app-btn mat-dialog-close [label]=" 'Cancel' " [isCancel]="true"></app-btn> 
-  <app-btn (clicked)="checkConsistency()" [label]=" 'Send Mail' " cdkFocusInitial></app-btn>
+  <app-btn mat-dialog-close [label]=" 'Cancel' " [icon]="'cancel'" [isCancel]="true"></app-btn> 
+  <app-btn (clicked)="checkConsistency()" [label]=" 'Send Mail' " [icon]="'email'" cdkFocusInitial></app-btn>
   <mat-progress-spinner mode="indeterminate" diameter="30" [hidden]="!visibleProgressSpinner"></mat-progress-spinner>
 </mat-dialog-actions>

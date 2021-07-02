@@ -1,1 +1,7 @@
-<button type="submit" [class.dialog-button]="!isCancel" [class.cancel-btn]="isCancel" (click)="sendEvent()">{{label}}</button>
+<button type="submit" [class.dialog-button]="!isCancel" 
+[class.cancel-btn]="isCancel" (click)="sendEvent()">
+    <div fxLayout="row" fxLayoutAlign="start center">
+    <mat-icon *ngIf="icon">{{icon}}</mat-icon>
+    {{label}}
+    </div>
+</button>

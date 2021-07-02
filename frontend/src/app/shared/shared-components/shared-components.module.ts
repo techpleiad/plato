@@ -11,7 +11,7 @@ import {MatToolbarModule} from '@angular/material/toolbar';
 import { HeadingPipePipe } from '../../heading-pipe.pipe';
 import { APPLICATION } from '../shared-constants';
 import { WarningDialogComponent } from './warning-dialog/warning-dialog.component';
-
+import {MatIconModule} from '@angular/material/icon';
 
 
 
@@ -29,7 +29,8 @@ import { WarningDialogComponent } from './warning-dialog/warning-dialog.componen
     MatDialogModule,
     MatSelectModule,
     MatInputModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatIconModule
   ],
   exports: [
     DropdownComponent,

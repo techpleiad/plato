@@ -65,6 +65,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-    <app-btn mat-dialog-close [label]=" 'Cancel' " [isCancel]="true"></app-btn> 
-    <app-btn (clicked)="addNewRule()" [label]=" 'Add' " cdkFocusInitial></app-btn>
+    <app-btn mat-dialog-close [label]=" 'Cancel' " [isCancel]="true" [icon]="'cancel'"></app-btn> 
+    <app-btn (clicked)="addNewRule()" [label]=" 'Add' " [icon]="'add_circle'" cdkFocusInitial></app-btn>
 </mat-dialog-actions>

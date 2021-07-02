@@ -4,3 +4,7 @@
 .editor-header{
     margin-bottom: 16px;
 }
+.generate-button {
+    position:relative;
+    bottom: 10px;
+}

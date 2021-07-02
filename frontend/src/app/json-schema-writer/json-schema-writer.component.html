@@ -10,7 +10,7 @@
             <mat-radio-button class="example-radio-button"  value="YAML"><b>YAML</b></mat-radio-button>
         </mat-radio-group>
         &nbsp;&nbsp;
-        <app-btn [label]="'Generate'" (clicked)="showJsonSchema()"></app-btn>
+        <app-btn [label]="'Generate'" (clicked)="showJsonSchema()" class="generate-button"></app-btn>
         </div>
         
         <app-custom-codemirror [id]=" 'input-json' "

@@ -10,6 +10,7 @@ export class BtnComponent implements OnInit {
   
   @Input() label: string = "";
   @Input() isCancel = false;
+  @Input() icon="";
   @Output() clicked = new EventEmitter();
 
   constructor() { }
