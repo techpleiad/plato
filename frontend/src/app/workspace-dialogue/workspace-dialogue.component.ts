@@ -138,6 +138,7 @@ export class WorkspaceDialogueComponent implements OnInit {
         if(result==="yes"){
           this.branchValue = branchValue;
           this.ICP = "";
+          this.chosenMissingProperty = "";
           this.MRDocuments = [];
           this.sendMR = false
 
@@ -259,9 +260,26 @@ export class WorkspaceDialogueComponent implements OnInit {
     });
   }
   setICP(ICP: any){
-    this.ICP = ICP;
     this.chosenMissingProperty = "";
+    if(this.functionValue==="consistency across profile" && this.keepChanges===true){
+      const dialogRef = this.dialog.open(WarningDialogComponent,this.WARNING_DIALOG_PARAM);
+      
+      dialogRef.afterClosed().subscribe(result=>{
+        if(result==="yes"){
+          this.ICP = ICP;
+          this.sendMR = false;
+          this.discardChangesClicked();
+        }
+        else{
+          console.log("ICP should not be changed");
+        }
+      });
+    }
+    else{
+      this.ICP = ICP;
+    }
   }
+  
   populateMissingProperty(event: any){
     // Removing the chosen missing property from the list.
     let jsonDisplayData = yaml.parse(this.displayData);
@@ -284,6 +302,8 @@ export class WorkspaceDialogueComponent implements OnInit {
     if(missingPropIdx!==-1){
       this.missingProperties.splice(missingPropIdx,1);
     }
+    console.log(this.missingProperties);
+    console.log(this.inconsistentProfileProperties.get(this.ICP));
     this.keepChanges = true;
     this.discardChanges = true;
     this.sendMR = false;
@@ -317,6 +337,8 @@ export class WorkspaceDialogueComponent implements OnInit {
         }
       }
       else if(this.isProfileConsistency){
+        this.inconsistentProfileProperties.set(this.ICP,this.missingProperties);
+        //console.log(this.inconsistentProfileProperties.get(this.ICP));
         this.chosenMissingProperty = "";
         if(this.MRDocuments[i].profile===this.ICP){
           this.MRDocuments[i].document = this.sourceData;
@@ -333,6 +355,7 @@ export class WorkspaceDialogueComponent implements OnInit {
         })
       }
       else if(this.isProfileConsistency){
+        this.inconsistentProfileProperties.set(this.ICP,this.missingProperties);
         this.MRDocuments.push({
           "branch": this.branchValue,
           "profile": this.ICP,
@@ -356,6 +379,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.sendToCodeMirror();
     if(this.isProfileConsistency===true && this.ICP!==""){
       this.chosenMissingProperty = "";
+      this.missingProperties = [];
       //when branch is changed we dont have ICP so we cannot send to codemirror.
       this.sendToCodeMirror();
     }
@@ -496,8 +520,21 @@ export class WorkspaceDialogueComponent implements OnInit {
       .subscribe(data => {
         this.isEditable = true;
         this.visibleProgressSpinner = false;
-        this.displayData = data;
-        this.missingProperties = this.inconsistentProfileProperties.get(this.ICP);
+
+        let found = false;
+        for(let i=0;i<this.MRDocuments.length;i++){
+          
+          if(this.MRDocuments[i].profile===this.ICP){
+            this.displayData = this.MRDocuments[i].document;
+            found = true;
+            this.visibleProgressSpinner = false;
+          }
+        }
+        if(found==false){
+          this.displayData = data;
+        }
+        
+        this.missingProperties = JSON.parse(JSON.stringify(this.inconsistentProfileProperties.get(this.ICP)));
       });
       
     }
