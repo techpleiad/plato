@@ -1,6 +1,6 @@
 <div  fxLayout="row" fxLayoutAlign="space-around center" class="sticky" *ngIf="content !== ''">
     <div *ngFor="let profileData of profileColorList; index as ind" id="side-bar-{{ind}}"
-         style="width: 150px; word-break: break-all"
+         style=" word-break: break-all"
          [style.background]="profileData.color.color"
          class="p-2 mb-2 owner rounded-left ">
       {{profileData.profile|headingPipe}}

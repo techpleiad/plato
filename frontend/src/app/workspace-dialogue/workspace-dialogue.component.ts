@@ -403,6 +403,8 @@ export class WorkspaceDialogueComponent implements OnInit {
 
       let temp = mergeRequestMail.split("pull/new");
       let temp2 = temp[0]+"compare/"+body["branch"]+".."+temp[1];
+      console.log(mergeRequestMail);
+      console.log(temp2);
       window.open(temp2,"_blank");
       /*
       let simpleSnackBarRef = this._snackBar.open("Created New Branch","View");
