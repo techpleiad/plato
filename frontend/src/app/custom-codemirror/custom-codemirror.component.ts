@@ -84,8 +84,6 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   }
 
   ngOnInit(): void {
-    console.log(this.isEditable);
-    console.log(this.CODEMIRROR_CONFIG.readonly);
     this.yamlFileService.errorObservable$.subscribe((data:boolean)=>{
       //console.log("working")
       if(this.contentChanged===true)
@@ -94,10 +92,8 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     })
     
     this._schemaTypeHandlerService.includeParams$.subscribe((data:any)=>{
-      console.log("getting data from service");
-      console.log(data);
+      console.log("_schemaTypeHandlerService running");
       this.additionalParams = data;
-      //console.log(this.content);
       this.setAdditionalParams();
     })
     
@@ -149,12 +145,9 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   }
   ngOnChanges(changes: SimpleChanges): void {
     console.log("noOnChanges");
-
     if(this.codemirrorMode==="JSON"){
       this._codemirrorService.editor = CodeEditor.JSON;
     }
-
-    //console.log(this.ownerList);
     this.content = this.content || "";
     this.profileColorList = [];
     this.codemirror?.refresh();
@@ -170,10 +163,6 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
 
   private update(): void{
     const jsonObject = yaml.parse(this.content);
-    //console.log("This is content")
-   // console.log(this.content);
-   
-    
     this._codemirrorService.mergeEditorConstruct(
       this.codemirror,
       JSON.parse(JSON.stringify(this.CODEMIRROR_CONFIG)),
@@ -239,6 +228,4 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   }
 
 }
-
-
 // constructor() -> ngOnInit() -> ngOnChanges() -> ngAfterViewInit() -> ngOnDestroy()

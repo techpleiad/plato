@@ -5,14 +5,11 @@ import { ProfileSpecTO, PropertyDetail } from '../shared/models/ProfileSpecTO';
 import { ConfigFilesService } from '../shared/shared-services/config-files.service';
 import { ProfileAggregatorService } from '../shared/shared-services/profile-aggregator.service';
 import { SprimeraFilesService } from '../shared/shared-services/sprimera-files.service';
-import * as diff from 'deep-diff'
 import * as yaml from 'yaml';
-import * as js_yaml from 'js-yaml';
 import { CapService } from '../shared/shared-services/cap.service';
 import { ResolveBranchInconsistencyService } from '../shared/shared-services/resolve-branch-inconsistency.service';
 import { WarningDialogComponent } from '../shared/shared-components/warning-dialog/warning-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Y } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-workspace-dialogue',
@@ -22,14 +19,13 @@ import { Y } from '@angular/cdk/keycodes';
 export class WorkspaceDialogueComponent implements OnInit {
 
   mservice:microService;
-
   profileList: string[] = [];
   branchList: string[] = [];
+
   functionList: string[] = [];
-  
   functionValue: any;
-  branchValue: any;
-  profileValue: any;
+  branchValue: string = "";
+  profileValue: string = "";
 
   isBranchReq = false;
   isProfileReq = false;
@@ -37,20 +33,16 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   displayData!: string;
 
+  // Sprimera Variables
+  propertyList: PropertyDetail[]=[];
+  ownerList: string[] = [];
+
   // Variables for consistency across branches
-  destinationBranchValue: any;
-  sourceBranchValue: any;
+  isBranchConsistency = false;
+  destinationBranchValue: string = "";
+  sourceBranchValue: string = "";
   isBranch1Req = false;
   isBranch2Req = false;
-  tempSourceData!: string;
-  sourceData!: string;
-  MRDocuments: any[] = [];
-  isBranchConsistency = false;
-
-  // Consistency variables 
-  keepChanges = false;
-  discardChanges = false;
-  sendMR = false;
 
   // Variables for consistency across profile
   isProfileConsistency = false;  
@@ -60,23 +52,21 @@ export class WorkspaceDialogueComponent implements OnInit {
   ICP: string = "";
   chosenMissingProperty: string = "";
 
-  // Sprimera Variables
-  propertyList: PropertyDetail[]=[];
-  ownerList: string[] = [];
-
-
-  differenceProperties: string[] = [];
-  //twoCodemirrors = false; //two codemirrors required while checking consistency.
-
+  // Consistency variables
+  tempSourceData!: string;
+  sourceData!: string;
+  MRDocuments: any[] = [];
+  keepChanges = false;
+  discardChanges = false;
+  sendMR = false;
 
   visibleProgressSpinner = false;
   showBtn = false;
   reqValidation = true; // No error msg
-
   isEditable = false;
   
-  // Consructor initialize branches and profiles.
-  constructor(@Inject(MAT_DIALOG_DATA) public data: microService,@Inject('WARNING_DIALOG_PARAM') private WARNING_DIALOG_PARAM: any, private _configFiles: ConfigFilesService, 
+  constructor(@Inject(MAT_DIALOG_DATA) public data: microService,@Inject('WARNING_DIALOG_PARAM') private WARNING_DIALOG_PARAM: any,
+  private _configFiles: ConfigFilesService, 
   private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService,
   private _capService: CapService, private _resolveBranchInconsistency: ResolveBranchInconsistencyService,
   public dialog: MatDialog, private _snackBar: MatSnackBar) {
@@ -84,19 +74,12 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.functionList = ["show individual file","sprimera",
     "consistency across branch","consistency across profile"];
     this.mservice = data;
-    this.branchValue = "";
-    this.profileValue = "";
-
-    this.destinationBranchValue = "";
-    this.sourceBranchValue = "";
- 
-
     this.profileList = this.mservice.profiles.map((x: any) => x.name);
     this.branchList = this.mservice.branches.map((x:any) => x.name);
    }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
+
   setFunction(functionValue: any){
     this.displayData = "";
     this.propertyList = [];
@@ -123,11 +106,9 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.isBranchConsistency = false;
     this.isProfileConsistency = false;
     
-
     this.missingProperties = [];
     this.reqValidation = true;
     this.isEditable = false;
-
     this.setBranchProfileReq();
   }
   setBranchProfileReq(){
@@ -157,7 +138,6 @@ export class WorkspaceDialogueComponent implements OnInit {
         if(result==="yes"){
           this.branchValue = branchValue;
           this.ICP = "";
-
           this.MRDocuments = [];
           this.sendMR = false
 
@@ -285,7 +265,6 @@ export class WorkspaceDialogueComponent implements OnInit {
   populateMissingProperty(event: any){
     // Removing the chosen missing property from the list.
     let jsonDisplayData = yaml.parse(this.displayData);
-    console.log(event);
     //this.chosenMissingProperty = event;
     this.chosenMissingProperty = event;
 
@@ -298,9 +277,13 @@ export class WorkspaceDialogueComponent implements OnInit {
       curr = curr[parentList[i]];
     }
     curr[parentList[parentList.length-1]] = null;
-    console.log(jsonDisplayData);
     this.displayData = JSON.stringify(jsonDisplayData,null,2);
-    console.log(this.displayData);
+
+    // Removing the missing property from the list.
+    let missingPropIdx = this.missingProperties.findIndex(x=>x===this.chosenMissingProperty);
+    if(missingPropIdx!==-1){
+      this.missingProperties.splice(missingPropIdx,1);
+    }
     this.keepChanges = true;
     this.discardChanges = true;
     this.sendMR = false;
@@ -308,7 +291,6 @@ export class WorkspaceDialogueComponent implements OnInit {
   modifyProfileData(event: any){
     if(this.chosenMissingProperty!==""){
       this.tempSourceData = event;
-      console.log("Modify Profile data");
     }
   }
 
@@ -403,17 +385,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
       let temp = mergeRequestMail.split("pull/new");
       let temp2 = temp[0]+"compare/"+body["branch"]+".."+temp[1];
-      console.log(mergeRequestMail);
-      console.log(temp2);
       window.open(temp2,"_blank");
-      /*
-      let simpleSnackBarRef = this._snackBar.open("Created New Branch","View");
-      setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 10000);
-      simpleSnackBarRef.onAction().subscribe(()=> {
-        window.open(mergeRequestMail, "_blank");
-      });
-      */
-      
     },
     err=>{
       let errorMsg = (err.error.error.errorMessage);
@@ -447,9 +419,8 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.sendToCodeMirror();
     } 
   }
-  /////////////////// SENDING DATA TO CODEMIRROR ////////////////
+
   sendToCodeMirror(){
-    // Progress Spinner 
     this.visibleProgressSpinner = true;
 
     // SHOW MERGED AND INDIVIDUAL FILES
@@ -472,7 +443,6 @@ export class WorkspaceDialogueComponent implements OnInit {
     else if(this.functionValue==="sprimera"){
       let profileSpecTOList: ProfileSpecTO[] = [];
       this._sprimeraFilesService.getFiles(this.mservice.service,this.branchValue,this.profileValue).subscribe((data: any[]) =>{
-        console.log(data);
         //Converting the fetched files into the format required by profile_aggregator service.
         for(let i=0;i<data.length;i++){
           profileSpecTOList.push(new ProfileSpecTO(
@@ -481,7 +451,7 @@ export class WorkspaceDialogueComponent implements OnInit {
             data[i].jsonNode,
           ))
         }
-        // Merging Files 
+
         const aggregated = this._profileAggregatorService.aggregateProfiles(profileSpecTOList);
         if(aggregated){
           this.visibleProgressSpinner = false;
@@ -500,7 +470,6 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.isBranchConsistency = true;
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.destinationBranchValue,this.profileValue)
       .subscribe(data => {
-        console.log("getting destination data");
         // checkiong if the source data for this profile has some local changes.
         let found = false;
         for(let i=0;i<this.MRDocuments.length;i++){
@@ -512,12 +481,10 @@ export class WorkspaceDialogueComponent implements OnInit {
           }
         }
         if(found===false){
-          console.log("getting source data from API");
           this._configFiles.getFile(this.mservice.service,this.functionValue, this.sourceBranchValue,this.profileValue)
           .subscribe(data2 => {  
             this.visibleProgressSpinner = false;
             this.sourceData = data2;
-            console.log(data2);
           });
         }
         this.displayData = data;
@@ -527,7 +494,6 @@ export class WorkspaceDialogueComponent implements OnInit {
     else if(this.functionValue==="consistency across profile"){
       this._configFiles.getFile(this.mservice.service,"individual",this.branchValue,this.ICP)
       .subscribe(data => {
-        console.log(data);
         this.isEditable = true;
         this.visibleProgressSpinner = false;
         this.displayData = data;
