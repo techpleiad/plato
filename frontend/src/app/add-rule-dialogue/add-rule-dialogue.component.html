@@ -2,24 +2,15 @@
     <h2 mat-dialog-title >Add Rule</h2>
 </div>
 
-
-    <!--
-    <app-custom-codemirror fxFlex [id]=" 'rule' "
-    [codemirrorMode]="editorMode"
-    (modifyProfileData) = "modifyProfileData($event)">
-    </app-custom-codemirror>
--->
-
-
-
 <mat-dialog-content>
-    <form fxLayout="row" fxLayoutAlign="start center">
+    <form>
+    <mat-form-field class="example-full-width input-field">
+        <mat-label><span class="text-danger mr-1">*</span>RULE ON PROPERTY</mat-label>
+        <input matInput placeholder="Enter Property" [(ngModel)]="nRule.ruleOnProperty" name="property">
+    </mat-form-field>
+    <div fxLayout="row" fxLayoutAlign="start center">
         <div>
-            <mat-form-field class="example-full-width input-field">
-              <mat-label><span class="text-danger mr-1">*</span>RULE ON PROPERTY</mat-label>
-              <input matInput placeholder="Enter Property" [(ngModel)]="nRule.ruleOnProperty" name="property">
-            </mat-form-field>
-            <div style="height:20px;">
+            <div>
               <span *ngIf="!isRuleOnPropertyValid" class="text-danger">
                 Please enter service name
               </span>
@@ -59,12 +50,13 @@
             <div style="height:20px;">
             </div>
         </div>
+        </div>
     </form>
 
     <app-json-schema-writer (jsonSchemaEdited) = "updateRuleData($event)"></app-json-schema-writer>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-    <app-btn mat-dialog-close [label]=" 'Cancel' " [isCancel]="true" [icon]="'cancel'"></app-btn> 
-    <app-btn (clicked)="addNewRule()" [label]=" 'Add' " [icon]="'add_circle'" cdkFocusInitial></app-btn>
+    <app-btn [label]=" 'Cancel' " [isCancel]="true" [icon]="'cancel'" (clicked)="closeDialog()"></app-btn> 
+    <app-btn (clicked)="addNewRule()" [label]=" 'Add' " [icon]="'add_circle'"></app-btn>
 </mat-dialog-actions>

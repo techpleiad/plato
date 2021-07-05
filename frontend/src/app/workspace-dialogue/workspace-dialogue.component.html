@@ -42,6 +42,6 @@
 <mat-dialog-actions align="end">
   <app-btn [label]=" 'Keep Changes' " (clicked)="keepChangesClicked()" *ngIf="keepChanges"></app-btn>
   <app-btn [label]=" 'Discard Changes' " (clicked)="discardChangesClicked()" *ngIf="discardChanges"></app-btn>
-  <app-btn mat-dialog-close [label]=" 'Cancel' " [isCancel] = "true"></app-btn>
+  <app-btn [label]=" 'Cancel' " [isCancel] = "true" (clicked)="closeWorkspace()"></app-btn>
 </mat-dialog-actions>
 

@@ -5,6 +5,7 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { branchConsistency } from '../branchConsistency';
 import { DataManagerService } from '../shared/shared-services/data-manager.service';
 import { microService } from '../microService';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-consistency-across-branch-dialogue',
@@ -33,6 +34,22 @@ export class ConsistencyAcrossBranchDialogueComponent implements OnInit {
   isBranch1Valid = true;
   isBranch2Valid = true;
   isRecipientValid = true;
+
+  constructor(private dialogRef: MatDialogRef<ConsistencyAcrossBranchDialogueComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: branchConsistency, private _dataManagerService: DataManagerService,
+    private _snackBar: MatSnackBar) {
+    this.branchCons = new branchConsistency();
+    dialogRef.disableClose = true;
+  }
+
+  ngOnInit(): void {
+    this._dataManagerService.getServicesList().subscribe(data => {
+      this.mservices = JSON.parse(JSON.stringify(data));
+      for(let i=0;i<this.mservices.length;i++){
+        this.services.push(this.mservices[i].service);
+      }
+    });
+  }
 
   setFunction(service: string){
     this.service = service;
@@ -72,9 +89,7 @@ export class ConsistencyAcrossBranchDialogueComponent implements OnInit {
     }
   }
 
-  constructor(private dialogRef: MatDialogRef<ConsistencyAcrossBranchDialogueComponent>,@Inject(MAT_DIALOG_DATA) private data: branchConsistency, private _dataManagerService: DataManagerService) {
-    this.branchCons = new branchConsistency();
-  }
+  
 
   checkConsistency(){
     this.isServiceValid = this.service.length>0;
@@ -92,17 +107,19 @@ export class ConsistencyAcrossBranchDialogueComponent implements OnInit {
       this._dataManagerService.sendBranchConsistencyEmail(this.branchCons).subscribe(data=>{
         this.visibleProgressSpinner = false;
         this.dialogRef.close(this.branchCons);
-      });
+      },
+      
+      err=>{
+        this.visibleProgressSpinner = false;
+        let errorMsg = (err.error.error.errorMessage);
+        let simpleSnackBarRef = this._snackBar.open(errorMsg,"Close");
+        setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 100000);
+      }
+      );
     }
   }
-
-  ngOnInit(): void {
-    this._dataManagerService.getServicesList().subscribe(data => {
-      this.mservices = JSON.parse(JSON.stringify(data));
-      for(let i=0;i<this.mservices.length;i++){
-        this.services.push(this.mservices[i].service);
-      }
-    });
+  closeDialog(){
+    this.dialogRef.close(ConsistencyAcrossBranchDialogueComponent);
   }
 
 }

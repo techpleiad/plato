@@ -5,6 +5,7 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { microService } from '../microService';
 import { profileConsistency } from '../profileConsistency';
 import { DataManagerService } from '../shared/shared-services/data-manager.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-consistency-across-profile-dialogue',
@@ -34,6 +35,22 @@ export class ConsistencyAcrossProfileDialogueComponent implements OnInit {
   isBranchValid = true;
   isRecipientValid = true;
 
+  constructor(private dialogRef: MatDialogRef<ConsistencyAcrossProfileDialogueComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: profileConsistency, private _dataManagerService: DataManagerService,
+    private _snackBar: MatSnackBar) {
+    this.profileCons = new profileConsistency();
+    dialogRef.disableClose = true;
+  }
+
+  ngOnInit(): void {
+    this._dataManagerService.getServicesList().subscribe(data => {
+      this.mservices = JSON.parse(JSON.stringify(data));
+      for(let i=0;i<this.mservices.length;i++){
+        this.services.push(this.mservices[i].service);
+      }
+    });
+  }
+
   setFunction(service: string){
     this.service = service;
     for(let i=0;i<this.mservices.length;i++){
@@ -50,26 +67,17 @@ export class ConsistencyAcrossProfileDialogueComponent implements OnInit {
 
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
-
-    // Add our fruit
     if (value) {
       this.recipients.push(value);
     }
-
-    // Clear the input value
     event.chipInput!.clear();
   }
 
   remove(recipient: string): void {
     const index = this.recipients.indexOf(recipient);
-
     if (index >= 0) {
       this.recipients.splice(index, 1);
     }
-  }
-
-  constructor(private dialogRef: MatDialogRef<ConsistencyAcrossProfileDialogueComponent>,@Inject(MAT_DIALOG_DATA) private data: profileConsistency, private _dataManagerService: DataManagerService) {
-    this.profileCons = new profileConsistency();
   }
 
   checkConsistency(){
@@ -87,17 +95,19 @@ export class ConsistencyAcrossProfileDialogueComponent implements OnInit {
       this._dataManagerService.sendProfileConsistencyEmail(this.profileCons, this.branchValue).subscribe(data=>{
         this.visibleProgressSpinner = false;
         this.dialogRef.close(this.profileCons);
-      });
+      },
+      err=>{
+        this.visibleProgressSpinner = false;
+        let errorMsg = (err.error.error.errorMessage);
+        let simpleSnackBarRef = this._snackBar.open(errorMsg,"Close");
+        setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 100000);
+      }
+      );
     }
   }
-
-  ngOnInit(): void {
-    this._dataManagerService.getServicesList().subscribe(data => {
-      this.mservices = JSON.parse(JSON.stringify(data));
-      for(let i=0;i<this.mservices.length;i++){
-        this.services.push(this.mservices[i].service);
-      }
-    });
+  closeDialog(){
+    this.dialogRef.close(ConsistencyAcrossProfileDialogueComponent);
   }
+
 
 }

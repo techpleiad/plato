@@ -14,7 +14,7 @@ export class CodemirrorService {
   private propertyTolineBreadcrumbMap = new Map();
   private _breadcrumbEditorLine = -1;
   private currentLineInEditor = 0;
-  private _mergeEditor: any;
+  public _mergeEditor: any;
 
   private _content = '';
   private _jsonContent: any;
@@ -53,16 +53,18 @@ export class CodemirrorService {
       }
       case CodeEditor.YAML: {
         this._content = YAML_PRETTIER.stringify(data);
-        console.log(this._content);
+        //console.log(this._content);
       }
     }
   }
 
   //// Showing the Editor
   showEditor(codemirrorHeight: string, codemirrorWidth: string): void {
-    this._mergeEditor.setValue(this._content);
-    this._mergeEditor.setSize(codemirrorWidth, codemirrorHeight);
-    this._mergeEditor.refresh();
+    if(this._mergeEditor){
+      this._mergeEditor.setValue(this._content);
+      this._mergeEditor.setSize(codemirrorWidth, codemirrorHeight);
+      this._mergeEditor.refresh();
+    }
   }
 
   set content(data: string) {

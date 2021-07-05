@@ -10,7 +10,9 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class WarningDialogComponent implements OnInit {
 
   warningOutput: string = "";
-  constructor(private dialogRef: MatDialogRef<WarningDialogComponent>,@Inject(MAT_DIALOG_DATA) public data: any) {}
+  constructor(private dialogRef: MatDialogRef<WarningDialogComponent>,@Inject(MAT_DIALOG_DATA) public data: any) {
+    dialogRef.disableClose = true;
+  }
 
   ngOnInit(): void {
   }

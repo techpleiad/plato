@@ -94,6 +94,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     this._schemaTypeHandlerService.includeParams$.subscribe((data:any)=>{
       console.log("_schemaTypeHandlerService running");
       this.additionalParams = data;
+      if(this.schemaPropertyClicked)
       this.setAdditionalParams();
     })
     
@@ -126,6 +127,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
         
           //console.log("contentChanged");
           //console.log(newContent);
+        this.content = newContent;
         this.modifyProfileData.emit(newContent);
       })
 
@@ -145,9 +147,22 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   }
   ngOnChanges(changes: SimpleChanges): void {
     console.log("noOnChanges");
+    if(this.content){
+      console.log(this.content);
+      let newContent = this.yamlFileService.replaceAll(this.content,'\t',this.SPACE_REPLACE);
+        if(this.codemirrorMode === "YAML")
+          this.yamlFileService.validateYAML(newContent);
+        if(this.codemirrorMode === "JSON")
+          this.yamlFileService.validateJSON(newContent);
+    }
+    //console.log(this._codemirrorService._mergeEditor.getValue());
     if(this.codemirrorMode==="JSON"){
       this._codemirrorService.editor = CodeEditor.JSON;
     }
+    else if(this.codemirrorMode==="YAML"){
+      this._codemirrorService.editor = CodeEditor.YAML;
+    }
+
     this.content = this.content || "";
     this.profileColorList = [];
     this.codemirror?.refresh();
@@ -156,7 +171,9 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       if(this.content !== "")
         this.update();
       else{
+        console.log(this.content);
         this._codemirrorService.content = "";
+        this._codemirrorService.showEditor(this.codemirrorHeight,this.codemirrorWidth);
       }
     }
   }
@@ -206,6 +223,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     console.log("setting add params");
     if(this.content){
       let jsonSchemaContent = JSON.parse(this.content);
+
       let parentList = this.schemaPropertyClicked.split(".");
       let curr = jsonSchemaContent;
       for(let i=0;i<parentList.length;i++){

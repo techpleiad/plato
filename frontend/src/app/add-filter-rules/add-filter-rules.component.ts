@@ -45,7 +45,7 @@ export class AddFilterRulesComponent implements OnInit {
   openAddRuleDialog(){
     const dialogRef = this.dialog.open(AddRuleDialogueComponent,{
       width: "1400px",
-      height: "700px"
+      minHeight: "600px"
     });
 
     dialogRef.afterClosed().subscribe((result: any)=>{

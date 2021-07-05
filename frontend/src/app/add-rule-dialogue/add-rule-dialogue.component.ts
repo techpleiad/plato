@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { addRuleTemplate } from '../addRuleTemplate';
 import { microService } from '../microService';
 import { CodemirrorService } from '../shared/shared-services/codemirror.service';
@@ -29,11 +30,13 @@ export class AddRuleDialogueComponent implements OnInit {
   isRuleOnPropertyValid = true;
   isServiceValid = true;
 
-  constructor(private dialogRef: MatDialogRef<AddRuleDialogueComponent>,@Inject(MAT_DIALOG_DATA) private data: addRuleTemplate, private _dataManagerService: DataManagerService, private _codemirrorService: CodemirrorService, private _rulesDataService: RulesDataService) {
+  constructor(private dialogRef: MatDialogRef<AddRuleDialogueComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: addRuleTemplate, private _dataManagerService: DataManagerService,
+    private _codemirrorService: CodemirrorService, private _rulesDataService: RulesDataService,
+    private _snackBar: MatSnackBar) {
     this.nRule = new addRuleTemplate();
+    dialogRef.disableClose = true;
   }
-
-  
 
   ngOnInit(): void {
     this._dataManagerService.getServicesList().subscribe(data => {
@@ -94,28 +97,33 @@ export class AddRuleDialogueComponent implements OnInit {
     }
     if(this.isRuleOnPropertyValid && this.isServiceValid){
       this.visibleProgressSpinner = true;
-      console.log(this.ruleData);
+      
       temp["rule"] = JSON.parse(this.ruleData);
       temp["rule"]["$schema"] = "https://json-schema.org/draft/2020-12/schema";
 
       let s1 = JSON.stringify(temp,null,2), s2 = JSON.stringify(this.nRule,null,2);
-      //console.log(s1);
-      //console.log(this.ruleData);
       s1 = s1.slice(1);
       s1 = s1.slice(0,s1.length-1);
       s2 = s2.slice(1);
       s2 = s2.slice(0,s2.length-1);
       let newRule = "{"+s1+","+s2+"}";
       let addNewRule: addRuleTemplate = JSON.parse(newRule);
-      console.log(addNewRule);
-      //console.log(newRule);
-      //console.log(addNewRule);
       
       this._rulesDataService.addRule(addNewRule).subscribe(data=>{
         this.visibleProgressSpinner = false;
         this.dialogRef.close(addNewRule);
-      });
+      },
+      err=>{
+        this.visibleProgressSpinner = false;
+        let errorMsg = (err.error.error.errorMessage);
+        let simpleSnackBarRef = this._snackBar.open(errorMsg,"Close");
+        setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 100000);
+      }
+      );
     }
+  }
+  closeDialog(){
+    this.dialogRef.close(AddRuleDialogueComponent);
   }
 
 }
