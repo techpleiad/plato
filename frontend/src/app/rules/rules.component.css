@@ -6,10 +6,12 @@
     overflow: auto;
     margin-top: 40px;
 }
+/*
 .mat-row:hover .mat-cell {
     background-color: #DDDDDD;
     cursor: pointer;
 }
+*/
 .mat-column-property {
     width: 40% !important;
     word-break: break-all;
@@ -29,4 +31,13 @@
     width: 10% !important;
     word-break: break-all;
     padding-right: 40px;
+}
+.mat-column-actions {
+    width: 10% !important;
+}
+.action-btn {
+    cursor: pointer;
+}
+.action-btn:hover {
+    cursor: pointer;
 }

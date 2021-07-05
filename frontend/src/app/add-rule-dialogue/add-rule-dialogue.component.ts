@@ -112,6 +112,7 @@ export class AddRuleDialogueComponent implements OnInit {
       this._rulesDataService.addRule(addNewRule).subscribe(data=>{
         this.visibleProgressSpinner = false;
         this.dialogRef.close(addNewRule);
+        this.reloadPage();
       },
       err=>{
         this.visibleProgressSpinner = false;
@@ -124,6 +125,9 @@ export class AddRuleDialogueComponent implements OnInit {
   }
   closeDialog(){
     this.dialogRef.close(AddRuleDialogueComponent);
+  }
+  reloadPage(){
+    window.location.reload();
   }
 
 }

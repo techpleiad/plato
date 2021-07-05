@@ -57,7 +57,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   profileColorList: ProfileDataTO[]=[];
 
   CODEMIRROR_CONFIG: any = {
-    readonly: !this.isEditable,
+    readonly: false,
     theme: 'idea',
     mode: 'yaml',
     lineNumbers: true,
