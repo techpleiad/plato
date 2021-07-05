@@ -99,7 +99,7 @@ export class AddRuleDialogueComponent implements OnInit {
       this.visibleProgressSpinner = true;
       
       temp["rule"] = JSON.parse(this.ruleData);
-      temp["rule"]["$schema"] = "https://json-schema.org/draft/2020-12/schema";
+      temp["rule"]["$schema"] = "http://json-schema.org/draft-07/schema#";
 
       let s1 = JSON.stringify(temp,null,2), s2 = JSON.stringify(this.nRule,null,2);
       s1 = s1.slice(1);
