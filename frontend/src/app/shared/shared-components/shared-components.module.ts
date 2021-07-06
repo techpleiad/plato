@@ -12,6 +12,7 @@ import { HeadingPipePipe } from '../../heading-pipe.pipe';
 import { APPLICATION } from '../shared-constants';
 import { WarningDialogComponent } from './warning-dialog/warning-dialog.component';
 import {MatIconModule} from '@angular/material/icon';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 
 
@@ -30,7 +31,8 @@ import {MatIconModule} from '@angular/material/icon';
     MatSelectModule,
     MatInputModule,
     MatToolbarModule,
-    MatIconModule
+    MatIconModule,
+    FlexLayoutModule
   ],
   exports: [
     DropdownComponent,
