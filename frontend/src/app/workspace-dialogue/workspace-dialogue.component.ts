@@ -423,6 +423,8 @@ export class WorkspaceDialogueComponent implements OnInit {
       window.open(temp2,"_blank");
     },
     err=>{
+      console.log(err);
+      console.log(body);
       let errorMsg = (err.error.error.errorMessage);
       this.showBackendFailure(errorMsg);
     }
@@ -435,10 +437,10 @@ export class WorkspaceDialogueComponent implements OnInit {
     if(this.isBranchReq===true && !this.branchValue){
       this.reqValidation = false;
     }
-
-    if(this.isProfileReq===true && !this.profileValue){
+    /*
+    if(this.isProfileReq===true && this.profileValue){
       this.reqValidation = false;
-    }
+    }*/
     console.log(this.branchValue);
     console.log(this.profileValue);
     if(this.isBranch1Req===true && this.sourceBranchValue===""){
