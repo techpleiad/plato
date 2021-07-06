@@ -19,6 +19,7 @@
         <div class="mb-3">
             <mat-form-field appearance="fill" class="input-field">
                 <mat-label>SERVICES</mat-label>
+
                 <mat-select [formControl]="servicesSelected" multiple>
                     {{setFunction()}}
                     <mat-option *ngFor="let service of serviceList" [value]="service">{{service}}</mat-option>

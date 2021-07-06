@@ -71,8 +71,9 @@ export class WorkspaceDialogueComponent implements OnInit {
   private _capService: CapService, private _resolveBranchInconsistency: ResolveBranchInconsistencyService,
   public dialog: MatDialog, private _snackBar: MatSnackBar) {
 
+
     this.functionList = ["show individual file","sprimera",
-    "consistency across branch","consistency across profile"];
+    "consistency across branch","consistency across profile","custom validation consistency"];
     this.mservice = data;
     this.profileList = this.mservice.profiles.map((x: any) => x.name);
     this.branchList = this.mservice.branches.map((x:any) => x.name);
@@ -423,6 +424,8 @@ export class WorkspaceDialogueComponent implements OnInit {
       window.open(temp2,"_blank");
     },
     err=>{
+      console.log(err);
+      console.log(body);
       let errorMsg = (err.error.error.errorMessage);
       this.showBackendFailure(errorMsg);
     }

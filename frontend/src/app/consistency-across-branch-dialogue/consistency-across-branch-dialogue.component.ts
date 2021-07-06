@@ -72,7 +72,6 @@ export class ConsistencyAcrossBranchDialogueComponent implements OnInit {
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
-    // Add our fruit
     if (value) {
       this.recipients.push(value);
     }

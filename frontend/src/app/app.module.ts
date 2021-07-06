@@ -75,7 +75,7 @@ import { DatatypeInputsComponent } from './datatype-inputs/datatype-inputs.compo
     CustomValidateDialogueComponent,
     AddRuleDialogueComponent,
     JsonSchemaWriterComponent,
-    DatatypeInputsComponent
+    DatatypeInputsComponent,
   ],
   imports: [
     BrowserModule,
