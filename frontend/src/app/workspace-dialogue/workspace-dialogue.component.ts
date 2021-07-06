@@ -82,7 +82,7 @@ export class WorkspaceDialogueComponent implements OnInit {
   public dialog: MatDialog, private _snackBar: MatSnackBar) {
 
     this.functionList = ["show merged file","show individual file","sprimera",
-    "consistency across branch","consistency across profile"];
+    "consistency across branch","consistency across profile","custom validation consistency"];
     this.mservice = data;
     this.branchValue = "";
     this.profileValue = "";

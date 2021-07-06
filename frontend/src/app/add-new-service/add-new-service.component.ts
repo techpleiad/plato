@@ -50,9 +50,15 @@ export class AddNewServiceComponent implements OnInit {
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
-    // Add our fruit
     if (value) {
-      this.profiles.push({name: value});
+      let flag = true;
+      for(let i=0;i<this.profiles.length;i++){
+        if(this.profiles[i].name===value){
+          flag = false;
+          break;
+        }
+      }
+      if(flag) this.profiles.push({name: value});
     }
 
     // Clear the input value
@@ -72,9 +78,15 @@ export class AddNewServiceComponent implements OnInit {
   addBranch(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
-    // Add our fruit
     if (value) {
-      this.branches.push({name: value, priority: 0});
+      let flag = true;
+      for(let i=0;i<this.branches.length;i++){
+        if(this.branches[i].name===value){
+          flag = false;
+          break;
+        }
+      }
+      if(flag) this.branches.push({name: value, priority: 0});
     }
 
     // Clear the input value
