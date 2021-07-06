@@ -41,7 +41,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() codemirrorMode = "YAML";
   @Input() codemirrorHeight = "400px";
   @Input() codemirrorWidth = "100%";
-  @Input() isEditable = false;
+  @Input() isEditable = true;
   @Input() isJsonSchemaEditor = false;
   contentValid = true;
   contentChanged = false;
@@ -57,7 +57,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   profileColorList: ProfileDataTO[]=[];
 
   CODEMIRROR_CONFIG: any = {
-    readonly: false,
+    readOnly: !this.isEditable,
     theme: 'idea',
     mode: 'yaml',
     lineNumbers: true,
@@ -147,6 +147,9 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   }
   ngOnChanges(changes: SimpleChanges): void {
     console.log("noOnChanges");
+    console.log(changes);
+    
+    
     if(this.content){
       console.log(this.content);
       let newContent = this.yamlFileService.replaceAll(this.content,'\t',this.SPACE_REPLACE);

@@ -15,3 +15,11 @@ app-dropdown{
     margin-right: 15px;
     margin-left: 15px;
 }
+.full-width-editor {
+    width: 100%;
+    max-width: 100%;
+}
+.partial-width-editor {
+    width: 80%;
+    max-width: 80%;
+}
