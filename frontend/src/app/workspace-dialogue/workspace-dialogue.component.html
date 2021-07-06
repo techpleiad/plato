@@ -11,7 +11,7 @@
       <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH' " [defaultValue]="branchValue" (change)="setBranch($event)" *ngIf="isBranchReq" ></app-dropdown>
       <app-dropdown [dropdownList]="branchList" [label]=" 'SOURCE' " [defaultValue]="sourceBranchValue" (change)="setSourceBranch($event)" *ngIf="isBranch2Req" ></app-dropdown>
       <app-dropdown [dropdownList]="branchList" [label]=" 'DESTINATION' " [defaultValue]="destinationBranchValue" (change)="setDestinationBranch($event)" *ngIf="isBranch1Req" ></app-dropdown>
-      <app-profile-input [mservice]="mservice" [canProfileDefault]="canProfileDefault" (profile_sent)="setProfile($event)" *ngIf="isProfileReq"></app-profile-input>
+      <app-profile-input [mservice]="mservice" [canProfileDefault]="canProfileDefault" [defaultValue]="profileValue" (profile_sent)="setProfile($event)" *ngIf="isProfileReq"></app-profile-input>
       <app-dropdown [dropdownList]="inconsistentProfiles" [label]=" 'PROFILE' " [defaultValue]="ICP" (change)="setICP($event)" *ngIf="isProfileConsistency"></app-dropdown>
       <app-btn (clicked)="processFunction()" [label]=" 'Show' " *ngIf="showBtn"></app-btn>
       <span style="color:red;" *ngIf="!reqValidation">Please fill the required fields*</span>

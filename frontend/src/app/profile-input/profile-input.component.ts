@@ -9,22 +9,23 @@ import { microService } from '../microService';
 export class ProfileInputComponent implements OnInit {
   @Input() mservice!: microService;
   @Input() canProfileDefault!: Boolean;
+  @Input() defaultValue!: string;
   @Output() profile_sent = new EventEmitter();
 
-  defaultValue = "";
 
   constructor() { }
 
 
 
   ngOnInit(): void {
+    /*
     if(this.canProfileDefault===true){
       this.defaultValue = "default";
-    }
+    }*/
   }
   sendProfile(event: any){
     if(event.value==="default"){
-      this.profile_sent.emit("");
+      this.profile_sent.emit("default");
     }
     else{
       this.profile_sent.emit(event.value);

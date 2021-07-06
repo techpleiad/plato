@@ -24,8 +24,8 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   functionList: string[] = [];
   functionValue: any;
-  branchValue: string = "";
-  profileValue: string = "";
+  branchValue!: string;
+  profileValue!: string;
 
   isBranchReq = false;
   isProfileReq = false;
@@ -82,6 +82,8 @@ export class WorkspaceDialogueComponent implements OnInit {
   ngOnInit(): void {}
 
   setFunction(functionValue: any){
+    this.branchValue = "";
+    this.profileValue = "";
     this.displayData = "";
     this.propertyList = [];
     this.ownerList = [];
@@ -430,13 +432,15 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   processFunction(){
     this.reqValidation = true;
-    if(this.isBranchReq===true && this.branchValue===""){
+    if(this.isBranchReq===true && !this.branchValue){
       this.reqValidation = false;
     }
 
-    if(this.canProfileDefault===false && this.isProfileReq===true && this.profileValue===""){
+    if(this.isProfileReq===true && !this.profileValue){
       this.reqValidation = false;
     }
+    console.log(this.branchValue);
+    console.log(this.profileValue);
     if(this.isBranch1Req===true && this.sourceBranchValue===""){
       this.reqValidation = false;
     }
