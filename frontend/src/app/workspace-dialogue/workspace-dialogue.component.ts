@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { microService } from '../microService';
 import { ProfileSpecTO, PropertyDetail } from '../shared/models/ProfileSpecTO';
 import { ConfigFilesService } from '../shared/shared-services/config-files.service';
@@ -65,7 +65,7 @@ export class WorkspaceDialogueComponent implements OnInit {
   reqValidation = true; // No error msg
   isEditable = false;
   
-  constructor(@Inject(MAT_DIALOG_DATA) public data: microService,@Inject('WARNING_DIALOG_PARAM') private WARNING_DIALOG_PARAM: any,
+  constructor(private dialogRef: MatDialogRef<WorkspaceDialogueComponent>, @Inject(MAT_DIALOG_DATA) public data: microService,@Inject('WARNING_DIALOG_PARAM') private WARNING_DIALOG_PARAM: any,
   private _configFiles: ConfigFilesService, 
   private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService,
   private _capService: CapService, private _resolveBranchInconsistency: ResolveBranchInconsistencyService,
@@ -76,6 +76,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.mservice = data;
     this.profileList = this.mservice.profiles.map((x: any) => x.name);
     this.branchList = this.mservice.branches.map((x:any) => x.name);
+    dialogRef.disableClose = true;
    }
 
   ngOnInit(): void {}
@@ -257,7 +258,12 @@ export class WorkspaceDialogueComponent implements OnInit {
       else{
         this.displayData = "All profiles are consistent."
       }
-    });
+    },
+    err=>{
+      let errorMsg = (err.error.error.errorMessage);
+      this.showBackendFailure(errorMsg);
+    }
+    );
   }
   setICP(ICP: any){
     this.chosenMissingProperty = "";
@@ -413,9 +419,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     },
     err=>{
       let errorMsg = (err.error.error.errorMessage);
-      let simpleSnackBarRef = this._snackBar.open(errorMsg,"Close");
-      setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 100000);
-      this.visibleProgressSpinner = false;
+      this.showBackendFailure(errorMsg);
     }
     );
     this.sendMR = false;
@@ -460,7 +464,12 @@ export class WorkspaceDialogueComponent implements OnInit {
       .subscribe(data => {
         this.visibleProgressSpinner = false;
         this.displayData = data;
-      });
+      },
+      err=>{
+        let errorMsg = (err.error.error.errorMessage);
+        this.showBackendFailure(errorMsg);
+      }
+      );
     }
  
     // SPIMERA
@@ -485,7 +494,12 @@ export class WorkspaceDialogueComponent implements OnInit {
         this.ownerList = profileSpecTOList.map(function(val){
           return val.profile;
         })
-      })
+      },
+      err=>{
+        let errorMsg = (err.error.error.errorMessage);
+        this.showBackendFailure(errorMsg);
+      }
+      )
     }
 
     // CONSISTENCY ACROSS BRANCHES
@@ -509,10 +523,20 @@ export class WorkspaceDialogueComponent implements OnInit {
           .subscribe(data2 => {  
             this.visibleProgressSpinner = false;
             this.sourceData = data2;
-          });
+          },
+          err=>{
+            let errorMsg = (err.error.error.errorMessage);
+            this.showBackendFailure(errorMsg);
+          }
+          );
         }
         this.displayData = data;
-      }); 
+      },
+      err=>{
+        let errorMsg = (err.error.error.errorMessage);
+        this.showBackendFailure(errorMsg);
+      }
+      ); 
     }
     //// CONSISTENCY ACROSS PROFILES
     else if(this.functionValue==="consistency across profile"){
@@ -535,9 +559,23 @@ export class WorkspaceDialogueComponent implements OnInit {
         }
         
         this.missingProperties = JSON.parse(JSON.stringify(this.inconsistentProfileProperties.get(this.ICP)));
-      });
+      },
+      err=>{
+        let errorMsg = (err.error.error.errorMessage);
+        this.showBackendFailure(errorMsg);
+      }
+      );
       
     }
+  }
+
+  closeWorkspace(){
+    this.dialogRef.close(WorkspaceDialogueComponent);
+  }
+  showBackendFailure(data:any){
+    let simpleSnackBarRef = this._snackBar.open(data,"Close");
+    setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 100000);
+    this.visibleProgressSpinner = false;
   }
 }
 

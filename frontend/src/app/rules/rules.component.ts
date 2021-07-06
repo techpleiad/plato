@@ -30,7 +30,7 @@ export class RulesComponent implements OnInit {
   rulesList: rulesTemplate[] = [];
   dataSource: RuleDisplay[] = [];
   dataSourceAll: RuleDisplay[] = [];
-  displayedColumns = ['position', 'property', 'services', 'branches', 'profiles'];
+  displayedColumns = ['position', 'property', 'services', 'branches', 'profiles','actions'];
   temp:string = "";
 
   constructor(private _rulesDataService: RulesDataService, public dialog: MatDialog) {}

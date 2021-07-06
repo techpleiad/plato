@@ -142,9 +142,9 @@
 
   </form>
 </mat-dialog-content>
-<hr>
+
 <mat-dialog-actions align="end">
-  <app-btn mat-dialog-close [label]=" 'Cancel' " [icon]="'cancel'" [isCancel]="true"></app-btn> 
-  <app-btn (clicked)="addNewService()" [label]=" 'Add' " [icon]="'add_circle'" cdkFocusInitial></app-btn>
+  <app-btn [label]=" 'Cancel' " [icon]="'cancel'" [isCancel]="true" (clicked)="closeDialog()"></app-btn> 
+  <app-btn (clicked)="addNewService()" [label]=" 'Add' " [icon]="'add_circle'"></app-btn>
 </mat-dialog-actions>
 

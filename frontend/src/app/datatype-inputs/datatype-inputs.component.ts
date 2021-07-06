@@ -17,6 +17,7 @@ export class DatatypeInputsComponent implements OnInit {
   inputValuesObject: any;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private dialogRef: MatDialogRef<DatatypeInputsComponent>) {
+    dialogRef.disableClose = true;
     this.datatype = data.datatype;
     this.typeInputs = data.typeInputs;
     this.inputValuesObject = {};
@@ -55,6 +56,9 @@ export class DatatypeInputsComponent implements OnInit {
     }
 
     event.chipInput!.clear();
+  }
+  closeDialog(){
+    this.dialogRef.close(DatatypeInputsComponent);
   }
 
 }

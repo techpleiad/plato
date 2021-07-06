@@ -3,6 +3,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { customValidate } from '../customValidate';
 import { microService } from '../microService';
 import { DataManagerService } from '../shared/shared-services/data-manager.service';
@@ -36,6 +37,22 @@ export class CustomValidateDialogueComponent implements OnInit {
   isProfileValid = true;
   isRecipientValid = true;
 
+  constructor(private dialogRef: MatDialogRef<CustomValidateDialogueComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: customValidate, private _dataManagerService: DataManagerService,
+    private _snackBar: MatSnackBar) {
+    this.cusVal = new customValidate();
+    dialogRef.disableClose = true;
+  }
+
+  ngOnInit(): void {
+    this._dataManagerService.getServicesList().subscribe(data => {
+      this.mservices = JSON.parse(JSON.stringify(data));
+      for(let i=0;i<this.mservices.length;i++){
+        this.services.push(this.mservices[i].service);
+      }
+    });
+  }
+
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
@@ -68,9 +85,6 @@ export class CustomValidateDialogueComponent implements OnInit {
     }
   }
 
-  constructor(private dialogRef: MatDialogRef<CustomValidateDialogueComponent>,@Inject(MAT_DIALOG_DATA) private data: customValidate, private _dataManagerService: DataManagerService) {
-    this.cusVal = new customValidate();
-  }
 
   customValidate(){
     this.cusVal.branches = this.branches.value;
@@ -92,17 +106,18 @@ export class CustomValidateDialogueComponent implements OnInit {
       this._dataManagerService.sendCustomValidateEmail(this.cusVal).subscribe(data=>{
         this.visibleProgressSpinner = false;
         this.dialogRef.close(this.cusVal);
-      });
+      },
+      err=>{
+        this.visibleProgressSpinner = false;
+        let errorMsg = (err.error.error.errorMessage);
+        let simpleSnackBarRef = this._snackBar.open(errorMsg,"Close");
+        setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 100000);
+      }
+      );
     }
   }
-
-  ngOnInit(): void {
-    this._dataManagerService.getServicesList().subscribe(data => {
-      this.mservices = JSON.parse(JSON.stringify(data));
-      for(let i=0;i<this.mservices.length;i++){
-        this.services.push(this.mservices[i].service);
-      }
-    });
+  closeDialog(){
+    this.dialogRef.close(CustomValidateDialogueComponent);
   }
 
 }

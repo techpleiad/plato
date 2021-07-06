@@ -37,4 +37,7 @@
           </mat-form-field>
     </div>
 </h2>
-<app-btn (clicked)="tempShow()" [label]=" 'Add' "></app-btn>
+<mat-dialog-actions align="end">
+  <app-btn [label]=" 'Cancel' " [isCancel]="true" [icon]="'cancel'" (clicked)="closeDialog()"></app-btn>
+  <app-btn (clicked)="tempShow()" [label]=" 'Add' " [icon]="'add_circle'"></app-btn>
+</mat-dialog-actions>
