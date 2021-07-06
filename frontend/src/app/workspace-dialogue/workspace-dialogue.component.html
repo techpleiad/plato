@@ -19,22 +19,20 @@
   </div>
   <!-- Showing the contents accordingly -->
   <div fxLayout="row">
-
-    
     <app-custom-codemirror [content]="displayData" [id]=" 'custom' " 
     [propertyList]="propertyList" [ownerList]="ownerList" 
     [cmp]="chosenMissingProperty"
     [isEditable]="isEditable"
     (modifyProfileData) = "modifyProfileData($event)"
-    *ngIf="!isBranchConsistency" fxFlex>
+    *ngIf="!isBranchConsistency" fxFlex="80">
     </app-custom-codemirror>
-    
-    
 
-    <app-dropdown [dropdownList]="missingProperties" [label]=" 'Missing Properties' " (change)="populateMissingProperty($event)"   *ngIf="missingProperties.length>0"></app-dropdown>
+    
+    <app-dropdown [dropdownList]="missingProperties" [label]=" 'Missing Properties' " (change)="populateMissingProperty($event)"   
+    *ngIf="missingProperties.length>0"></app-dropdown>
     <!--<app-custom-codemirror fxFlex [content]="displayData2" [id]=" 'custom2' " [propertyList]="propertyList" [ownerList]="ownerList" [differenceProperties]="differenceProperties" *ngIf="isBranch2Req"></app-custom-codemirror>-->
-    <app-monaco-editor fxFlex [data1]="displayData" [data2]="sourceData" (modifySourceData)="modifySourceData($event)" *ngIf="isBranchConsistency"></app-monaco-editor>
   </div>
+  <app-monaco-editor fxFlex [data1]="displayData" [data2]="sourceData" (modifySourceData)="modifySourceData($event)" *ngIf="isBranchConsistency"></app-monaco-editor>
 
 </mat-dialog-content>
 
