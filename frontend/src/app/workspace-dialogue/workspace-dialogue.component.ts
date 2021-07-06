@@ -26,6 +26,7 @@ export class WorkspaceDialogueComponent implements OnInit {
   functionValue: any;
   branchValue!: string;
   profileValue!: string;
+  profileValidated = false;
 
   isBranchReq = false;
   isProfileReq = false;
@@ -89,6 +90,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.propertyList = [];
     this.ownerList = [];
     this.functionValue = functionValue;
+    this.profileValidated = false;
     this.showBtn = true;
 
     this.isBranchReq = false;
@@ -207,6 +209,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     
   }
   setProfile(profileValue: any){
+    this.profileValidated = true;
     // profile cannot be changed directly in case of branch consistency function.
     if(this.functionValue==="consistency across branch" && this.keepChanges===true){
       const dialogRef = this.dialog.open(WarningDialogComponent,this.WARNING_DIALOG_PARAM);
@@ -438,10 +441,10 @@ export class WorkspaceDialogueComponent implements OnInit {
     if(this.isBranchReq===true && !this.branchValue){
       this.reqValidation = false;
     }
-    /*
-    if(this.isProfileReq===true && this.profileValue){
+    
+    if(!this.profileValidated){
       this.reqValidation = false;
-    }*/
+    }
     console.log(this.branchValue);
     console.log(this.profileValue);
     if(this.isBranch1Req===true && this.sourceBranchValue===""){
