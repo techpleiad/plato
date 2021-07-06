@@ -442,7 +442,7 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.reqValidation = false;
     }
     
-    if(!this.profileValidated){
+    if(this.isProfileReq===true && !this.profileValidated){
       this.reqValidation = false;
     }
     console.log(this.branchValue);

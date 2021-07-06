@@ -41,7 +41,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
   @Input() codemirrorMode = "YAML";
   @Input() codemirrorHeight = "400px";
   @Input() codemirrorWidth = "100%";
-  @Input() isEditable = true;
+  @Input() isEditable = false;
   @Input() isJsonSchemaEditor = false;
   contentValid = true;
   contentChanged = false;
@@ -81,6 +81,7 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
       
     this.SPACE_REPLACE = ' '.repeat(this.SPACES_TO_ONE_TAB);
     this._codemirrorService.editor = CodeEditor.YAML;
+    console.log("constructor running");
   }
 
   ngOnInit(): void {
@@ -110,6 +111,15 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
         this._colorService.reset();
         if(this.content!=="")
         this.update();
+      }
+      if(this.codemirror){
+        if(this.isEditable)
+        this.codemirror.setOption("readOnly",false);
+        else{
+          this.codemirror.setOption("readOnly",true);
+        }
+        console.log(this.codemirror);
+        console.log(this.codemirror.readOnly);
       }
       this.codemirror.on('change',(editor: any)=>{
         this.contentChanged = true;
@@ -149,6 +159,15 @@ export class CustomCodemirrorComponent implements OnInit, AfterViewInit, OnChang
     console.log("noOnChanges");
     console.log(changes);
     
+    if(this.codemirror){
+      if(this.isEditable)
+      this.codemirror.setOption("readOnly",false);
+      else{
+        this.codemirror.setOption("readOnly",true);
+      }
+      console.log(this.codemirror);
+      console.log(this.codemirror.readOnly);
+    }
     
     if(this.content){
       console.log(this.content);

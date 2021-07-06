@@ -34,7 +34,7 @@ export class AddSearchComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: microService) => {
       if(result){
         //this._dataManagerService.addService(result);
-        console.log(result);
+        //console.log(result);
         this.reload_display_services.emit();
       }
       else{
