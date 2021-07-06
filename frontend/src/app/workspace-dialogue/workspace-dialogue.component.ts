@@ -127,11 +127,10 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
     if(this.functionValue==="consistency across profile"){
       this.isBranchReq = true;
-      this.branchValue = ""; //branch is unset, want inconsistent profiles acc to branch.
+      this.branchValue = ""; 
     }
   }
   setBranch(branchValue: any){
-    // cannot change branch directly in case of profile consistency function.
     if(this.keepChanges===true || this.MRDocuments.length>0){
       const dialogRef = this.dialog.open(WarningDialogComponent,this.WARNING_DIALOG_PARAM);
       
@@ -275,6 +274,7 @@ export class WorkspaceDialogueComponent implements OnInit {
           this.ICP = ICP;
           this.sendMR = false;
           this.discardChangesClicked();
+          this.displayData = "";
         }
         else{
           console.log("ICP should not be changed");
@@ -288,6 +288,9 @@ export class WorkspaceDialogueComponent implements OnInit {
   
   populateMissingProperty(event: any){
     // Removing the chosen missing property from the list.
+    if(this.tempSourceData!==""){
+      this.displayData = this.tempSourceData;
+    }
     let jsonDisplayData = yaml.parse(this.displayData);
     //this.chosenMissingProperty = event;
     this.chosenMissingProperty = event;
