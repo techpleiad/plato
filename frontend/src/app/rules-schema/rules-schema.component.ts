@@ -12,14 +12,15 @@ export class RulesSchemaComponent implements OnInit {
 
   ruleJsonSchema: string = "";
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: rulesTemplate) {
-    console.log(data.rule);
+  constructor(private dialogRef: MatDialogRef<RulesSchemaComponent>,@Inject(MAT_DIALOG_DATA) public data: rulesTemplate) {
     this.ruleJsonSchema = JSON.stringify(data.rule,null,2);
-    console.log(this.ruleJsonSchema);
-    console.log(typeof this.ruleJsonSchema);
+    dialogRef.disableClose = true;
    }
 
   ngOnInit(): void {
+  }
+  closeDialog(){
+    this.dialogRef.close(RulesSchemaComponent);
   }
 
 }
