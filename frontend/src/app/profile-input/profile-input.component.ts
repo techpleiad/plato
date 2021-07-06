@@ -25,7 +25,7 @@ export class ProfileInputComponent implements OnInit {
   }
   sendProfile(event: any){
     if(event.value==="default"){
-      this.profile_sent.emit("default");
+      this.profile_sent.emit("");
     }
     else{
       this.profile_sent.emit(event.value);
