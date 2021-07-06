@@ -199,11 +199,20 @@ public class CustomValidateService implements ICustomValidateUseCase {
         Map<String, List<JsonNode>> newTree = new TreeMap<>();
         for (Map.Entry<String, List<Pair<String, JsonNode>>> entry : originalTree.entrySet()) {
             for (Pair<String, JsonNode> pair : entry.getValue()) {
-                List<JsonNode> jsonNodes = newTree.get(entry.getKey() + "." + pair.getFirst());
+                List<JsonNode> jsonNodes;
+                if(entry.getKey().equals("")){
+                    jsonNodes = newTree.get(pair.getFirst());
+                }else{
+                     jsonNodes = newTree.get(entry.getKey() + "." + pair.getFirst());
+                }
                 if (jsonNodes == null) {
                     ArrayList<JsonNode> jsonNodeArrayList = new ArrayList<>();
                     jsonNodeArrayList.add(pair.getSecond());
-                    newTree.put(entry.getKey() + "." + pair.getFirst(), jsonNodeArrayList);
+                    if(entry.getKey().equals("")){
+                        newTree.put(pair.getFirst(), jsonNodeArrayList);
+                    }else{
+                        newTree.put(entry.getKey() + "." + pair.getFirst(), jsonNodeArrayList);
+                    }
                 } else {
                     jsonNodes.add(pair.getSecond());
                 }
