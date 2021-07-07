@@ -24,7 +24,7 @@
     [cmp]="chosenMissingProperty"
     [isEditable]="isEditable"
     (modifyProfileData) = "modifyProfileData($event)"
-    *ngIf="!isBranchConsistency"
+    *ngIf="!isBranchConsistency && !customValidateComponent"
     [ngClass]="{'full-width-editor':missingProperties.length===0, 'partial-width-editor':missingProperties.length>0}">
 
     </app-custom-codemirror>
