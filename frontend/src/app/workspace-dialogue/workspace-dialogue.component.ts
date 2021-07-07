@@ -298,7 +298,6 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.displayData = this.tempSourceData;
     }
     let jsonDisplayData = yaml.parse(this.displayData);
-    //this.chosenMissingProperty = event;
     this.chosenMissingProperty = event;
 
     let parentList = this.chosenMissingProperty.split(".");
@@ -317,34 +316,26 @@ export class WorkspaceDialogueComponent implements OnInit {
     if(missingPropIdx!==-1){
       this.missingProperties.splice(missingPropIdx,1);
     }
-    console.log(this.missingProperties);
-    console.log(this.inconsistentProfileProperties.get(this.ICP));
     this.keepChanges = true;
     this.discardChanges = true;
     this.sendMR = false;
   }
-  modifyProfileData(event: any){
+  modifyProfileData(event: any){ // For codemirror updation
     if(this.tempSourceData!==""){
       this.keepChanges = true;
       this.discardChanges = true;
       this.sendMR = false;
     }
     this.tempSourceData = event;
-    /*
-    if(this.chosenMissingProperty!==""){
-      this.tempSourceData = event;
-    }*/
   }
-
-   ////////////// RESOLVING BRANCH INCONSISTENCY ////////////////
-  modifySourceData(event: any){
+  modifySourceData(event: any){ // For Monaco Updation
     this.tempSourceData = event;
     this.keepChanges = true;
     this.discardChanges = true;
     this.sendMR = false;
   }
+
   keepChangesClicked(){
-    
     this.sourceData = this.tempSourceData;
     this.tempSourceData = "";
     this.keepChanges = false;
@@ -352,7 +343,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
     let found = false;
     for(let i=0;i<this.MRDocuments.length;i++){
-      if(this.isBranchConsistency){
+      if(this.isBranchConsistency || this.functionValue==="show individual file"){
         if(this.MRDocuments[i].profile===this.profileValue){
           this.MRDocuments[i].document = this.sourceData;
           found = true;
@@ -360,7 +351,6 @@ export class WorkspaceDialogueComponent implements OnInit {
       }
       else if(this.isProfileConsistency){
         this.inconsistentProfileProperties.set(this.ICP,this.missingProperties);
-        //console.log(this.inconsistentProfileProperties.get(this.ICP));
         this.chosenMissingProperty = "";
         if(this.MRDocuments[i].profile===this.ICP){
           this.MRDocuments[i].document = this.sourceData;
@@ -384,6 +374,13 @@ export class WorkspaceDialogueComponent implements OnInit {
           "document": this.sourceData
         })
       }
+      else if(this.functionValue==="show individual file"){
+        this.MRDocuments.push({
+          "branch": this.branchValue,
+          "profile": this.profileValue,
+          "document": this.sourceData
+        })
+      }
     }
     let simpleSnackBarRef = this._snackBar.open("changes saved locally");
     setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 3000);
@@ -398,7 +395,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     if(this.MRDocuments.length>0){
       this.sendMR = true;
     }
-    if(this.isBranchConsistency)
+    if(this.isBranchConsistency || this.functionValue==="show individual file")
     this.sendToCodeMirror();
     if(this.isProfileConsistency===true && this.ICP!==""){
       this.chosenMissingProperty = "";
@@ -417,7 +414,7 @@ export class WorkspaceDialogueComponent implements OnInit {
         "documents": this.MRDocuments
       }
     }
-    else if(this.isProfileConsistency){
+    else if(this.isProfileConsistency || this.functionValue==="show individual file"){
       body = {
         "service": this.mservice.service,
         "branch": this.branchValue,
@@ -435,8 +432,6 @@ export class WorkspaceDialogueComponent implements OnInit {
       window.open(temp2,"_blank");
     },
     err=>{
-      console.log(err);
-      console.log(body);
       let errorMsg = (err.error.error.errorMessage);
       this.showBackendFailure(errorMsg);
     }
@@ -453,8 +448,6 @@ export class WorkspaceDialogueComponent implements OnInit {
     if(this.isProfileReq===true && !this.profileValidated){
       this.reqValidation = false;
     }
-    console.log(this.branchValue);
-    console.log(this.profileValue);
     if(this.isBranch1Req===true && this.sourceBranchValue===""){
       this.reqValidation = false;
     }
@@ -471,27 +464,35 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   sendToCodeMirror(){
     this.visibleProgressSpinner = true;
-    this.tempSourceData = ""
+    this.tempSourceData = "";
+    this.displayData = "";
 
     // SHOW MERGED AND INDIVIDUAL FILES
-    if(this.functionValue==="show merged file" || this.functionValue==="show individual file"){
-      let type = "";
-      if(this.functionValue==="show merged file"){
-        type = "merged";
+    if(this.functionValue==="show individual file"){
+      let found = false;
+      for(let i=0;i<this.MRDocuments.length;i++){
+          
+        if(this.MRDocuments[i].profile===this.profileValue){
+            this.displayData = this.MRDocuments[i].document;
+            found = true;
+            this.visibleProgressSpinner = false;
+            this.isEditable = true;
+        }
       }
-      else{
-        type = "individual";
+      if(found===false){
+        this._configFiles.getFile(this.mservice.service,"individual",this.branchValue,this.profileValue)
+        .subscribe(data => {
+          this.isEditable = true;
+          this.visibleProgressSpinner = false;
+          this.displayData = data;
+        },
+        err=>{
+          let errorMsg = (err.error.error.errorMessage);
+          this.showBackendFailure(errorMsg);
+        }
+        );
       }
-      this._configFiles.getFile(this.mservice.service,type, this.branchValue,this.profileValue)
-      .subscribe(data => {
-        this.visibleProgressSpinner = false;
-        this.displayData = data;
-      },
-      err=>{
-        let errorMsg = (err.error.error.errorMessage);
-        this.showBackendFailure(errorMsg);
-      }
-      );
+
     }
  
     // SPIMERA
@@ -538,6 +539,9 @@ export class WorkspaceDialogueComponent implements OnInit {
             this.sourceData = this.MRDocuments[i].document;
             found = true;
             this.visibleProgressSpinner = false;
+            if(data===this.sourceData){
+              this.showConsistentBranchMessage();
+            }
           }
         }
         if(found===false){
@@ -545,6 +549,9 @@ export class WorkspaceDialogueComponent implements OnInit {
           .subscribe(data2 => {  
             this.visibleProgressSpinner = false;
             this.sourceData = data2;
+            if(data===this.sourceData){
+              this.showConsistentBranchMessage();
+            }
           },
           err=>{
             let errorMsg = (err.error.error.errorMessage);
@@ -552,6 +559,7 @@ export class WorkspaceDialogueComponent implements OnInit {
           }
           );
         }
+        
         this.displayData = data;
       },
       err=>{
@@ -562,34 +570,33 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
     //// CONSISTENCY ACROSS PROFILES
     else if(this.functionValue==="consistency across profile"){
-      this._configFiles.getFile(this.mservice.service,"individual",this.branchValue,this.ICP)
-      .subscribe(data => {
-        this.isEditable = true;
-        this.visibleProgressSpinner = false;
-
-        let found = false;
-        for(let i=0;i<this.MRDocuments.length;i++){
+      let found = false;
+      for(let i=0;i<this.MRDocuments.length;i++){
           
-          if(this.MRDocuments[i].profile===this.ICP){
-            console.log(this.MRDocuments[i].document);
+        if(this.MRDocuments[i].profile===this.ICP){
             this.displayData = this.MRDocuments[i].document;
             found = true;
             this.visibleProgressSpinner = false;
-          }
         }
-        if(found==false){
-          this.displayData = data;
-        }
-        
-        this.missingProperties = JSON.parse(JSON.stringify(this.inconsistentProfileProperties.get(this.ICP)));
-        console.log(this.missingProperties);
-      },
-      err=>{
-        let errorMsg = (err.error.error.errorMessage);
-        this.showBackendFailure(errorMsg);
       }
-      );
-      
+      if(found===false){
+        this._configFiles.getFile(this.mservice.service,"individual",this.branchValue,this.ICP)
+        .subscribe(data => {
+          this.isEditable = true;
+          this.visibleProgressSpinner = false;
+          this.displayData = data;
+          
+        },
+        err=>{
+          let errorMsg = (err.error.error.errorMessage);
+          this.showBackendFailure(errorMsg);
+        }
+        );
+      }
+      this.missingProperties = JSON.parse(JSON.stringify(this.inconsistentProfileProperties.get(this.ICP)));
+      if(this.missingProperties.length===0){
+        this.showConsistentProfileMessage();
+      }
     }
   }
 
@@ -598,7 +605,17 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
   showBackendFailure(data:any){
     let simpleSnackBarRef = this._snackBar.open(data,"Close");
-    setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 100000);
+    setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 5000);
+    this.visibleProgressSpinner = false;
+  }
+  showConsistentProfileMessage(){
+    let simpleSnackBarRef = this._snackBar.open(`${this.ICP} profile is consistent`,"Close");
+    setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 5000);
+    this.visibleProgressSpinner = false;
+  }
+  showConsistentBranchMessage(){
+    let simpleSnackBarRef = this._snackBar.open(`These branches are consistent`,"Close");
+    setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 5000);
     this.visibleProgressSpinner = false;
   }
 }
