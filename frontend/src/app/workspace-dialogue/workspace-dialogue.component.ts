@@ -293,7 +293,7 @@ export class WorkspaceDialogueComponent implements OnInit {
   }
   
   populateMissingProperty(event: any){
-    // Removing the chosen missing property from the list.
+    console.log(this.tempSourceData);
     if(this.tempSourceData!==""){
       this.displayData = this.tempSourceData;
     }
@@ -324,9 +324,16 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.sendMR = false;
   }
   modifyProfileData(event: any){
+    if(this.tempSourceData!==""){
+      this.keepChanges = true;
+      this.discardChanges = true;
+      this.sendMR = false;
+    }
+    this.tempSourceData = event;
+    /*
     if(this.chosenMissingProperty!==""){
       this.tempSourceData = event;
-    }
+    }*/
   }
 
    ////////////// RESOLVING BRANCH INCONSISTENCY ////////////////
@@ -383,6 +390,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.sendMR = true;
   }
   discardChangesClicked(){
+    this.displayData = this.tempSourceData;
     this.tempSourceData = "";
     this.discardChanges = false;
     this.keepChanges = false;
@@ -463,6 +471,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
   sendToCodeMirror(){
     this.visibleProgressSpinner = true;
+    this.tempSourceData = ""
 
     // SHOW MERGED AND INDIVIDUAL FILES
     if(this.functionValue==="show merged file" || this.functionValue==="show individual file"){
@@ -562,6 +571,7 @@ export class WorkspaceDialogueComponent implements OnInit {
         for(let i=0;i<this.MRDocuments.length;i++){
           
           if(this.MRDocuments[i].profile===this.ICP){
+            console.log(this.MRDocuments[i].document);
             this.displayData = this.MRDocuments[i].document;
             found = true;
             this.visibleProgressSpinner = false;
