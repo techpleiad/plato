@@ -572,6 +572,7 @@ export class WorkspaceDialogueComponent implements OnInit {
         }
         
         this.missingProperties = JSON.parse(JSON.stringify(this.inconsistentProfileProperties.get(this.ICP)));
+        console.log(this.missingProperties);
       },
       err=>{
         let errorMsg = (err.error.error.errorMessage);
