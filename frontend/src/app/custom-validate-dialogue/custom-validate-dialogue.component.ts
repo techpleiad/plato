@@ -53,15 +53,34 @@ export class CustomValidateDialogueComponent implements OnInit {
     });
   }
 
+  setFunction(service: string){
+    this.cusVal.services = [];
+    this.cusVal.services.push(service);
+    for(let i=0;i<this.mservices.length;i++){
+      if(this.mservices[i].service===service){
+        this.branchList = this.mservices[i].branches.map((x:any) => x.name);
+        this.profileList = this.mservices[i].profiles.map((x:any) => x.name);
+        break;
+      }
+    }
+  }
+
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
-
-    // Add our fruit
     if (value) {
-      this.recipients.push(value);
+      let flag = true;
+      for(let i=0;i<this.recipients.length;i++){
+        if(this.recipients[i]===value){
+          flag = false;
+          break;
+        }
+      }
+      if(flag){
+        if(this.validateEmail(value)){
+          this.recipients.push(value);
+        }
+      }
     }
-
-    // Clear the input value
     event.chipInput!.clear();
   }
 
@@ -73,16 +92,9 @@ export class CustomValidateDialogueComponent implements OnInit {
     }
   }
 
-  setFunction(service: string){
-    this.cusVal.services = [];
-    this.cusVal.services.push(service);
-    for(let i=0;i<this.mservices.length;i++){
-      if(this.mservices[i].service===service){
-        this.branchList = this.mservices[i].branches.map((x:any) => x.name);
-        this.profileList = this.mservices[i].profiles.map((x:any) => x.name);
-        break;
-      }
-    }
+  validateEmail(email: string) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
   }
 
 

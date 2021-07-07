@@ -73,7 +73,18 @@ export class ConsistencyAcrossBranchDialogueComponent implements OnInit {
     const value = (event.value || '').trim();
 
     if (value) {
-      this.recipients.push(value);
+      let flag = true;
+      for(let i=0;i<this.recipients.length;i++){
+        if(this.recipients[i]===value){
+          flag = false;
+          break;
+        }
+      }
+      if(flag){
+        if(this.validateEmail(value)){
+          this.recipients.push(value);
+        }
+      }
     }
 
     // Clear the input value
@@ -88,7 +99,10 @@ export class ConsistencyAcrossBranchDialogueComponent implements OnInit {
     }
   }
 
-  
+  validateEmail(email: string) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  }
 
   checkConsistency(){
     this.isServiceValid = this.service.length>0;

@@ -68,7 +68,18 @@ export class ConsistencyAcrossProfileDialogueComponent implements OnInit {
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
     if (value) {
-      this.recipients.push(value);
+      let flag = true;
+      for(let i=0;i<this.recipients.length;i++){
+        if(this.recipients[i]===value){
+          flag = false;
+          break;
+        }
+      }
+      if(flag){
+        if(this.validateEmail(value)){
+          this.recipients.push(value);
+        }
+      }
     }
     event.chipInput!.clear();
   }
@@ -78,6 +89,11 @@ export class ConsistencyAcrossProfileDialogueComponent implements OnInit {
     if (index >= 0) {
       this.recipients.splice(index, 1);
     }
+  }
+
+  validateEmail(email: string) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
   }
 
   checkConsistency(){
