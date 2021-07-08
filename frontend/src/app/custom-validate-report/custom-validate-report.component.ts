@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewInit } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { customValidate } from '../customValidate';
 import { RulesDataService } from '../shared/shared-services/rules-data.service';
 
@@ -18,11 +18,13 @@ export class CustomValidateReportComponent implements OnInit {
   @Input() service = "device-manager";
   @Input() branch = "dev";
   @Input() profile = "dev";
+  @Output() gotCVReport = new EventEmitter();
 
   cusVal!: customValidate;
   displayedColumns = ['position', 'property', 'errorMsg'];
   dataSource: any[] = [];
   result: any;
+  showTable = false;
 
   constructor(private _rulesDataService: RulesDataService) {
     this.cusVal = new customValidate();
@@ -36,6 +38,7 @@ export class CustomValidateReportComponent implements OnInit {
     this._rulesDataService.sendCustomValidateEmail(this.cusVal).subscribe(data=>{
       this.result = JSON.parse(JSON.stringify(data));
       let strList: string[] = this.result[0].customValidateReportList[0].validationMessages;
+      let tempData: any[] = [];
       for(let i=0;i<strList.length;i++){
         let str: string = strList[i].slice(2);
         let idx = -1;
@@ -45,11 +48,15 @@ export class CustomValidateReportComponent implements OnInit {
             break;
           }
         }
-        this.dataSource.push({position: i+1, property: str.slice(0,idx), errorMsg: str.slice(idx+2)});
+        console.log("here");
+        
+        tempData.push({position: i+1, property: str.slice(0,idx), errorMsg: str.slice(idx+2)});
       }
+      this.dataSource = tempData;
+      this.gotCVReport.emit();
+      this.showTable = true;
       console.log(this.dataSource);
     });
-
     
   }
 

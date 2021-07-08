@@ -244,7 +244,7 @@ export class WorkspaceDialogueComponent implements OnInit {
       ],
       "includeSuppressed": true,
        "email": {
-          "sendEmail": true,
+          "sendEmail": false,
           "recipients": [
               "temp@gmail.com"
           ]
@@ -606,7 +606,6 @@ export class WorkspaceDialogueComponent implements OnInit {
 
     else if(this.functionValue==="custom validation"){
       this.customValidateComponent = true;
-      this.visibleProgressSpinner = false;
       console.log("customValidation")
     }
   }

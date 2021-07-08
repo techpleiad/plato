@@ -128,6 +128,7 @@ export class AddNewServiceComponent implements OnInit {
     this._dataManagerService.addService(this.addService).subscribe(data=>{
       //console.log(data);
       this.dialogRef.close(this.addService);
+      window.location.reload();
     },
     err=>{
       let errorMsg = (err.error.error.errorMessage);

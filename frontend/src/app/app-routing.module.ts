@@ -11,7 +11,6 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'rules', component: RulesComponent },
   { path: 'schema-writer', component: JsonSchemaWriterComponent},
-  { path: 'custom-validate-report', component: CustomValidateReportComponent},
   { path: '**', component: PageNotFoundComponent }
 ];
 
