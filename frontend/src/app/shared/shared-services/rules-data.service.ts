@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { addRuleTemplate } from 'src/app/addRuleTemplate';
+import { customValidate } from 'src/app/customValidate';
 
 @Injectable({
   providedIn: 'root'
@@ -21,5 +22,10 @@ export class RulesDataService {
     console.log(addNewRule);
 
     return this.http.post(this.BASE.ADD_RULES.URL, addNewRule);
+  }
+
+  sendCustomValidateEmail(cusVal: customValidate){
+    console.log(cusVal);
+    return this.http.post(`${this.BASE.ADD_SERVICES.URL}/branches/custom-validate`, cusVal);
   }
 }

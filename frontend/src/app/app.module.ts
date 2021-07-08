@@ -53,6 +53,7 @@ import { CustomValidateDialogueComponent } from './custom-validate-dialogue/cust
 import { AddRuleDialogueComponent } from './add-rule-dialogue/add-rule-dialogue.component';
 import { JsonSchemaWriterComponent } from './json-schema-writer/json-schema-writer.component';
 import { DatatypeInputsComponent } from './datatype-inputs/datatype-inputs.component';
+import { CustomValidateReportComponent } from './custom-validate-report/custom-validate-report.component';
 
 @NgModule({
   declarations: [
@@ -76,6 +77,7 @@ import { DatatypeInputsComponent } from './datatype-inputs/datatype-inputs.compo
     AddRuleDialogueComponent,
     JsonSchemaWriterComponent,
     DatatypeInputsComponent,
+    CustomValidateReportComponent,
   ],
   imports: [
     BrowserModule,

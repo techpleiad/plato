@@ -7,6 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { customValidate } from '../customValidate';
 import { microService } from '../microService';
 import { DataManagerService } from '../shared/shared-services/data-manager.service';
+import { RulesDataService } from '../shared/shared-services/rules-data.service';
 
 @Component({
   selector: 'app-custom-validate-dialogue',
@@ -38,7 +39,8 @@ export class CustomValidateDialogueComponent implements OnInit {
   isRecipientValid = true;
 
   constructor(private dialogRef: MatDialogRef<CustomValidateDialogueComponent>,
-    @Inject(MAT_DIALOG_DATA) private data: customValidate, private _dataManagerService: DataManagerService,
+    @Inject(MAT_DIALOG_DATA) private data: customValidate, private _dataManagerService: DataManagerService, 
+    private _rulesDataService: RulesDataService, 
     private _snackBar: MatSnackBar) {
     this.cusVal = new customValidate();
     dialogRef.disableClose = true;
@@ -115,7 +117,7 @@ export class CustomValidateDialogueComponent implements OnInit {
       this.cusVal.profiles = this.profiles.value;
       this.cusVal.email = {sendEmail: true, recipients: this.recipients};
 
-      this._dataManagerService.sendCustomValidateEmail(this.cusVal).subscribe(data=>{
+      this._rulesDataService.sendCustomValidateEmail(this.cusVal).subscribe(data=>{
         this.visibleProgressSpinner = false;
         this.dialogRef.close(this.cusVal);
       },

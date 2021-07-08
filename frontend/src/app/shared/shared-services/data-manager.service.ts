@@ -41,10 +41,5 @@ export class DataManagerService {
     console.log(profileCons);
     return this.http.post(`${this.BASE.ADD_SERVICES.URL}/branches/${branchValue}/across-profiles-validate`, profileCons);
   }
-
-  sendCustomValidateEmail(cusVal: customValidate){
-    console.log(cusVal);
-    return this.http.post(`${this.BASE.ADD_SERVICES.URL}/branches/custom-validate`, cusVal);
-  }
 }
 
