@@ -24,7 +24,7 @@ export class CustomValidateReportComponent implements OnInit, OnChanges {
   displayedColumns = ['position', 'property', 'errorMsg'];
   dataSource: any[] = [];
   result: any;
-  showTable = false;
+  showTable = true;
 
   constructor(private _rulesDataService: RulesDataService) {
     this.cusVal = new customValidate();
@@ -42,30 +42,37 @@ export class CustomValidateReportComponent implements OnInit, OnChanges {
     this.cusVal.branches.push(this.branch);
     this.cusVal.profiles.push(this.profile);
     this.cusVal.email = {sendEmail: false, recipients: []};
-    this._rulesDataService.sendCustomValidateEmail(this.cusVal).subscribe(data=>{
-      this.result = JSON.parse(JSON.stringify(data));
-      this.showTable = this.result[0].customValidateReportList.length>0;
-      if(this.showTable){
-        let strList: string[] = this.result[0].customValidateReportList[0].validationMessages;
-        let tempData: any[] = [];
-        for(let i=0;i<strList.length;i++){
-          let str: string = strList[i].slice(2);
-          let idx = -1;
-          for(let j=0;j<str.length;j++){
-            if(str[j]===':'){
-              idx = j;
-              break;
+
+    
+      this._rulesDataService.sendCustomValidateEmail(this.cusVal).subscribe(data=>{
+        this.result = JSON.parse(JSON.stringify(data));
+        this.showTable = this.result[0].customValidateReportList.length>0;
+        
+        if(this.showTable){
+          let strList: string[] = this.result[0].customValidateReportList[0].validationMessages;
+          let tempData: any[] = [];
+          for(let i=0;i<strList.length;i++){
+            let str: string = strList[i].slice(2);
+            let idx = -1;
+            for(let j=0;j<str.length;j++){
+              if(str[j]===':'){
+                idx = j;
+                break;
+              }
             }
+            console.log("here");
+            
+            tempData.push({position: i+1, property: str.slice(0,idx), errorMsg: str.slice(idx+2)});
           }
-          console.log("here");
-          
-          tempData.push({position: i+1, property: str.slice(0,idx), errorMsg: str.slice(idx+2)});
+          this.dataSource = tempData;
+            
         }
-        this.dataSource = tempData;
-      }
-      this.gotCVReport.emit();
-      console.log(this.dataSource);
-    });
+        this.gotCVReport.emit();
+        console.log(this.dataSource);
+      });
+    
+
+    
     
   }
 
