@@ -34,6 +34,7 @@ export class ConsistencyAcrossProfileDialogueComponent implements OnInit {
   isServiceValid = true;
   isBranchValid = true;
   isRecipientValid = true;
+  isEmailValid = true;
 
   constructor(private dialogRef: MatDialogRef<ConsistencyAcrossProfileDialogueComponent>,
     @Inject(MAT_DIALOG_DATA) private data: profileConsistency, private _dataManagerService: DataManagerService,
@@ -77,7 +78,10 @@ export class ConsistencyAcrossProfileDialogueComponent implements OnInit {
       }
       if(flag){
         if(this.validateEmail(value)){
+          this.isEmailValid = true;
           this.recipients.push(value);
+        }else{
+          this.isEmailValid = false;
         }
       }
     }
@@ -110,6 +114,9 @@ export class ConsistencyAcrossProfileDialogueComponent implements OnInit {
 
       this._dataManagerService.sendProfileConsistencyEmail(this.profileCons, this.branchValue).subscribe(data=>{
         this.visibleProgressSpinner = false;
+        let Msg = "Mail Sent Successfully";
+        let simpleSnackBarRef = this._snackBar.open(Msg,"Close");
+        setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 5000);
         this.dialogRef.close(this.profileCons);
       },
       err=>{

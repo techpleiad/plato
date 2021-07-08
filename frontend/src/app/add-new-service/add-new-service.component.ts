@@ -127,6 +127,9 @@ export class AddNewServiceComponent implements OnInit {
   executeAddService(){
     this._dataManagerService.addService(this.addService).subscribe(data=>{
       //console.log(data);
+      let Msg = "Service Added Successfully";
+      let simpleSnackBarRef = this._snackBar.open(Msg,"Close");
+      setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 5000);
       this.dialogRef.close(this.addService);
       window.location.reload();
     },

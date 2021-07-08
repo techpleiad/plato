@@ -18,3 +18,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
 </table>
+
+<div *ngIf="!showTable">
+    <h1>No Errors Present</h1>
+</div>

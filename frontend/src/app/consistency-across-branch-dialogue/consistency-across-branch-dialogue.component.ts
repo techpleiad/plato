@@ -34,6 +34,7 @@ export class ConsistencyAcrossBranchDialogueComponent implements OnInit {
   isBranch1Valid = true;
   isBranch2Valid = true;
   isRecipientValid = true;
+  isEmailValid = true;
 
   constructor(private dialogRef: MatDialogRef<ConsistencyAcrossBranchDialogueComponent>,
     @Inject(MAT_DIALOG_DATA) private data: branchConsistency, private _dataManagerService: DataManagerService,
@@ -82,7 +83,10 @@ export class ConsistencyAcrossBranchDialogueComponent implements OnInit {
       }
       if(flag){
         if(this.validateEmail(value)){
+          this.isEmailValid = true;
           this.recipients.push(value);
+        }else{
+          this.isEmailValid = false;
         }
       }
     }
@@ -119,6 +123,9 @@ export class ConsistencyAcrossBranchDialogueComponent implements OnInit {
 
       this._dataManagerService.sendBranchConsistencyEmail(this.branchCons).subscribe(data=>{
         this.visibleProgressSpinner = false;
+        let Msg = "Mail Sent Successfully";
+        let simpleSnackBarRef = this._snackBar.open(Msg,"Close");
+        setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 5000);
         this.dialogRef.close(this.branchCons);
       },
       

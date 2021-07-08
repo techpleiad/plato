@@ -34,7 +34,8 @@
     *ngIf="missingProperties.length>0" style="margin-left: 15px;"></app-dropdown>
     <!--<app-custom-codemirror fxFlex [content]="displayData2" [id]=" 'custom2' " [propertyList]="propertyList" [ownerList]="ownerList" [differenceProperties]="differenceProperties" *ngIf="isBranch2Req"></app-custom-codemirror>-->
     <app-monaco-editor fxFlex [data1]="displayData" [data2]="sourceData" (modifySourceData)="modifySourceData($event)" *ngIf="isBranchConsistency"></app-monaco-editor>
-    <app-custom-validate-report fxFlex *ngIf="customValidateComponent" (gotCVReport)="visibleProgressSpinner=false"></app-custom-validate-report>
+    <app-custom-validate-report fxFlex [service]="mservice.service" [branch]="branchValue" [profile]="profileValue"
+     *ngIf="customValidateComponent" (gotCVReport)="visibleProgressSpinner=false"></app-custom-validate-report>
   </div>
   
 

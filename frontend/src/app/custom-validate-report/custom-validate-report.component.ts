@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, Output, EventEmitter, OnChanges } from '@angular/core';
 import { customValidate } from '../customValidate';
 import { RulesDataService } from '../shared/shared-services/rules-data.service';
 
@@ -13,50 +13,66 @@ export interface ValidationDisplay{
   templateUrl: './custom-validate-report.component.html',
   styleUrls: ['./custom-validate-report.component.css']
 })
-export class CustomValidateReportComponent implements OnInit {
+export class CustomValidateReportComponent implements OnInit, OnChanges {
   
-  @Input() service = "device-manager";
-  @Input() branch = "dev";
-  @Input() profile = "dev";
+  @Input() service: string = "";
+  @Input() branch: string = "";
+  @Input() profile: string = "";
   @Output() gotCVReport = new EventEmitter();
 
   cusVal!: customValidate;
   displayedColumns = ['position', 'property', 'errorMsg'];
   dataSource: any[] = [];
   result: any;
-  showTable = false;
+  showTable = true;
 
   constructor(private _rulesDataService: RulesDataService) {
     this.cusVal = new customValidate();
   }
-  ngOnInit(): void {
+  //ngOnInit(){}
+  ngOnInit(){}
+  ngOnChanges(): void {
+    console.log("here");
     //this.dataSource.push({position: 1, property: "temp", errorMsg: "errormm"});
+    this.cusVal.services=[]
+    this.cusVal.branches=[]
+    this.cusVal.profiles=[]
+
     this.cusVal.services.push(this.service);
     this.cusVal.branches.push(this.branch);
     this.cusVal.profiles.push(this.profile);
     this.cusVal.email = {sendEmail: false, recipients: []};
-    this._rulesDataService.sendCustomValidateEmail(this.cusVal).subscribe(data=>{
-      this.result = JSON.parse(JSON.stringify(data));
-      let strList: string[] = this.result[0].customValidateReportList[0].validationMessages;
-      let tempData: any[] = [];
-      for(let i=0;i<strList.length;i++){
-        let str: string = strList[i].slice(2);
-        let idx = -1;
-        for(let j=0;j<str.length;j++){
-          if(str[j]===':'){
-            idx = j;
-            break;
-          }
-        }
-        console.log("here");
+
+    
+      this._rulesDataService.sendCustomValidateEmail(this.cusVal).subscribe(data=>{
+        this.result = JSON.parse(JSON.stringify(data));
+        this.showTable = this.result[0].customValidateReportList.length>0;
         
-        tempData.push({position: i+1, property: str.slice(0,idx), errorMsg: str.slice(idx+2)});
-      }
-      this.dataSource = tempData;
-      this.gotCVReport.emit();
-      this.showTable = true;
-      console.log(this.dataSource);
-    });
+        if(this.showTable){
+          let strList: string[] = this.result[0].customValidateReportList[0].validationMessages;
+          let tempData: any[] = [];
+          for(let i=0;i<strList.length;i++){
+            let str: string = strList[i].slice(2);
+            let idx = -1;
+            for(let j=0;j<str.length;j++){
+              if(str[j]===':'){
+                idx = j;
+                break;
+              }
+            }
+            console.log("here");
+            
+            tempData.push({position: i+1, property: str.slice(0,idx), errorMsg: str.slice(idx+2)});
+          }
+          this.dataSource = tempData;
+            
+        }
+        this.gotCVReport.emit();
+        console.log(this.dataSource);
+      });
+    
+
+    
     
   }
 
