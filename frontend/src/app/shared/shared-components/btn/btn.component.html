@@ -1,4 +1,4 @@
-<button type="submit" [class.dialog-button]="!isCancel" 
+<button type="submit" [class.dialog-button]="!isCancel" [disabled]="disabled"
 [class.cancel-btn]="isCancel" class="btn" (click)="sendEvent()" fxLayout="row" fxLayoutAlign="start center">
     <mat-icon *ngIf="icon">{{icon}}</mat-icon>
     {{label}}

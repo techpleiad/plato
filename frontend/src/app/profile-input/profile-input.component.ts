@@ -10,6 +10,7 @@ export class ProfileInputComponent implements OnInit {
   @Input() mservice!: microService;
   @Input() canProfileDefault!: Boolean;
   @Input() defaultValue!: string;
+  @Input() disabled = false;
   @Output() profile_sent = new EventEmitter();
 
 

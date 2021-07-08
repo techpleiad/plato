@@ -11,6 +11,7 @@ export class BtnComponent implements OnInit {
   @Input() label: string = "";
   @Input() isCancel = false;
   @Input() icon="";
+  @Input() disabled = false;
   @Output() clicked = new EventEmitter();
 
   constructor() { }

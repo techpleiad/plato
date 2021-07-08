@@ -10,6 +10,7 @@ export class DropdownComponent implements OnInit {
   @Input() dropdownList: string [] = [];
   @Input() label: string = "";
   @Input() defaultValue: string = "";
+  @Input() disabled = false;
   @Output() change = new EventEmitter();
   constructor() {
     
