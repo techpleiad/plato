@@ -65,6 +65,7 @@ export class WorkspaceDialogueComponent implements OnInit {
   showBtn = false;
   reqValidation = true; // No error msg
   isEditable = false;
+  customValidateComponent = false;
   
   constructor(private dialogRef: MatDialogRef<WorkspaceDialogueComponent>, @Inject(MAT_DIALOG_DATA) public data: microService,@Inject('WARNING_DIALOG_PARAM') private WARNING_DIALOG_PARAM: any,
   private _configFiles: ConfigFilesService, 
@@ -74,7 +75,7 @@ export class WorkspaceDialogueComponent implements OnInit {
 
 
     this.functionList = ["show individual file","sprimera",
-    "consistency across branch","consistency across profile","custom validation consistency"];
+    "consistency across branch","consistency across profile","custom validation"];
     this.mservice = data;
     this.profileList = this.mservice.profiles.map((x: any) => x.name);
     this.branchList = this.mservice.branches.map((x:any) => x.name);
@@ -133,6 +134,10 @@ export class WorkspaceDialogueComponent implements OnInit {
     if(this.functionValue==="consistency across profile"){
       this.isBranchReq = true;
       this.branchValue = ""; 
+    }
+    if(this.functionValue==="custom validation"){
+      this.isBranchReq = true;
+      this.isProfileReq = true;
     }
   }
   setBranch(branchValue: any){
@@ -206,7 +211,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     else{
       this.sourceBranchValue = branchValue;
     }
-    
+
   }
   setProfile(profileValue: any){
     this.profileValidated = true;
@@ -597,6 +602,12 @@ export class WorkspaceDialogueComponent implements OnInit {
       if(this.missingProperties.length===0){
         this.showConsistentProfileMessage();
       }
+    }
+
+    else if(this.functionValue==="custom validation"){
+      this.customValidateComponent = true;
+      this.visibleProgressSpinner = false;
+      console.log("customValidation")
     }
   }
 
