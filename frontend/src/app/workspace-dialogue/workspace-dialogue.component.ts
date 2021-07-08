@@ -116,6 +116,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.missingProperties = [];
     this.reqValidation = true;
     this.isEditable = false;
+    this.customValidateComponent = false;
     this.setBranchProfileReq();
   }
   setBranchProfileReq(){
@@ -216,7 +217,7 @@ export class WorkspaceDialogueComponent implements OnInit {
   setProfile(profileValue: any){
     this.profileValidated = true;
     // profile cannot be changed directly in case of branch consistency function.
-    if(this.functionValue==="consistency across branch" && this.keepChanges===true){
+    if(this.keepChanges===true){
       const dialogRef = this.dialog.open(WarningDialogComponent,this.WARNING_DIALOG_PARAM);
       
       dialogRef.afterClosed().subscribe(result=>{
@@ -432,9 +433,17 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.visibleProgressSpinner = false;
       this.MRDocuments = [];
 
-      let temp = mergeRequestMail.split("pull/new");
-      let temp2 = temp[0]+"compare/"+body["branch"]+".."+temp[1];
-      window.open(temp2,"_blank");
+      if(mergeRequestMail.includes("github")){
+        let temp = mergeRequestMail.split("pull/new");
+        let temp2 = temp[0]+"compare/"+body["branch"]+".."+temp[1];
+        window.open(temp2,"_blank");
+      }
+      else{
+        let temp = mergeRequestMail.split("target_branch%5D=");
+        let final_url = temp[0]+"target_branch%5D="+body["branch"];
+        window.open(final_url,"_blank");
+      }
+      
     },
     err=>{
       let errorMsg = (err.error.error.errorMessage);
