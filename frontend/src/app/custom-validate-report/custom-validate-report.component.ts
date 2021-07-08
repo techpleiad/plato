@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, AfterViewInit, Output, EventEmitter, OnChanges } from '@angular/core';
 import { customValidate } from '../customValidate';
 import { RulesDataService } from '../shared/shared-services/rules-data.service';
 
@@ -13,7 +13,7 @@ export interface ValidationDisplay{
   templateUrl: './custom-validate-report.component.html',
   styleUrls: ['./custom-validate-report.component.css']
 })
-export class CustomValidateReportComponent implements OnInit {
+export class CustomValidateReportComponent implements OnInit, OnChanges {
   
   @Input() service: string = "";
   @Input() branch: string = "";
@@ -29,8 +29,15 @@ export class CustomValidateReportComponent implements OnInit {
   constructor(private _rulesDataService: RulesDataService) {
     this.cusVal = new customValidate();
   }
-  ngOnInit(): void {
+  //ngOnInit(){}
+  ngOnInit(){}
+  ngOnChanges(): void {
+    console.log("here");
     //this.dataSource.push({position: 1, property: "temp", errorMsg: "errormm"});
+    this.cusVal.services=[]
+    this.cusVal.branches=[]
+    this.cusVal.profiles=[]
+
     this.cusVal.services.push(this.service);
     this.cusVal.branches.push(this.branch);
     this.cusVal.profiles.push(this.profile);

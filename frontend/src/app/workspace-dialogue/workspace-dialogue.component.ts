@@ -606,6 +606,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
 
     else if(this.functionValue==="custom validation"){
+      this.customValidateComponent = false;
       this.customValidateComponent = true;
       console.log("customValidation")
     }
