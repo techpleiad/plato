@@ -12,6 +12,11 @@
     cursor: pointer;
 }
 */
+.mat-column-position {
+    width: 5% !important;
+    padding-right: 40px;
+
+}
 .mat-column-property {
     width: 40% !important;
     word-break: break-all;
