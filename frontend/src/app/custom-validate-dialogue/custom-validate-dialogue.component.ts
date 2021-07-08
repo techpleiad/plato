@@ -37,6 +37,7 @@ export class CustomValidateDialogueComponent implements OnInit {
   isBranchValid = true;
   isProfileValid = true;
   isRecipientValid = true;
+  isEmailValid = true;
 
   constructor(private dialogRef: MatDialogRef<CustomValidateDialogueComponent>,
     @Inject(MAT_DIALOG_DATA) private data: customValidate, private _dataManagerService: DataManagerService, 
@@ -79,7 +80,10 @@ export class CustomValidateDialogueComponent implements OnInit {
       }
       if(flag){
         if(this.validateEmail(value)){
+          this.isEmailValid = true;
           this.recipients.push(value);
+        }else{
+          this.isEmailValid = false;
         }
       }
     }
@@ -119,6 +123,9 @@ export class CustomValidateDialogueComponent implements OnInit {
 
       this._rulesDataService.sendCustomValidateEmail(this.cusVal).subscribe(data=>{
         this.visibleProgressSpinner = false;
+        let Msg = "Mail Sent Successfully";
+        let simpleSnackBarRef = this._snackBar.open(Msg,"Close");
+        setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 5000);
         this.dialogRef.close(this.cusVal);
       },
       err=>{

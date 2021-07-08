@@ -116,6 +116,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.missingProperties = [];
     this.reqValidation = true;
     this.isEditable = false;
+    this.customValidateComponent = false;
     this.setBranchProfileReq();
   }
   setBranchProfileReq(){
