@@ -439,8 +439,8 @@ export class WorkspaceDialogueComponent implements OnInit {
         window.open(temp2,"_blank");
       }
       else{
-        let temp = mergeRequestMail.split("target_branch%5D=");
-        let final_url = temp[0]+"target_branch%5D="+body["branch"];
+        let final_url = mergeRequestMail+"&merge_request[target_branch]="+body["branch"];
+        console.log(final_url);
         window.open(final_url,"_blank");
       }
       
