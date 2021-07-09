@@ -386,7 +386,6 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
     private String convertJsonNodeToYAML(final JsonNode jsonNode) throws JsonProcessingException {
         final String yaml = new YAMLMapper()
                 .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-                .enable(YAMLGenerator.Feature.INDENT_ARRAYS)
                 .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
                 .writeValueAsString(jsonNode);
 
