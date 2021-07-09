@@ -624,7 +624,7 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.dialogRef.close(WorkspaceDialogueComponent);
   }
   showBackendFailure(data:any){
-    let simpleSnackBarRef = this._snackBar.open(data,"Close");
+    let simpleSnackBarRef = this._snackBar.open(data || "Internal error occurred","Close");
     setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 5000);
     this.visibleProgressSpinner = false;
   }

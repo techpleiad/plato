@@ -29,7 +29,6 @@ export class CustomValidateReportComponent implements OnInit, OnChanges {
   constructor(private _rulesDataService: RulesDataService) {
     this.cusVal = new customValidate();
   }
-  //ngOnInit(){}
   ngOnInit(){}
   ngOnChanges(): void {
     console.log("here");
