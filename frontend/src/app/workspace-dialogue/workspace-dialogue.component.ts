@@ -545,6 +545,7 @@ export class WorkspaceDialogueComponent implements OnInit {
       this.isBranchConsistency = true;
       this._configFiles.getFile(this.mservice.service,this.functionValue, this.destinationBranchValue,this.profileValue)
       .subscribe(data => {
+        console.log(data);
         // checkiong if the source data for this profile has some local changes.
         let found = false;
         for(let i=0;i<this.MRDocuments.length;i++){
