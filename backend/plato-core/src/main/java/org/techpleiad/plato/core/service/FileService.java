@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -113,8 +114,7 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
 
         String formatString = null;
         try {
-            formatString = new YAMLMapper().writeValueAsString(root);
-            formatString = formatString.replace("\"", "");
+            formatString = convertJsonNodeToYAML(root);
         } catch (final Exception parseError) {
             log.error(parseError.getMessage());
         }
@@ -167,8 +167,7 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
         }
         if (merged) {
             final JsonNode jsonNode = getMergedYamlFiles(treeMap, serviceBranchData, profile, serviceSpec.getService());
-            final String jsonAsYaml = new YAMLMapper().writeValueAsString(jsonNode);
-            return jsonAsYaml;
+            return convertJsonNodeToYAML(jsonNode);
         } else {
             final File serviceYamlByProfile = treeMap.get(profile);
             if (serviceYamlByProfile == null) {
@@ -382,6 +381,16 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
             }
         }
         return mainNode;
+    }
+
+    private String convertJsonNodeToYAML(final JsonNode jsonNode) throws JsonProcessingException {
+        final String yaml = new YAMLMapper()
+                .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+                .enable(YAMLGenerator.Feature.INDENT_ARRAYS)
+                .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+                .writeValueAsString(jsonNode);
+
+        return yaml;
     }
 
 
