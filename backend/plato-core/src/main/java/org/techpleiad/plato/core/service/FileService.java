@@ -136,13 +136,13 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
     }
 
     @Override
-    public void overWriteFiles(Map<String, String> fileNameToUpdatedFileContentMap, File directory) throws IOException {
-        File[] files = Objects.requireNonNull(directory.listFiles());
-        for (Map.Entry<String, String> fileNameToContent : fileNameToUpdatedFileContentMap.entrySet()) {
-            for (File file : files) {
+    public void overWriteFiles(final Map<String, String> fileNameToUpdatedFileContentMap, final File directory) throws IOException {
+        final File[] files = Objects.requireNonNull(directory.listFiles());
+        for (final Map.Entry<String, String> fileNameToContent : fileNameToUpdatedFileContentMap.entrySet()) {
+            for (final File file : files) {
                 if (file.getName().equals(fileNameToContent.getKey())) {
-                    FileWriter fw = new FileWriter(file.getAbsoluteFile());
-                    BufferedWriter bw = new BufferedWriter(fw);
+                    final FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                    final BufferedWriter bw = new BufferedWriter(fw);
                     bw.write(fileNameToContent.getValue());
                     bw.close();
                 }
@@ -153,15 +153,7 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
 
     @Override
     @ThreadDirectory
-    public String getFileAsYaml(ServiceSpec serviceSpec, String branch, String profile, boolean merged) throws JsonProcessingException, ExecutionException, InterruptedException {
-        JsonNode jsonNode = getFileAsJson(serviceSpec, branch, profile, merged);
-        String jsonAsYaml = new YAMLMapper().writeValueAsString(jsonNode);
-        return jsonAsYaml;
-    }
-
-    @ThreadDirectory
-    @Override
-    public JsonNode getFileAsJson(ServiceSpec serviceSpec, String branch, String profile, boolean merged) throws ExecutionException, InterruptedException {
+    public String getFileAsYaml(final ServiceSpec serviceSpec, final String branch, final String profile, final boolean merged) throws JsonProcessingException, ExecutionException, InterruptedException {
         final ServiceBranchData serviceBranchData = gitService.cloneGitRepositoryByBranchAsync(serviceSpec.getGitRepository(), branch);
 
         final CompletableFuture<TreeMap<String, File>> serviceProfileToFileMap = getYamlFileTree(
@@ -169,11 +161,39 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
                 serviceSpec.getService()
         );
 
-        TreeMap<String, File> treeMap = serviceProfileToFileMap.get();
+        final TreeMap<String, File> treeMap = serviceProfileToFileMap.get();
         if (treeMap.get(profile) == null) {
             log.info("File linked to profile not found");
         }
-        JsonNode jsonNode;
+        if (merged) {
+            final JsonNode jsonNode = getMergedYamlFiles(treeMap, serviceBranchData, profile, serviceSpec.getService());
+            final String jsonAsYaml = new YAMLMapper().writeValueAsString(jsonNode);
+            return jsonAsYaml;
+        } else {
+            final File serviceYamlByProfile = treeMap.get(profile);
+            if (serviceYamlByProfile == null) {
+                throw new ProfileNotSupportedException(serviceSpec.getService(), profile);
+            }
+            final String fileContents = getFileToString(serviceYamlByProfile);
+            return fileContents;
+        }
+    }
+
+    @ThreadDirectory
+    @Override
+    public JsonNode getFileAsJson(final ServiceSpec serviceSpec, final String branch, final String profile, final boolean merged) throws ExecutionException, InterruptedException {
+        final ServiceBranchData serviceBranchData = gitService.cloneGitRepositoryByBranchAsync(serviceSpec.getGitRepository(), branch);
+
+        final CompletableFuture<TreeMap<String, File>> serviceProfileToFileMap = getYamlFileTree(
+                serviceBranchData.getDirectory(),
+                serviceSpec.getService()
+        );
+
+        final TreeMap<String, File> treeMap = serviceProfileToFileMap.get();
+        if (treeMap.get(profile) == null) {
+            log.info("File linked to profile not found");
+        }
+        final JsonNode jsonNode;
         if (merged) {
             jsonNode = getMergedYamlFiles(treeMap, serviceBranchData, profile, serviceSpec.getService());
         } else {
@@ -188,7 +208,7 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
 
     @ThreadDirectory
     @Override
-    public List<FileDetail> getFileMapAsJson(ServiceSpec serviceSpec, String branch, String profile) throws ExecutionException, InterruptedException, JsonProcessingException {
+    public List<FileDetail> getFileMapAsJson(final ServiceSpec serviceSpec, final String branch, final String profile) throws ExecutionException, InterruptedException, JsonProcessingException {
         final ServiceBranchData serviceBranchData = gitService.cloneGitRepositoryByBranchAsync(serviceSpec.getGitRepository(), branch);
 
         final CompletableFuture<TreeMap<String, File>> serviceProfileToFileMap = getYamlFileTree(
@@ -201,10 +221,10 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
                 "application"
         );
 
-        TreeMap<String, File> serviceNameFileMap = serviceProfileToFileMap.get();
-        TreeMap<String, File> applicationFileMap = applicationProfileToFileMap.get();
+        final TreeMap<String, File> serviceNameFileMap = serviceProfileToFileMap.get();
+        final TreeMap<String, File> applicationFileMap = applicationProfileToFileMap.get();
 
-        List<FileDetail> FileDetailList = new ArrayList<>();
+        final List<FileDetail> FileDetailList = new ArrayList<>();
 
         final File serviceYamlByProfile = serviceNameFileMap.get(profile);
         final File serviceYaml = serviceNameFileMap.get("");
@@ -212,19 +232,19 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
         final File applicationYaml = applicationFileMap.get("");
 
         if (applicationYaml != null) {
-            FileDetail fileDetail = createFileDetail("application", "default", applicationYaml);
+            final FileDetail fileDetail = createFileDetail("application", "default", applicationYaml);
             FileDetailList.add(fileDetail);
         }
         if (serviceYaml != null) {
-            FileDetail fileDetail = createFileDetail(serviceSpec.getService(), "default", serviceYaml);
+            final FileDetail fileDetail = createFileDetail(serviceSpec.getService(), "default", serviceYaml);
             FileDetailList.add(fileDetail);
         }
         if (applicationYamlByProfile != null) {
-            FileDetail fileDetail = createFileDetail("application", profile, applicationYamlByProfile);
+            final FileDetail fileDetail = createFileDetail("application", profile, applicationYamlByProfile);
             FileDetailList.add(fileDetail);
         }
         if (serviceYamlByProfile != null) {
-            FileDetail fileDetail = createFileDetail(serviceSpec.getService(), profile, serviceYamlByProfile);
+            final FileDetail fileDetail = createFileDetail(serviceSpec.getService(), profile, serviceYamlByProfile);
             FileDetailList.add(fileDetail);
         }
 
@@ -235,10 +255,10 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
         return FileDetailList;
     }
 
-    private FileDetail createFileDetail(String service, String profile, File file) throws JsonProcessingException {
-        JsonNode jsonNode = convertFileToJsonNode(file, false);
-        String jsonAsYaml = new YAMLMapper().writeValueAsString(jsonNode);
-        FileDetail fileDetail = FileDetail.builder()
+    private FileDetail createFileDetail(final String service, final String profile, final File file) throws JsonProcessingException {
+        final JsonNode jsonNode = convertFileToJsonNode(file, false);
+        final String jsonAsYaml = new YAMLMapper().writeValueAsString(jsonNode);
+        final FileDetail fileDetail = FileDetail.builder()
                 .service(service)
                 .profile(profile)
                 .jsonNode(jsonNode)
@@ -249,12 +269,12 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
 
 
     @Override
-    public JsonNode getMergedYamlFiles(TreeMap<String, File> serviceProfileToFileMap, ServiceBranchData serviceBranchData, String profile, String service) throws ExecutionException, InterruptedException {
+    public JsonNode getMergedYamlFiles(final TreeMap<String, File> serviceProfileToFileMap, final ServiceBranchData serviceBranchData, final String profile, final String service) throws ExecutionException, InterruptedException {
         final CompletableFuture<TreeMap<String, File>> applicationProfileToFileMap = getYamlFileTree(
                 serviceBranchData.getDirectory(),
                 "application"
         );
-        List<File> files = new ArrayList<>();
+        final List<File> files = new ArrayList<>();
 
         final File serviceYamlByProfile = serviceProfileToFileMap.get(profile);
         final File serviceYaml = serviceProfileToFileMap.get("");
@@ -273,13 +293,13 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
         if (files.isEmpty())
             throw new ServiceNotFoundException("Service Configs not found", service);
 
-        List<JsonNode> jsonNodes = new ArrayList<>();
+        final List<JsonNode> jsonNodes = new ArrayList<>();
 
-        for (File file : files) {
+        for (final File file : files) {
             jsonNodes.add(convertFileToJsonNode(file, false));
         }
 
-        JsonNode mergedYamlAsJsonNode = mergeYaml(jsonNodes);
+        final JsonNode mergedYamlAsJsonNode = mergeYaml(jsonNodes);
         return mergedYamlAsJsonNode;
     }
 
@@ -330,20 +350,20 @@ public class FileService implements IFileServiceUserCase, IFileThreadServiceUseC
         }
     }
 
-    private JsonNode mergeYaml(List<JsonNode> jsonNodes) {
-        JsonNode mergedJsonNode = jsonNodes.get(0);
+    private JsonNode mergeYaml(final List<JsonNode> jsonNodes) {
+        final JsonNode mergedJsonNode = jsonNodes.get(0);
         for (int i = 1; i < jsonNodes.size(); i++) {
             merge(mergedJsonNode, jsonNodes.get(i));
         }
         return mergedJsonNode;
     }
 
-    private JsonNode merge(JsonNode mainNode, JsonNode updateNode) {
-        Iterator<String> fieldNames = updateNode.fieldNames();
+    private JsonNode merge(final JsonNode mainNode, final JsonNode updateNode) {
+        final Iterator<String> fieldNames = updateNode.fieldNames();
         while (fieldNames.hasNext()) {
-            String updateNodeFieldName = fieldNames.next();
-            JsonNode nodeFromMainNode = mainNode.get(updateNodeFieldName);
-            JsonNode nodeFromUpdateNode = updateNode.get(updateNodeFieldName);
+            final String updateNodeFieldName = fieldNames.next();
+            final JsonNode nodeFromMainNode = mainNode.get(updateNodeFieldName);
+            final JsonNode nodeFromUpdateNode = updateNode.get(updateNodeFieldName);
             // If the node is an @ArrayNode replace existing Array Node property in main node
             if (nodeFromMainNode != null && nodeFromMainNode.isArray() &&
                     nodeFromUpdateNode.isArray()) {
