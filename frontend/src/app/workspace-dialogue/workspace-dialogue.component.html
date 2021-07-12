@@ -14,8 +14,8 @@
       <app-profile-input [mservice]="mservice" [canProfileDefault]="canProfileDefault" [defaultValue]="profileValue" [disabled]="visibleProgressSpinner" (profile_sent)="setProfile($event)" *ngIf="isProfileReq"></app-profile-input>
       <app-dropdown [dropdownList]="inconsistentProfiles" [label]=" 'PROFILE' " [disabled]="visibleProgressSpinner" [defaultValue]="ICP" (change)="setICP($event)" *ngIf="isProfileConsistency"></app-dropdown>
       <app-btn (clicked)="processFunction()" [label]=" 'Show' " [disabled]="visibleProgressSpinner" *ngIf="showBtn"></app-btn>
-      <span style="color:red;" *ngIf="!reqValidation">Please fill the required fields*</span>
-      <mat-progress-spinner mode="indeterminate" diameter="30" [hidden]="!visibleProgressSpinner"></mat-progress-spinner>    
+      <span style="color:red; margin-left:16px;" *ngIf="!reqValidation">Please fill the required fields*</span>
+      <mat-progress-spinner mode="indeterminate" diameter="30" [hidden]="!visibleProgressSpinner" style="margin-left:16px;"></mat-progress-spinner>    
   </div>
   <!-- Showing the contents accordingly -->
   <div fxLayout="row">

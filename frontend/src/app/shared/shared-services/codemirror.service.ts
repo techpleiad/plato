@@ -139,10 +139,10 @@ export class CodemirrorService {
     }
     let missingProp = cmp;
     this.missingLineNumber = this.propertyTolineBreadcrumbMap.get(missingProp);
-    
+    /*
     if(this.missingLineNumber){
       this.updateColor(this._lineToDivMapper.get(`${this.missingLineNumber}`), '#78DEC7');
-    }
+    }*/
   }
   updateColor(element: any, color: any): void {
     if (element) {
