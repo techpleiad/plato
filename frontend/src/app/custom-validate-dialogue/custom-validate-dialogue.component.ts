@@ -36,6 +36,8 @@ export class CustomValidateDialogueComponent implements OnInit {
   isServiceValid = true;
   isBranchValid = true;
   isProfileValid = true;
+  isBranchReq = false;
+  isProfileReq = false;
   isRecipientValid = true;
   isEmailValid = true;
 
@@ -66,6 +68,8 @@ export class CustomValidateDialogueComponent implements OnInit {
         break;
       }
     }
+    this.isBranchReq = true;
+    this.isProfileReq = true;
   }
 
   add(event: MatChipInputEvent): void {

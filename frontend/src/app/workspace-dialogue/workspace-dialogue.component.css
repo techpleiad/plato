@@ -22,6 +22,10 @@ app-dropdown{
     width: 80%;
     max-width: 80%;
 }
+
 mat-progress-spinner {
     margin-left: 16px
+}
+table {
+    width: 100%;
 }

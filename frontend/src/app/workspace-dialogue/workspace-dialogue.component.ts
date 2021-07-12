@@ -10,6 +10,8 @@ import { CapService } from '../shared/shared-services/cap.service';
 import { ResolveBranchInconsistencyService } from '../shared/shared-services/resolve-branch-inconsistency.service';
 import { WarningDialogComponent } from '../shared/shared-components/warning-dialog/warning-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { customValidate } from '../customValidate';
+import { RulesDataService } from '../shared/shared-services/rules-data.service';
 
 @Component({
   selector: 'app-workspace-dialogue',
@@ -66,12 +68,18 @@ export class WorkspaceDialogueComponent implements OnInit {
   reqValidation = true; // No error msg
   isEditable = false;
   customValidateComponent = false;
+
+  cusVal!: customValidate;
+  displayedColumns = ['position', 'parentProperty', 'property', 'errorMsg'];
+  dataSource: any[] = [];
+  result: any;
+  showTable: number = 2;
   
   constructor(private dialogRef: MatDialogRef<WorkspaceDialogueComponent>, @Inject(MAT_DIALOG_DATA) public data: microService,@Inject('WARNING_DIALOG_PARAM') private WARNING_DIALOG_PARAM: any,
   private _configFiles: ConfigFilesService, 
   private _sprimeraFilesService: SprimeraFilesService, private _profileAggregatorService: ProfileAggregatorService,
   private _capService: CapService, private _resolveBranchInconsistency: ResolveBranchInconsistencyService,
-  public dialog: MatDialog, private _snackBar: MatSnackBar) {
+  public dialog: MatDialog, private _snackBar: MatSnackBar, private _rulesDataService: RulesDataService) {
 
 
     this.functionList = ["show individual file","sprimera",
@@ -80,6 +88,8 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.profileList = this.mservice.profiles.map((x: any) => x.name);
     this.branchList = this.mservice.branches.map((x:any) => x.name);
     dialogRef.disableClose = true;
+
+    this.cusVal = new customValidate();
    }
 
   ngOnInit(): void {}
@@ -117,6 +127,8 @@ export class WorkspaceDialogueComponent implements OnInit {
     this.reqValidation = true;
     this.isEditable = false;
     this.customValidateComponent = false;
+
+    this.showTable = 2;
     this.setBranchProfileReq();
   }
   setBranchProfileReq(){
@@ -615,9 +627,48 @@ export class WorkspaceDialogueComponent implements OnInit {
     }
 
     else if(this.functionValue==="custom validation"){
-      this.customValidateComponent = false;
+      //this.customValidateComponent = false;
       this.customValidateComponent = true;
-      console.log("customValidation")
+      console.log("customValidation");
+
+      this.cusVal.services=[];
+      this.cusVal.branches=[];
+      this.cusVal.profiles=[];
+
+      this.cusVal.services.push(this.mservice.service);
+      this.cusVal.branches.push(this.branchValue);
+      this.cusVal.profiles.push(this.profileValue);
+      this.cusVal.email = {sendEmail: false, recipients: []};
+
+    
+      this._rulesDataService.sendCustomValidateEmail(this.cusVal).subscribe(data=>{
+        this.result = JSON.parse(JSON.stringify(data));
+        this.showTable = this.result[0].customValidateReportList.length;
+        this.showTable = Math.min(1,this.showTable);
+        
+        if(this.showTable){
+          let parentProperty: string = this.result[0].customValidateReportList[0].property;
+          let strList: string[] = this.result[0].customValidateReportList[0].validationMessages;
+          let tempData: any[] = [];
+          for(let i=0;i<strList.length;i++){
+            let str: string = strList[i].slice(2);
+            let idx = -1;
+            for(let j=0;j<str.length;j++){
+              if(str[j]===':'){
+                idx = j;
+                break;
+              }
+            }
+            console.log("here");
+            
+            tempData.push({position: i+1, parentProperty: parentProperty, property: str.slice(0,idx), errorMsg: str.slice(idx+2)});
+          }
+          this.dataSource = tempData;
+            
+        }
+        this.visibleProgressSpinner = false;
+        console.log(this.dataSource);
+      });
     }
   }
 

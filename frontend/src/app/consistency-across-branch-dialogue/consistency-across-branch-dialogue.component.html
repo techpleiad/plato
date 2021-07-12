@@ -10,7 +10,7 @@
           </span>
         </div>
     </div>
-    <div class="mb-3">
+    <div class="mb-3" *ngIf="isBranch1Req">
         <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH 1' " (change)="setBranch1($event)" ></app-dropdown>
         <div style="height:20px;">
           <span *ngIf="!isBranch1Valid" class="text-danger">
@@ -18,7 +18,7 @@
           </span>
         </div>
     </div>
-    <div class="mb-3">
+    <div class="mb-3" *ngIf="isBranch2Req">
         <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH 2' " (change)="setBranch2($event)" ></app-dropdown>
         <div style="height:20px;">
           <span *ngIf="!isBranch2Valid" class="text-danger">
