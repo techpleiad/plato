@@ -4,6 +4,11 @@
         <td mat-cell *matCellDef="let element"> {{element.position}} </td>
     </ng-container>
 
+    <ng-container matColumnDef="parentProperty">
+        <th mat-header-cell *matHeaderCellDef> Parent Property </th>
+        <td mat-cell *matCellDef="let element"> {{element.parentProperty}} </td>
+    </ng-container>
+
     <ng-container matColumnDef="property">
         <th mat-header-cell *matHeaderCellDef> Property </th>
         <td mat-cell *matCellDef="let element"> {{element.property}} </td>

@@ -33,6 +33,8 @@ export class ConsistencyAcrossBranchDialogueComponent implements OnInit {
   isServiceValid = true;
   isBranch1Valid = true;
   isBranch2Valid = true;
+  isBranch1Req = false;
+  isBranch2Req = false;
   isRecipientValid = true;
   isEmailValid = true;
 
@@ -60,6 +62,8 @@ export class ConsistencyAcrossBranchDialogueComponent implements OnInit {
         break;
       }
     }
+    this.isBranch1Req = true;
+    this.isBranch2Req = true;
   }
 
   setBranch1(branchValue: any){

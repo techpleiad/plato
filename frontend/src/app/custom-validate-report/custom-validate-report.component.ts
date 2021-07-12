@@ -21,7 +21,7 @@ export class CustomValidateReportComponent implements OnInit, OnChanges {
   @Output() gotCVReport = new EventEmitter();
 
   cusVal!: customValidate;
-  displayedColumns = ['position', 'property', 'errorMsg'];
+  displayedColumns = ['position', 'parentProperty', 'property', 'errorMsg'];
   dataSource: any[] = [];
   result: any;
   showTable = true;
@@ -30,8 +30,8 @@ export class CustomValidateReportComponent implements OnInit, OnChanges {
     this.cusVal = new customValidate();
   }
   //ngOnInit(){}
-  ngOnInit(){}
-  ngOnChanges(): void {
+  ngOnChanges(){}
+  ngOnInit(): void {
     console.log("here");
     //this.dataSource.push({position: 1, property: "temp", errorMsg: "errormm"});
     this.cusVal.services=[]
@@ -49,6 +49,7 @@ export class CustomValidateReportComponent implements OnInit, OnChanges {
         this.showTable = this.result[0].customValidateReportList.length>0;
         
         if(this.showTable){
+          let parentProperty: string = this.result[0].customValidateReportList[0].property;
           let strList: string[] = this.result[0].customValidateReportList[0].validationMessages;
           let tempData: any[] = [];
           for(let i=0;i<strList.length;i++){
@@ -62,7 +63,7 @@ export class CustomValidateReportComponent implements OnInit, OnChanges {
             }
             console.log("here");
             
-            tempData.push({position: i+1, property: str.slice(0,idx), errorMsg: str.slice(idx+2)});
+            tempData.push({position: i+1, parentProperty: parentProperty, property: str.slice(0,idx), errorMsg: str.slice(idx+2)});
           }
           this.dataSource = tempData;
             

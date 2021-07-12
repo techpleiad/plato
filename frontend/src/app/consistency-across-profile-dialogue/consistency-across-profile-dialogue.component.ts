@@ -33,6 +33,7 @@ export class ConsistencyAcrossProfileDialogueComponent implements OnInit {
   visibleProgressSpinner = false;
   isServiceValid = true;
   isBranchValid = true;
+  isBranchReq = false;
   isRecipientValid = true;
   isEmailValid = true;
 
@@ -60,6 +61,7 @@ export class ConsistencyAcrossProfileDialogueComponent implements OnInit {
         break;
       }
     }
+    this.isBranchReq = true;
   }
 
   setBranch(branchValue: any){
