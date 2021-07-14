@@ -12,6 +12,9 @@ export class ConfigFilesService {
     this.BASE = API_END_POINT.PLATO;
    }
   getFile(service:any, type:any, branch:any, profile:any){
+    if(profile==="default"){
+      profile = "";
+    }
     return this.http.get(`${this.BASE.GET_SERVICES.URL}/${service}/branches/${branch}`,{
       params:{
         format:"yaml",

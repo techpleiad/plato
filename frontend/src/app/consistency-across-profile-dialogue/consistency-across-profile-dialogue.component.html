@@ -4,9 +4,19 @@
   <form>
     <div class="mb-3">
         <app-dropdown [dropdownList]="services" [label]=" 'SELECT SERVICE NAME' " (change)="setFunction($event)" ></app-dropdown>
+        <div style="height:20px;">
+          <span *ngIf="!isServiceValid" class="text-danger">
+            Please select service name
+          </span>
+        </div>
     </div>
-    <div class="mb-3">
+    <div class="mb-3" *ngIf="isBranchReq">
         <app-dropdown [dropdownList]="branchList" [label]=" 'BRANCH' " (change)="setBranch($event)" ></app-dropdown>
+        <div style="height:20px;">
+          <span *ngIf="!isBranchValid" class="text-danger">
+            Please select branch name
+          </span>
+        </div>
     </div>
     <div class="mb-3">
         <mat-card>
@@ -16,12 +26,12 @@
             </section>
             </mat-card-content>
         </mat-card>
+        <div style="height:20px;">
+        </div>
     </div>
     <div class="mb-3">
-        <label for="recipients" class="col-form-label"><span class="text-danger mr-1">*</span>RECIPIENTS EMAIL</label>
-        <br>
         <mat-form-field class="example-chip-list">
-            <mat-label>Recipients</mat-label>
+            <mat-label><span class="text-danger mr-1">*</span>RECIPIENTS EMAIL</mat-label>
             <mat-chip-list #chipList aria-label="Recipients selection">
             <mat-chip *ngFor="let recipient of recipients" [selectable]="selectable"
                     [removable]="removable" (removed)="remove(recipient)">
@@ -36,15 +46,19 @@
             </mat-chip-list>
         </mat-form-field>
         <div style="height:20px;">
-          <!--<span *ngIf="!isRecipientValid" class="text-danger">
+          <span *ngIf="!isRecipientValid" class="text-danger">
             Please enter recipient name
-          </span>-->
+          </span>
+          <br>
+          <span *ngIf="!isEmailValid" class="text-danger">
+            Please enter valid email
+          </span>
         </div>
     </div>
   </form>
 </mat-dialog-content>
-<hr>
 <mat-dialog-actions align="end">
-  <app-btn mat-dialog-close [label]=" 'Cancel' " [isCancel]="true"></app-btn> 
-  <app-btn (clicked)="checkConsistency()" [label]=" 'Send Mail' " cdkFocusInitial></app-btn>
+  <app-btn [label]=" 'Cancel' " [icon]="'cancel'" [isCancel]="true" (clicked)="closeDialog()"></app-btn> 
+  <app-btn (clicked)="checkConsistency()" [label]=" 'Send Mail' " [icon]="'email'"></app-btn>
+  <mat-progress-spinner mode="indeterminate" diameter="30" [hidden]="!visibleProgressSpinner"></mat-progress-spinner>
 </mat-dialog-actions>

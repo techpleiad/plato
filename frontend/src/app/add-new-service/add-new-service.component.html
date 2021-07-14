@@ -3,9 +3,10 @@
 <mat-dialog-content>
   <form>
     <div class="mb-3">
-      <label for="service-name" class="col-form-label"><span class="text-danger mr-1">*</span>SERVICE NAME</label>
-      <input type="text" class="form-control" id="service-name" name="service" [(ngModel)]="addService.service"
-        placeholder="Enter Service Name">
+      <mat-form-field class="example-full-width">
+        <mat-label><span class="text-danger mr-1">*</span>SERVICE NAME</mat-label>
+        <input matInput placeholder="Enter Service Name" [(ngModel)]="addService.service" name="service">
+      </mat-form-field>
       <div style="height:20px;">
         <span *ngIf="!isServiceValid" class="text-danger">
           Please enter service name
@@ -14,17 +15,19 @@
     </div>
 
     <div class="mb-3">
-      <label for="desc" class="col-form-label">DESCRIPTION</label>
-      <input type="text" class="form-control" id="desc" name="description" [(ngModel)]="addService.description"
-        placeholder="Enter Description">
+      <mat-form-field class="example-full-width">
+        <mat-label>DESCRIPTION</mat-label>
+        <input matInput placeholder="Enter Description" [(ngModel)]="addService.description" name="description">
+      </mat-form-field>
       <div style="height:20px;">
       </div>
     </div>
 
     <div class="mb-3">
-      <label for="dir" class="col-form-label"><span class="text-danger mr-1">*</span>DIRECTORY</label>
-      <input type="text" class="form-control" id="dir" name="directory" [(ngModel)]="addService.directory"
-        placeholder="Enter directory">
+      <mat-form-field class="example-full-width">
+        <mat-label><span class="text-danger mr-1">*</span>DIRECTORY</mat-label>
+        <input matInput placeholder="Enter Directory" [(ngModel)]="addService.directory" name="directory">
+      </mat-form-field>
       <div style="height:20px;">
         <span *ngIf="!isDirValid" class="text-danger">
           Please enter root directory
@@ -32,20 +35,25 @@
       </div>
     </div>
 
-    <label for="Git-Repo" class="col-form-label"><span class="text-danger mr-1">*</span>GIT REPOSITORY</label>
-    <mat-card>
-      <mat-card-content>
-        <section class="example-section">
-          <mat-checkbox class="example-margin" [(ngModel)]="checked" name="checkbox">Enter Only URL</mat-checkbox>
-        </section>
-      </mat-card-content>
-    </mat-card>
+    <div class="mb-3">
+      <mat-card>
+        <mat-card-content>
+          <h3><span class="text-danger mr-1">*</span>GIT REPOSITORY</h3>
+          <section class="example-section">
+            <mat-checkbox class="example-margin" [(ngModel)]="checked" name="checkbox">Public Repository</mat-checkbox>
+          </section>
+        </mat-card-content>
+      </mat-card>
+      <div style="height:20px;">
+      </div>
+    </div>
 
     <div class="mb-3">
       <div *ngIf="checked; else elseBlock">
-        <label for="url" class="col-form-label"><span class="text-danger mr-1">*</span>URL</label>
-        <input type="url" class="form-control" id="url" name="url" [(ngModel)]="url"
-          placeholder="Enter Git Repository URL">
+        <mat-form-field class="example-full-width">
+          <mat-label><span class="text-danger mr-1">*</span>URL</mat-label>
+          <input type="url" matInput placeholder="Enter Git Repository URL" [(ngModel)]="url" name="url">
+        </mat-form-field>
         <div style="height:20px;">
           <span *ngIf="!isUrlValid" class="text-danger">
             Please enter git repository URL
@@ -53,27 +61,30 @@
         </div>
       </div>
       <ng-template #elseBlock>
-        <label for="url" class="col-form-label"><span class="text-danger mr-1">*</span>URL</label>
-        <input type="url" class="form-control" id="url" name="url" [(ngModel)]="url"
-          placeholder="Enter Git Repository URL">
+        <mat-form-field class="example-full-width">
+          <mat-label><span class="text-danger mr-1">*</span>URL</mat-label>
+          <input type="url" matInput placeholder="Enter Git Repository URL" [(ngModel)]="url" name="url">
+        </mat-form-field>
         <div style="height:20px;">
           <span *ngIf="!isUrlValid" class="text-danger">
             Please enter git repository URL
           </span>
         </div>
 
-        <label for="username" class="col-form-label"><span class="text-danger mr-1">*</span>USERNAME</label>
-        <input type="text" class="form-control" id="username" name="username" [(ngModel)]="username"
-          placeholder="Enter Git Repository Username">
+        <mat-form-field class="example-full-width">
+          <mat-label><span class="text-danger mr-1">*</span>USERNAME</mat-label>
+          <input matInput placeholder="Enter Git Repository Username" [(ngModel)]="username" name="username">
+        </mat-form-field>
         <div style="height:20px;">
           <span *ngIf="!isUsernameValid" class="text-danger">
             Please enter git repository username
           </span>
         </div>
 
-        <label for="password" class="col-form-label"><span class="text-danger mr-1">*</span>PASSWORD</label>
-        <input type="password" class="form-control" id="password" name="password" [(ngModel)]="password"
-          placeholder="Enter Git Repository Password">
+        <mat-form-field class="example-full-width">
+          <mat-label><span class="text-danger mr-1">*</span>PASSWORD</mat-label>
+          <input type="password" matInput placeholder="Enter Git Repository Password" [(ngModel)]="password" name="password">
+        </mat-form-field>
         <div style="height:20px;">
           <span *ngIf="!isPasswordValid" class="text-danger">
             Please enter git repository password
@@ -83,11 +94,9 @@
       </ng-template>
     </div>
 
-    <div>
-      <label for="profiles" class="col-form-label"><span class="text-danger mr-1">*</span>PROFILES</label>
-      <br>
+    <div class="mb-3">
       <mat-form-field class="example-chip-list">
-        <mat-label>Profile</mat-label>
+        <mat-label><span class="text-danger mr-1">*</span>PROFILES</mat-label>
         <mat-chip-list #chipList aria-label="Profiles selection">
           <mat-chip *ngFor="let profile of profiles" [selectable]="selectable"
                    [removable]="removable" (removed)="remove(profile)">
@@ -108,11 +117,9 @@
       </div>
     </div>
 
-    <div>
-      <label for="branches" class="col-form-label"><span class="text-danger mr-1">*</span>BRANCHES</label>
-      <br>
+    <div class="mb-3">
       <mat-form-field class="example-chip-list">
-        <mat-label>Branch</mat-label>
+        <mat-label><span class="text-danger mr-1">*</span>BRANCHES</mat-label>
         <mat-chip-list #chipListBranch aria-label="Branches selection">
           <mat-chip *ngFor="let branch of branches" [selectable]="selectable"
                    [removable]="removable" (removed)="removeBranch(branch)">
@@ -135,9 +142,9 @@
 
   </form>
 </mat-dialog-content>
-<hr>
+
 <mat-dialog-actions align="end">
-  <app-btn mat-dialog-close [label]=" 'Cancel' " [isCancel]="true"></app-btn> 
-  <app-btn (clicked)="addNewService()" [label]=" 'Add' " cdkFocusInitial></app-btn>
+  <app-btn [label]=" 'Cancel' " [icon]="'cancel'" [isCancel]="true" (clicked)="closeDialog()"></app-btn> 
+  <app-btn (clicked)="addNewService()" [label]=" 'Add' " [icon]="'add_circle'"></app-btn>
 </mat-dialog-actions>
 

@@ -1,0 +1,43 @@
+<h1>{{datatype | headingPipe}}</h1>
+<h2 *ngFor="let i of typeInputs; index as idx">
+    <div *ngIf="i.inputType==='integer' " class="form-group">
+        
+        <label>{{i.param}}</label>
+        <input type="number" class="form-control" [(ngModel)]="inputValuesObject[i.param]">
+       
+    </div>
+    <div *ngIf="i.inputType==='string' " class="form-group">
+            <label>{{i.param}}</label>
+            <input class="form-control" [(ngModel)]="inputValuesObject[i.param]">
+    </div>
+    <div *ngIf="i.inputType==='boolean' ">
+        <mat-form-field appearance="fill">
+            <mat-label>{{i.param}}</mat-label>
+            <mat-select [(ngModel)]="inputValuesObject[i.param]">
+              <mat-option [value]="true">True</mat-option>
+              <mat-option [value]="false">False</mat-option>
+            </mat-select>
+          </mat-form-field>
+    </div>
+
+    <div *ngIf="i.inputType==='list' " class="form-group">
+        <mat-form-field class="example-chip-list">
+            <mat-label>{{i.param}}</mat-label>
+            <mat-chip-list #chipList>
+              <mat-chip *ngFor="let l of inputValuesObject[i.param]" [selectable]="true"
+                       [removable]="true" (removed)="removeFromList(l,idx)">
+                {{l}}
+                <mat-icon matChipRemove *ngIf="true">cancel</mat-icon>
+              </mat-chip>
+              <input [matChipInputFor]="chipList"
+                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                     [matChipInputAddOnBlur]="true"
+                     (matChipInputTokenEnd)="addInList($event,idx)">
+            </mat-chip-list>
+          </mat-form-field>
+    </div>
+</h2>
+<mat-dialog-actions align="end">
+  <app-btn [label]=" 'Cancel' " [isCancel]="true" [icon]="'cancel'" (clicked)="closeDialog()"></app-btn>
+  <app-btn (clicked)="tempShow()" [label]=" 'Add' " [icon]="'add_circle'"></app-btn>
+</mat-dialog-actions>

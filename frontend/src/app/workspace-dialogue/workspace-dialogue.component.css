@@ -11,3 +11,21 @@
 .merge-btn{
     margin-top: 0px;
 }
+app-dropdown{
+    margin-right: 16px;
+}
+.full-width-editor {
+    width: 100%;
+    max-width: 100%;
+}
+.partial-width-editor {
+    width: 80%;
+    max-width: 80%;
+}
+
+mat-progress-spinner {
+    margin-left: 16px
+}
+table {
+    width: 100%;
+}

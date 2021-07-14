@@ -1,0 +1,10 @@
+<app-custom-codemirror 
+    [content]="ruleJsonSchema" 
+    [id]=" 'rulesSchema' "
+    [codemirrorMode]="'JSON'"
+    [codemirrorHeight]=" '600px' " 
+    [codemirrorWidth]=" '1000px' ">
+</app-custom-codemirror>
+<mat-dialog-actions align="end">
+<app-btn [label]=" 'Cancel' " [isCancel] = "true" (clicked)="closeDialog()" [icon]="'cancel'"></app-btn>
+</mat-dialog-actions>

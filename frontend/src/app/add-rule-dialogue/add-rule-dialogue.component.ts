@@ -1,0 +1,133 @@
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { addRuleTemplate } from '../addRuleTemplate';
+import { microService } from '../microService';
+import { CodemirrorService } from '../shared/shared-services/codemirror.service';
+import { DataManagerService } from '../shared/shared-services/data-manager.service';
+import { RulesDataService } from '../shared/shared-services/rules-data.service';
+
+@Component({
+  selector: 'app-add-rule-dialogue',
+  templateUrl: './add-rule-dialogue.component.html',
+  styleUrls: ['./add-rule-dialogue.component.css']
+})
+export class AddRuleDialogueComponent implements OnInit {
+
+  servicesSelected = new FormControl();
+  branchesSelected = new FormControl();
+  profilesSelected = new FormControl();
+
+  nRule!: addRuleTemplate;
+  ruleData: string = "";
+  mservices: microService[] = [];
+  serviceList: string[] = [];
+  branchList: string[] = [];
+  profileList: string[] = [];
+
+  visibleProgressSpinner = false;
+  isRuleOnPropertyValid = true;
+  isServiceValid = true;
+
+  constructor(private dialogRef: MatDialogRef<AddRuleDialogueComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: addRuleTemplate, private _dataManagerService: DataManagerService,
+    private _codemirrorService: CodemirrorService, private _rulesDataService: RulesDataService,
+    private _snackBar: MatSnackBar) {
+    this.nRule = new addRuleTemplate();
+    dialogRef.disableClose = true;
+  }
+
+  ngOnInit(): void {
+    this._dataManagerService.getServicesList().subscribe(data => {
+      this.mservices = JSON.parse(JSON.stringify(data));
+      for(let i=0;i<this.mservices.length;i++){
+        this.serviceList.push(this.mservices[i].service);
+      }
+    });
+  }
+  setFunction(){
+    this.branchList = [];
+    this.profileList = [];
+    let serSel: string[] = [];
+    if(this.servicesSelected.value!=null){
+      serSel = this.servicesSelected.value;
+      for(let i=0;i<serSel.length;i++){
+        for(let j=0;j<this.mservices.length;j++){
+          if(this.mservices[j].service===serSel[i]){
+            let bList = this.mservices[j].branches.map((x:any) => x.name);
+            this.branchList = this.branchList.concat(bList);
+            let pList = this.mservices[i].profiles.map((x:any) => x.name);
+            this.profileList = this.profileList.concat(pList);
+          }
+        }
+      }
+      this.branchList = [...new Set(this.branchList)];
+      this.profileList = [...new Set(this.profileList)];
+    }
+  }
+
+
+  updateRuleData(event: any){
+    this.ruleData = event;
+    console.log(typeof event);
+  }
+
+
+  addNewRule(){
+    let sList: string[] = [];
+    let bList: string[] = [];
+    let pList: string[] = [];
+    if(this.servicesSelected.value!=null) sList = this.servicesSelected.value;
+    if(this.branchesSelected.value!=null) bList = this.branchesSelected.value;
+    if(this.profilesSelected.value!=null) pList = this.profilesSelected.value;
+    this.nRule.scope = {
+      services: sList,
+      branches: bList,
+      profiles: pList
+    };
+    this.isRuleOnPropertyValid = this.nRule.ruleOnProperty.length>0;
+    this.isServiceValid = sList.length>0;
+    
+    let temp = {
+      
+      "rule": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+      }
+    }
+    if(this.isRuleOnPropertyValid && this.isServiceValid){
+      this.visibleProgressSpinner = true;
+      
+      temp["rule"] = JSON.parse(this.ruleData);
+      temp["rule"]["$schema"] = "http://json-schema.org/draft-07/schema#";
+
+      let s1 = JSON.stringify(temp,null,2), s2 = JSON.stringify(this.nRule,null,2);
+      s1 = s1.slice(1);
+      s1 = s1.slice(0,s1.length-1);
+      s2 = s2.slice(1);
+      s2 = s2.slice(0,s2.length-1);
+      let newRule = "{"+s1+","+s2+"}";
+      let addNewRule: addRuleTemplate = JSON.parse(newRule);
+      
+      this._rulesDataService.addRule(addNewRule).subscribe(data=>{
+        this.visibleProgressSpinner = false;
+        this.dialogRef.close(addNewRule);
+        this.reloadPage();
+      },
+      err=>{
+        this.visibleProgressSpinner = false;
+        let errorMsg = (err.error.error.errorMessage);
+        let simpleSnackBarRef = this._snackBar.open(errorMsg,"Close");
+        setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 100000);
+      }
+      );
+    }
+  }
+  closeDialog(){
+    this.dialogRef.close(AddRuleDialogueComponent);
+  }
+  reloadPage(){
+    window.location.reload();
+  }
+
+}

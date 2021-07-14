@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { branchConsistency } from 'src/app/branchConsistency';
+import { customValidate } from 'src/app/customValidate';
 import { microService } from 'src/app/microService';
 import { profileConsistency } from 'src/app/profileConsistency';
 import * as yaml from 'yaml';

@@ -1,0 +1,31 @@
+<div class="container">
+<h2 mat-dialog-title class="dialog-title" style="text-align: center;">JSON Schema Editor</h2>
+
+<div fxLayout="row">
+    <div fxLayout="column" fxFlex="50">
+        <div fxLayout="row">
+        <mat-radio-group class="example-radio-group editor-header" [(ngModel)]="editorMode">
+            <mat-radio-button class="example-radio-button .mat-h3"  value="JSON"><b>JSON</b></mat-radio-button>
+            &nbsp;&nbsp;
+            <mat-radio-button class="example-radio-button"  value="YAML"><b>YAML</b></mat-radio-button>
+        </mat-radio-group>
+        &nbsp;&nbsp;
+        <app-btn [label]="'Generate'" (clicked)="showJsonSchema()" class="generate-button"></app-btn>
+        </div>
+        
+        <app-custom-codemirror [id]=" 'input-json' "
+        [codemirrorHeight]=" '500px' " 
+        [isEditable]="true" [codemirrorMode]="editorMode" (modifyProfileData) = "modifyProfileData($event)">
+        </app-custom-codemirror>
+    </div>
+
+    <div fxLayout="column" fxFlex="50">
+        <div class="editor-header"><b>JSON SCHEMA</b></div>
+        <app-custom-codemirror [id]=" 'output-json-schema' " [content]="jsonSchema" 
+        [isJsonSchemaEditor] = "true" [isEditable]="true"
+        [codemirrorHeight]=" '500px' " [codemirrorMode]="'JSON'" 
+        (modifyProfileData)="updateJsonSchemaContent($event)">
+        </app-custom-codemirror>
+    </div>
+</div>
+</div>

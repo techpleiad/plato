@@ -4,6 +4,7 @@ import {MatChipInputEvent} from '@angular/material/chips';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { microService } from '../microService';
 import { DataManagerService } from '../shared/shared-services/data-manager.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface Profile {
   name: string;
@@ -46,55 +47,57 @@ export class AddNewServiceComponent implements OnInit {
   username: string="";
   password: string="";
 
-  //profile module chip fucntions
+  constructor(private dialogRef: MatDialogRef<AddNewServiceComponent>,@Inject(MAT_DIALOG_DATA) private data: microService,
+  private _dataManagerService: DataManagerService,  private _snackBar: MatSnackBar) {
+    this.addService=new microService();
+    this.dialogRef.disableClose = true;
+  }
+
+  ngOnInit(): void {
+  }
   add(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
 
-    // Add our fruit
     if (value) {
-      this.profiles.push({name: value});
+      let flag = true;
+      for(let i=0;i<this.profiles.length;i++){
+        if(this.profiles[i].name===value){
+          flag = false;
+          break;
+        }
+      }
+      if(flag) this.profiles.push({name: value});
     }
-
-    // Clear the input value
     event.chipInput!.clear();
   }
 
   remove(profile: Profile): void {
     const index = this.profiles.indexOf(profile);
-
     if (index >= 0) {
       this.profiles.splice(index, 1);
     }
   }
-  //profile module chip functions
-
-  //branch module chip fucntions
   addBranch(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
-
-    // Add our fruit
     if (value) {
-      this.branches.push({name: value, priority: 0});
+      let flag = true;
+      for(let i=0;i<this.branches.length;i++){
+        if(this.branches[i].name===value){
+          flag = false;
+          break;
+        }
+      }
+      if(flag) this.branches.push({name: value, priority: 0});
     }
-
-    // Clear the input value
     event.chipInput!.clear();
   }
 
   removeBranch(branch: Branch): void {
     const index = this.branches.indexOf(branch);
-
     if (index >= 0) {
       this.branches.splice(index, 1);
     }
   }
-  //branch module chip functions
-  
-  constructor(private dialogRef: MatDialogRef<AddNewServiceComponent>,@Inject(MAT_DIALOG_DATA) private data: microService, private _dataManagerService: DataManagerService) {
-    this.addService=new microService();
-    console.log(data);
-  }
-
   addNewService(){
     for(let i=0;i<this.branches.length;i++){
       this.branches[i].priority=i+1;
@@ -112,26 +115,34 @@ export class AddNewServiceComponent implements OnInit {
       this.addService.gitRepository={url: this.url};
       if(this.isServiceValid && this.isDirValid && this.isUrlValid && this.isProfileValid && this.isBranchValid){
         this.executeAddService();
-        //this.dialogRef.close(this.addService);
       }
     }else{
       this.addService.gitRepository={url: this.url, username: this.username, password: this.password};
       if(this.isServiceValid && this.isDirValid && this.isUrlValid && this.isUsernameValid && this.isPasswordValid && this.isProfileValid && this.isBranchValid){
         this.executeAddService();
-        //this.dialogRef.close(this.addService);
       }
     }
     
   }
-
   executeAddService(){
     this._dataManagerService.addService(this.addService).subscribe(data=>{
       //console.log(data);
+      let Msg = "Service Added Successfully";
+      let simpleSnackBarRef = this._snackBar.open(Msg,"Close");
+      setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 5000);
       this.dialogRef.close(this.addService);
-    });
+      window.location.reload();
+    },
+    err=>{
+      let errorMsg = (err.error.error.errorMessage);
+      let simpleSnackBarRef = this._snackBar.open(errorMsg,"Close");
+      setTimeout(simpleSnackBarRef.dismiss.bind(simpleSnackBarRef), 100000);
+    }
+    );
+  }
+  closeDialog(){
+    this.dialogRef.close(AddNewServiceComponent);
   }
 
-  ngOnInit(): void {
-  }
 
 }

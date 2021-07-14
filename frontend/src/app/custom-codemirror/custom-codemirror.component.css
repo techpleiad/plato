@@ -6,3 +6,9 @@ textarea{
 .owner{
     color: black;
 }
+.wrong-code {
+    background-color: #FF616D;
+}
+.correct-code {
+    background-color: #78DEC7;
+}

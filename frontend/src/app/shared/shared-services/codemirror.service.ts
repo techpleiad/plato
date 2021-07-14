@@ -10,19 +10,22 @@ import { PropertyDetail } from '../models/ProfileSpecTO';
 })
 export class CodemirrorService {
 
-  private lineToPropertyBreadcrumbMap: any;
-  private propertyTolineBreadcrumbMap: any;
+  public lineToPropertyBreadcrumbMap: any;
+  private propertyTolineBreadcrumbMap = new Map();
   private _breadcrumbEditorLine = -1;
   private currentLineInEditor = 0;
-  private _mergeEditor: any;
+  public _mergeEditor: any;
 
-  private _content = '';  //// _content => main content inside the editor
-  private _editor: CodeEditor = CodeEditor.JSON; //// setting default editor type to JSON.
+  private _content = '';
+  private _jsonContent: any;
+  private _editor: CodeEditor = CodeEditor.JSON;
 
   private _profileData: ProfileDataTO[] = [];
   private _propertyList: any[] = [];
   private _profileMapper: any = null;
   private _lineToDivMapper = new Map();
+
+  private missingLineNumber: any;
 
   constructor() { }
 
@@ -32,26 +35,16 @@ export class CodemirrorService {
   set editor(type: CodeEditor) {
     this._editor = type;
   }
-
-  //// This func sets the content according to the Editor Type
-  mergeEditorConstruct(codemirrorTextArea: any, configuration: any, data: any, codemirrorId: any): void {
+  mergeEditorConstruct(codemirrorTextArea: any, configuration: any, data: any, codemirrorId: any, cmp: string): void {
 
     configuration.foldGutter = false;
     configuration.readOnly = true;
-
-    //// _mergeEditor => main editor
     this._mergeEditor = codemirrorTextArea;
     this._mergeEditor.refresh();
-    //// On double click point the cursor to that area
-    this._mergeEditor.on('dblclick', (instance: any, event: Event) => {
-      this.breadcrumbEditorLine = instance.getCursor().line + 1;
-      //SpringProfileComponent.DisplayPropertyPathOrFind = true; // circular dependency  
-    });
-    
+
     this._mergeEditor.on('update', (instance: any) => {
-      this.onScrollCodemirrorUpdate(codemirrorId);
+      this.onScrollCodemirrorUpdate(codemirrorId,cmp);
     });
-    
 
     switch (this._editor) {
       case CodeEditor.JSON: {
@@ -60,15 +53,18 @@ export class CodemirrorService {
       }
       case CodeEditor.YAML: {
         this._content = YAML_PRETTIER.stringify(data);
+        //console.log(this._content);
       }
     }
   }
 
   //// Showing the Editor
-  showEditor(): void {
-    this._mergeEditor.setValue(this._content);
-    this._mergeEditor.setSize('100%', '400px');
-    this._mergeEditor.refresh();
+  showEditor(codemirrorHeight: string, codemirrorWidth: string): void {
+    if(this._mergeEditor){
+      this._mergeEditor.setValue(this._content);
+      this._mergeEditor.setSize(codemirrorWidth, codemirrorHeight);
+      this._mergeEditor.refresh();
+    }
   }
 
   set content(data: string) {
@@ -82,7 +78,7 @@ export class CodemirrorService {
     this._breadcrumbEditorLine = line;
   }
 
-  updateCodeMirrorVisual(profileData: ProfileDataTO[], propertyList: PropertyDetail[], jsonObject: any, codemirrorId: string): void {
+  updateCodeMirrorVisual(profileData: ProfileDataTO[], propertyList: PropertyDetail[], jsonObject: any, codemirrorId: string,cmp: string): void {
     
     this._mergeEditor.refresh();
     this._lineToDivMapper = new Map();
@@ -104,16 +100,22 @@ export class CodemirrorService {
       }
       case CodeEditor.YAML: {
         this.currentLineInEditor = YAML_PARSER.INITIAL_LINE;
+        if(jsonObject!==null)
         this.yamlLineReaderInObject('', jsonObject, profileMapper, YAML_PARSER);
         break;
       }
     }
     this._profileMapper = profileMapper;
-    this.onScrollCodemirrorUpdate(codemirrorId);
+    this.onScrollCodemirrorUpdate(codemirrorId,cmp);
+    if(this.missingLineNumber){
+      let y = Number(`${this.missingLineNumber}`);
+      console.log("property added at line ", y);
+      this._mergeEditor.focus();
+      this._mergeEditor.setCursor({line: y-1, ch: 0});
+    }
   }
 
-  private onScrollCodemirrorUpdate(codemirrorId: string): void {
-
+  private onScrollCodemirrorUpdate(codemirrorId: string,cmp: string): void {
     const parent = document.getElementById(codemirrorId);
     const lineElements = parent?.getElementsByClassName('CodeMirror-linenumber CodeMirror-gutter-elt');
     if (lineElements) {
@@ -135,14 +137,18 @@ export class CodemirrorService {
         this.updateColor(document.getElementById(`side-bar-${index}`), profile.color.color);
       });
     }
+    let missingProp = cmp;
+    this.missingLineNumber = this.propertyTolineBreadcrumbMap.get(missingProp);
+    /*
+    if(this.missingLineNumber){
+      this.updateColor(this._lineToDivMapper.get(`${this.missingLineNumber}`), '#78DEC7');
+    }*/
   }
-
   updateColor(element: any, color: any): void {
     if (element) {
       element.style['background-color'] = color;
     }
   }
-
   propertyType(value: any): string {
     if (value instanceof Array) {
       return 'Array';
@@ -152,7 +158,6 @@ export class CodemirrorService {
     }
     return 'primitive';
   }
-
   jsonLineReader(path: string, root: any,  profileMapper: any, config: CodemirrorReader, isArray: boolean = false): void {
     const parentIndex = this.currentLineInEditor;
     for (const pro of Object.keys(root)) {
@@ -202,7 +207,7 @@ export class CodemirrorService {
       this.highlightPropertyInCursorLine(this.propertyTolineBreadcrumbMap
         .get(this.getEditorBreadcrumbArray().slice(0, index + 1).join('.')));
     }
-    catch (exception) { // can case when primitive index
+    catch (exception) { 
       console.error(exception);
       this.updateEditorCursorPosition(index + 1);
     }
@@ -267,7 +272,6 @@ export class CodemirrorService {
   }
 
   findSuggestedPropertyList(text: string): string[] {
-    // console.log('search : ', text.substr(text.lastIndexOf('.') + 1));
     const suggestedPropertyList: string[] = [];
     this.propertyTolineBreadcrumbMap.forEach((value: number, key: string) => {
       if (key.startsWith(text) && key.length !== text.length) {
