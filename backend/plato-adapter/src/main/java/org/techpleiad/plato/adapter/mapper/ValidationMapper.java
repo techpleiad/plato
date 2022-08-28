@@ -2,6 +2,7 @@ package org.techpleiad.plato.adapter.mapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.mapstruct.Mapper;
+import org.springframework.util.CollectionUtils;
 import org.techpleiad.plato.api.request.DocumentRequestTO;
 import org.techpleiad.plato.api.request.ResolveInconsistencyRequestTO;
 import org.techpleiad.plato.api.response.BranchProfileReportResponseTO;
@@ -22,6 +23,7 @@ import org.techpleiad.plato.core.domain.ResolveConsistencyAcrossProfiles;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Mapper(componentModel = "spring")
 public interface ValidationMapper {
@@ -39,27 +41,43 @@ public interface ValidationMapper {
     List<ConsistencyLevelValidateResponseTO> convertConsistencyLevelBranchesReportToConsistencyLevelResponse(final List<ConsistencyLevelAcrossBranchesReport> consistencyLevelAcrossBranchesReport);
 
     default ServicesAcrossProfileValidateResponseTO convertInconsistentProfilePropertyToProfilePropertyResponseTO(
-            final String service, final String branch, final ConsistencyAcrossProfilesReport profilePropertyDetails) {
+            final String service, final String branch, final ConsistencyAcrossProfilesReport profilePropertyDetails,
+            final AtomicBoolean isReportCompletelyConsistent,
+            final boolean disableYamlDoc
+    ) {
         return ServicesAcrossProfileValidateResponseTO.builder()
                 .service(service)
                 .branch(branch)
-                .missingProperty(convertMissingPropertyMapToList(profilePropertyDetails.getMissingProperty(), profilePropertyDetails.getProfileDocument()))
+                .missingProperty(convertMissingPropertyMapToList(
+                        profilePropertyDetails.getMissingProperty(),
+                        profilePropertyDetails.getProfileDocument(),
+                        isReportCompletelyConsistent,
+                        disableYamlDoc
+                ))
                 .build();
     }
 
-    default List<ProfilePropertiesResponseTO> convertMissingPropertyMapToList(final HashMap<String, List<String>> missingProperty, final HashMap<String, JsonNode> profileDocument) {
+    default List<ProfilePropertiesResponseTO> convertMissingPropertyMapToList(
+            final HashMap<String, List<String>> missingProperty,
+            final HashMap<String, JsonNode> profileDocument,
+            final AtomicBoolean isReportCompletelyConsistent,
+            final boolean disableYamlDoc) {
         final List<ProfilePropertiesResponseTO> profilePropertiesResponseTOList = new LinkedList<>();
-        missingProperty.forEach((profile, properties) ->
-                profilePropertiesResponseTOList.add(ProfilePropertiesResponseTO.builder()
-                        .properties(properties)
-                        .document(DocumentResponseTO.builder().
-                                profile(profile)
-                                .document(profileDocument.get(profile))
-                                .build()
-                        )
-                        .build()
-                )
-        );
+        missingProperty.forEach((profile, properties) -> {
+
+            final DocumentResponseTO documentResponseTO = DocumentResponseTO.builder()
+                    .profile(profile)
+                    .document(disableYamlDoc ? null : profileDocument.get(profile))
+                    .build();
+
+            profilePropertiesResponseTOList.add(ProfilePropertiesResponseTO.builder()
+                    .properties(properties).document(documentResponseTO)
+                    .build()
+            );
+            if (!CollectionUtils.isEmpty(properties)) {
+                isReportCompletelyConsistent.set(false);
+            }
+        });
         return profilePropertiesResponseTOList;
     }
 

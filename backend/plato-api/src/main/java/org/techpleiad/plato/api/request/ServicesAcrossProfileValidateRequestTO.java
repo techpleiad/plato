@@ -17,6 +17,7 @@ import java.util.List;
 public class ServicesAcrossProfileValidateRequestTO {
     @NotEmpty(message = "service list cannot be empty")
     private List<String> services;
+    private boolean disableYamlDoc;
     private boolean includeSuppressed;
     private EmailRequestTO email;
 }

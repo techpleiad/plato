@@ -1,4 +1,6 @@
 spring:
+  main:
+    allow-bean-definition-overriding: true
   data:
     mongodb:
       uri: mongodb://localhost:27017/plato
@@ -19,7 +21,7 @@ plato:
     branchConsistencyEmailSubject: "Plato :: Branch Consistency Report - {{branch1}} and {{branch2}} branch"
     profileConsistencyEmailSubject: "Plato :: Profile Consistency Report - {{branch}} branch"
     customValidationEmailSubject: "Plato :: Custom Validation Report"
-    emailFrom: "Plato"
+    emailFrom: "username@email.com"
 
   properties:
     altered:
