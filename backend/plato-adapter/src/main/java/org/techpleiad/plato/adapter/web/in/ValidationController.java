@@ -2,6 +2,7 @@ package org.techpleiad.plato.adapter.web.in;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -31,6 +32,7 @@ import org.techpleiad.plato.core.port.in.IValidateAcrossProfileUseCase;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @RestController
@@ -77,15 +79,16 @@ public class ValidationController implements IValidationController {
                     .sendEmail(mailBody, servicesAcrossProfileValidateRequestTO.getEmail().getRecipients(), subject, configToolConfig
                             .getEmailFrom());
         }
-
+        final AtomicBoolean isReportCompletelyConsistent = new AtomicBoolean(true);
         final List<ServicesAcrossProfileValidateResponseTO> responseList =
                 reportList.stream().map(report ->
                         validationMapper.convertInconsistentProfilePropertyToProfilePropertyResponseTO(
                                 report.getService(),
                                 branchName,
-                                report
+                                report, isReportCompletelyConsistent,
+                                servicesAcrossProfileValidateRequestTO.isDisableYamlDoc()
                         )).collect(Collectors.toList());
-        return ResponseEntity.ok(responseList);
+        return isReportCompletelyConsistent.get() ? ResponseEntity.ok(responseList) : ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).body(responseList);
     }
 
     @ExecutionTime

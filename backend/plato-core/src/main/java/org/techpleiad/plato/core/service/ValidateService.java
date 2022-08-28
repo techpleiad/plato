@@ -12,7 +12,20 @@ import org.springframework.stereotype.Service;
 import org.techpleiad.plato.core.advice.ExecutionTime;
 import org.techpleiad.plato.core.advice.ThreadDirectory;
 import org.techpleiad.plato.core.convert.SortingNodeFactory;
-import org.techpleiad.plato.core.domain.*;
+import org.techpleiad.plato.core.domain.Branch;
+import org.techpleiad.plato.core.domain.BranchProfileReport;
+import org.techpleiad.plato.core.domain.BranchReport;
+import org.techpleiad.plato.core.domain.ConsistencyAcrossBranchesReport;
+import org.techpleiad.plato.core.domain.ConsistencyAcrossProfilesReport;
+import org.techpleiad.plato.core.domain.ConsistencyLevelAcrossBranchesReport;
+import org.techpleiad.plato.core.domain.Document;
+import org.techpleiad.plato.core.domain.MissingPropertyDetail;
+import org.techpleiad.plato.core.domain.Profile;
+import org.techpleiad.plato.core.domain.PropertyNodeDetail;
+import org.techpleiad.plato.core.domain.PropertyTreeNode;
+import org.techpleiad.plato.core.domain.ServiceBranchData;
+import org.techpleiad.plato.core.domain.ServiceSpec;
+import org.techpleiad.plato.core.domain.ValidationAcrossBranchProperties;
 import org.techpleiad.plato.core.exceptions.BranchNotSupportedException;
 import org.techpleiad.plato.core.exceptions.FileConvertException;
 import org.techpleiad.plato.core.port.in.IFileServiceUserCase;
@@ -26,7 +39,19 @@ import org.techpleiad.plato.core.port.in.IValidateAcrossProfileUseCase;
 import org.techpleiad.plato.core.port.in.IValidateBranchUseCase;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Queue;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -257,7 +282,8 @@ public class ValidateService implements IValidateAcrossProfileUseCase, IValidate
             final String branchName,
             final boolean isSuppressed) throws ExecutionException, InterruptedException {
 
-        serviceSpecList.forEach(serviceSpec -> validateBranchInService(serviceSpec, branchName));
+        //skipping this check for allowing consistency check for any branch
+        //serviceSpecList.forEach(serviceSpec -> validateBranchInService(serviceSpec, branchName));
 
         final List<ConsistencyAcrossProfilesReport> reportList = new LinkedList<>();
 
